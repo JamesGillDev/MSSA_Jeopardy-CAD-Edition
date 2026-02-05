@@ -306,64 +306,67 @@
 .game-board {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 4px;
+    gap: 3px;
     margin-bottom: 20px;
     align-items: start;
     background: #1a1a2e;
-    padding: 6px;
-    border-radius: 10px;
-    border: 3px solid #0a0a15;
+    padding: 5px;
+    border-radius: 8px;
+    border: 2px solid #0a0a15;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .category-column {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
 }
 
 .category-header {
     background: linear-gradient(180deg, #1a237e 0%, #060ce9 50%, #1a237e 100%);
     color: white;
-    padding: 12px 8px;
+    padding: 8px 4px;
     text-align: center;
     font-weight: bold;
-    font-size: 0.75rem;
-    border-radius: 8px;
-    aspect-ratio: 1 / 0.7;
+    font-size: 0.65rem;
+    border-radius: 5px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: 3px solid #0a1158;
+    letter-spacing: 0.3px;
+    border: 2px solid #0a1158;
     box-shadow: 
         inset 0 2px 4px rgba(255,255,255,0.1), 
         inset 0 -2px 4px rgba(0,0,0,0.3),
-        2px 2px 8px rgba(0,0,0,0.5);
+        1px 1px 4px rgba(0,0,0,0.5);
 }
 
-/* Square TV-style question cells */
+/* Smaller square TV-style question cells */
 .question-cell {
     background: linear-gradient(180deg, #2196f3 0%, #1976d2 20%, #1565c0 50%, #0d47a1 80%, #0a3d91 100%);
     color: #ffd700;
     text-align: center;
     font-weight: bold;
-    font-size: 1.3rem;
-    border-radius: 8px;
+    font-size: 1rem;
+    border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s ease;
-    aspect-ratio: 1 / 1;
+    height: 55px;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 0 0 10px rgba(0,0,0,0.5);
-    border: 3px solid #0a1158;
+    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
+    border: 2px solid #0a1158;
     box-shadow: 
-        inset 0 4px 8px rgba(255,255,255,0.2),
-        inset 0 -4px 8px rgba(0,0,0,0.5),
-        inset 4px 0 8px rgba(255,255,255,0.05),
-        inset -4px 0 8px rgba(0,0,0,0.2),
-        3px 3px 10px rgba(0,0,0,0.6);
+        inset 0 3px 6px rgba(255,255,255,0.2),
+        inset 0 -3px 6px rgba(0,0,0,0.5),
+        inset 3px 0 6px rgba(255,255,255,0.05),
+        inset -3px 0 6px rgba(0,0,0,0.2),
+        2px 2px 6px rgba(0,0,0,0.5);
     position: relative;
     overflow: hidden;
 }
@@ -376,8 +379,8 @@
     left: 0;
     right: 0;
     height: 50%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
-    border-radius: 5px 5px 50% 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0) 100%);
+    border-radius: 3px 3px 50% 50%;
     pointer-events: none;
 }
 
@@ -389,17 +392,17 @@
     left: 5%;
     width: 15%;
     height: 30%;
-    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 100%);
     border-radius: 50%;
     pointer-events: none;
 }
 
 .question-cell:hover:not(.answered) {
-    transform: scale(1.05);
+    transform: scale(1.08);
     box-shadow: 
-        inset 0 4px 8px rgba(255,255,255,0.25),
-        inset 0 -4px 8px rgba(0,0,0,0.5),
-        0 6px 20px rgba(0,0,0,0.7);
+        inset 0 3px 6px rgba(255,255,255,0.25),
+        inset 0 -3px 6px rgba(0,0,0,0.5),
+        0 4px 15px rgba(0,0,0,0.6);
     background: linear-gradient(180deg, #42a5f5 0%, #2196f3 20%, #1976d2 50%, #1565c0 80%, #0d47a1 100%);
 }
 
@@ -423,18 +426,18 @@
 @@keyframes dailyDoubleFlash {
     0% {
         box-shadow: 
-            inset 0 4px 8px rgba(255,255,255,0.2),
-            inset 0 -4px 8px rgba(0,0,0,0.5),
-            0 0 30px #ffd700,
-            0 0 50px rgba(255, 215, 0, 0.7);
-        border: 3px solid #ffd700;
+            inset 0 3px 6px rgba(255,255,255,0.2),
+            inset 0 -3px 6px rgba(0,0,0,0.5),
+            0 0 20px #ffd700,
+            0 0 35px rgba(255, 215, 0, 0.7);
+        border: 2px solid #ffd700;
     }
     100% {
         box-shadow: 
-            inset 0 4px 8px rgba(255,255,255,0.2),
-            inset 0 -4px 8px rgba(0,0,0,0.5),
-            3px 3px 10px rgba(0,0,0,0.6);
-        border: 3px solid #0a1158;
+            inset 0 3px 6px rgba(255,255,255,0.2),
+            inset 0 -3px 6px rgba(0,0,0,0.5),
+            2px 2px 6px rgba(0,0,0,0.5);
+        border: 2px solid #0a1158;
     }
 }
 
