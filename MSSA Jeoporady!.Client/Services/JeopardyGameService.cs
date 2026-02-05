@@ -8,9 +8,10 @@ public class JeopardyGameService
     public Dictionary<int, int> PlayerScores { get; private set; } = [];
     public Dictionary<int, string> PlayerNames { get; private set; } = [];
     public int CurrentPlayer { get; private set; } = 1;
-    public int TotalPlayers { get; private set; } = 3;
+    public int TotalPlayers => PlayerScores.Count;
     public JeopardyQuestion? CurrentQuestion { get; private set; }
     private static readonly Random _random = new();
+    private int _nextPlayerId = 1;
 
     public JeopardyGameService()
     {
@@ -19,20 +20,60 @@ public class JeopardyGameService
 
     public void InitializeGame()
     {
-        PlayerScores = new Dictionary<int, int>
+        PlayerScores.Clear();
+        PlayerNames.Clear();
+        _nextPlayerId = 1;
+        
+        // Start with 3 players by default
+        for (int i = 0; i < 3; i++)
         {
-            { 1, 0 },
-            { 2, 0 },
-            { 3, 0 }
-        };
-        PlayerNames = new Dictionary<int, string>
-        {
-            { 1, "Player 1" },
-            { 2, "Player 2" },
-            { 3, "Player 3" }
-        };
+            AddPlayer();
+        }
+        
         CurrentPlayer = 1;
         Categories = BuildGameBoard();
+    }
+
+    public void InitializeGameKeepPlayers()
+    {
+        // Reset scores but keep players
+        foreach (var key in PlayerScores.Keys.ToList())
+        {
+            PlayerScores[key] = 0;
+        }
+        CurrentPlayer = PlayerScores.Keys.First();
+        Categories = BuildGameBoard();
+    }
+
+    public int AddPlayer(string? name = null)
+    {
+        int playerId = _nextPlayerId++;
+        PlayerScores[playerId] = 0;
+        PlayerNames[playerId] = name ?? $"Player {playerId}";
+        return playerId;
+    }
+
+    public bool RemovePlayer(int playerId)
+    {
+        if (TotalPlayers <= 1) return false; // Must have at least 1 player
+        
+        if (PlayerScores.Remove(playerId))
+        {
+            PlayerNames.Remove(playerId);
+            
+            // Adjust current player if needed
+            if (CurrentPlayer == playerId || !PlayerScores.ContainsKey(CurrentPlayer))
+            {
+                CurrentPlayer = PlayerScores.Keys.First();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public List<int> GetPlayerIds()
+    {
+        return PlayerScores.Keys.OrderBy(k => k).ToList();
     }
 
     private List<JeopardyCategory> BuildGameBoard()
@@ -58,7 +99,7 @@ public class JeopardyGameService
                     var randomIndex = _random.Next(questionsForValue.Count);
                     var question = questionsForValue[randomIndex];
                     
-                    // Random chance for BONUS (about 10% of questions)
+                    // Random chance for Daily Double (about 10% of questions)
                     question.IsBonus = _random.Next(10) == 0;
                     question.IsAnswered = false;
                     
@@ -94,7 +135,7 @@ public class JeopardyGameService
 
     public void AnswerQuestion(bool isCorrect, int playerNumber)
     {
-        if (CurrentQuestion != null)
+        if (CurrentQuestion != null && PlayerScores.ContainsKey(playerNumber))
         {
             CurrentQuestion.IsAnswered = true;
             int points = CurrentQuestion.IsBonus ? CurrentQuestion.PointValue * 2 : CurrentQuestion.PointValue;
@@ -114,7 +155,10 @@ public class JeopardyGameService
 
     public void NextPlayer()
     {
-        CurrentPlayer = (CurrentPlayer % TotalPlayers) + 1;
+        var playerIds = GetPlayerIds();
+        int currentIndex = playerIds.IndexOf(CurrentPlayer);
+        int nextIndex = (currentIndex + 1) % playerIds.Count;
+        CurrentPlayer = playerIds[nextIndex];
     }
 
     public void CloseQuestion()
