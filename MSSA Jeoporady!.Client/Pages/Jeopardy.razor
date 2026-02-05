@@ -60,17 +60,17 @@
     else if (gameService.CurrentQuestion != null)
     {
         <div class="question-modal-overlay" @onclick="CloseModal">
-            <div class="question-modal @(gameService.CurrentQuestion.IsBonus ? "bonus-modal" : "")" @onclick:stopPropagation="true">
+            <div class="question-modal @(gameService.CurrentQuestion.IsBonus ? "daily-double-modal" : "")" @onclick:stopPropagation="true">
                 @if (gameService.CurrentQuestion.IsBonus)
                 {
-                    <div class="bonus-banner">*** BONUS - DOUBLE POINTS! ***</div>
+                    <div class="daily-double-banner">DAILY DOUBLE!</div>
                 }
                 <div class="question-category">@gameService.CurrentQuestion.Category</div>
                 <div class="question-value">
                     $@(gameService.CurrentQuestion.IsBonus ? gameService.CurrentQuestion.PointValue * 2 : gameService.CurrentQuestion.PointValue)
                     @if (gameService.CurrentQuestion.IsBonus)
                     {
-                        <span class="bonus-label">(2x BONUS)</span>
+                        <span class="daily-double-label">(2x Points)</span>
                     }
                 </div>
                 <div class="question-text">@gameService.CurrentQuestion.Question</div>
@@ -105,18 +105,11 @@
                 <div class="category-header">@category.Name</div>
                 @foreach (var question in category.Questions.OrderBy(q => q.PointValue))
                 {
-                    <div class="question-cell @(question.IsAnswered ? "answered" : "") @(question.IsBonus && !question.IsAnswered ? "bonus-cell" : "")" 
+                    <div class="question-cell @(question.IsAnswered ? "answered" : "") @(question.IsBonus && !question.IsAnswered ? "daily-double" : "")" 
                          @onclick="() => SelectQuestion(question)">
                         @if (!question.IsAnswered)
                         {
-                            @if (question.IsBonus)
-                            {
-                                <span>$@question.PointValue<br/><small>BONUS</small></span>
-                            }
-                            else
-                            {
-                                <span>$@question.PointValue</span>
-                            }
+                            <span>$@question.PointValue</span>
                         }
                     </div>
                 }
@@ -245,78 +238,115 @@
 .game-board {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 8px;
+    gap: 3px;
     margin-bottom: 20px;
     align-items: start;
+    background: #000;
+    padding: 3px;
+    border-radius: 8px;
 }
 
 .category-column {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 3px;
 }
 
 .category-header {
-    background: linear-gradient(135deg, #060ce9 0%, #1a237e 100%);
+    background: linear-gradient(180deg, #1a237e 0%, #060ce9 50%, #1a237e 100%);
     color: white;
     padding: 15px 10px;
     text-align: center;
     font-weight: bold;
     font-size: 0.85rem;
-    border-radius: 8px;
+    border-radius: 6px;
     height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
     letter-spacing: 1px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 2px solid #0a1158;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -2px 4px rgba(0,0,0,0.3);
 }
 
+/* TV-style question cells */
 .question-cell {
-    background: linear-gradient(135deg, #060ce9 0%, #0d47a1 100%);
+    background: linear-gradient(180deg, #1565c0 0%, #0d47a1 30%, #0a3d91 70%, #062f70 100%);
     color: #ffd700;
-    padding: 25px 10px;
+    padding: 15px 8px;
     text-align: center;
     font-weight: bold;
-    font-size: 1.5rem;
-    border-radius: 8px;
+    font-size: 1.4rem;
+    border-radius: 6px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    height: 80px;
+    transition: all 0.2s ease;
+    height: 75px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    text-shadow: 2px 2px 0 #000;
+    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+    border: 2px solid #0a1158;
+    box-shadow: 
+        inset 0 3px 6px rgba(255,255,255,0.15),
+        inset 0 -3px 6px rgba(0,0,0,0.4),
+        0 1px 2px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+/* TV screen glare effect */
+.question-cell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 100%);
+    border-radius: 4px 4px 50% 50%;
+    pointer-events: none;
 }
 
 .question-cell:hover:not(.answered) {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+    transform: scale(1.03);
+    box-shadow: 
+        inset 0 3px 6px rgba(255,255,255,0.2),
+        inset 0 -3px 6px rgba(0,0,0,0.4),
+        0 4px 12px rgba(0,0,0,0.6);
+    background: linear-gradient(180deg, #1976d2 0%, #1565c0 30%, #0d47a1 70%, #0a3d91 100%);
 }
 
 .question-cell.answered {
-    background: #1a237e;
+    background: linear-gradient(180deg, #1a237e 0%, #0d1654 50%, #060d3a 100%);
     cursor: default;
-    opacity: 0.5;
-    height: 80px;
+    opacity: 0.6;
+    height: 75px;
 }
 
-.question-cell.bonus-cell {
-    background: linear-gradient(135deg, #ff6f00 0%, #ff8f00 100%);
-    animation: bonusPulse 1.5s infinite;
+.question-cell.answered::before {
+    display: none;
 }
 
-.question-cell.bonus-cell small {
-    font-size: 0.6rem;
-    display: block;
+/* Daily Double styling */
+.question-cell.daily-double {
+    background: linear-gradient(180deg, #1565c0 0%, #0d47a1 30%, #0a3d91 70%, #062f70 100%);
+    animation: dailyDoublePulse 2s infinite;
 }
 
-@@keyframes bonusPulse {
-    0%, 100% { box-shadow: 0 0 5px #ffd700; }
-    50% { box-shadow: 0 0 20px #ffd700, 0 0 30px #ff8f00; }
+@@keyframes dailyDoublePulse {
+    0%, 100% { 
+        box-shadow: 
+            inset 0 3px 6px rgba(255,255,255,0.15),
+            inset 0 -3px 6px rgba(0,0,0,0.4),
+            0 0 8px #ffd700;
+    }
+    50% { 
+        box-shadow: 
+            inset 0 3px 6px rgba(255,255,255,0.15),
+            inset 0 -3px 6px rgba(0,0,0,0.4),
+            0 0 20px #ffd700, 0 0 30px #ff8f00;
+    }
 }
 
     .question-modal-overlay {
@@ -333,7 +363,7 @@
     }
 
     .question-modal {
-        background: linear-gradient(135deg, #060ce9 0%, #1a237e 100%);
+        background: linear-gradient(180deg, #1565c0 0%, #0d47a1 30%, #0a3d91 70%, #062f70 100%);
         color: white;
         padding: 40px;
         border-radius: 15px;
@@ -341,25 +371,34 @@
         width: 90%;
         text-align: center;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        border: 3px solid #0a1158;
     }
 
-    .question-modal.bonus-modal {
-        background: linear-gradient(135deg, #ff6f00 0%, #1a237e 100%);
-        border: 3px solid #ffd700;
+    .question-modal.daily-double-modal {
+        background: linear-gradient(180deg, #1565c0 0%, #0d47a1 30%, #0a3d91 70%, #062f70 100%);
+        border: 4px solid #ffd700;
+        box-shadow: 0 0 30px #ffd700, 0 10px 40px rgba(0, 0, 0, 0.5);
     }
 
-    .bonus-banner {
-        background: #ffd700;
+    .daily-double-banner {
+        background: linear-gradient(90deg, #ffd700 0%, #ffed4a 50%, #ffd700 100%);
         color: #1a237e;
-        padding: 10px;
-        margin: -40px -40px 20px -40px;
+        padding: 15px;
+        margin: -40px -40px 25px -40px;
         border-radius: 12px 12px 0 0;
         font-weight: bold;
-        font-size: 1.3rem;
-        letter-spacing: 2px;
+        font-size: 1.8rem;
+        letter-spacing: 3px;
+        text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+        animation: dailyDoubleBannerPulse 1s infinite;
     }
 
-    .bonus-label {
+    @@keyframes dailyDoubleBannerPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+    }
+
+    .daily-double-label {
         font-size: 1rem;
         color: #ffd700;
         display: block;
