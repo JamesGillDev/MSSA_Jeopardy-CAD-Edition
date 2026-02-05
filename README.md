@@ -1,4 +1,4 @@
-# ?? MSSA Jeopardy! - Cloud Application Development Edition
+# MSSA Jeopardy! - Cloud Application Development Edition
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-purple)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blue)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
@@ -8,39 +8,48 @@ A fun, interactive Jeopardy!-style quiz game designed for the **Microsoft Softwa
 
 ![MSSA Jeopardy Banner](https://img.shields.io/badge/MSSA-Jeopardy!-gold?style=for-the-badge&labelColor=blue)
 
-## ?? About
+## About
 
 This application is built to help MSSA students review and reinforce their learning in a gamified format. The classic Jeopardy! game show format makes studying more engaging and competitive, whether you're preparing for certifications or just want to test your cloud development knowledge.
 
-## ? Features
+## Live Demo
 
-- ?? **Classic Jeopardy! Gameplay** - Select categories and point values from an interactive game board
-- ?? **Score Tracking** - Earn points for correct answers, lose points for incorrect ones
-- ?? **30 Questions** - 6 categories with 5 questions each (100-500 points)
-- ?? **Responsive Design** - Works on desktop, tablet, and mobile devices
-- ?? **Replay Anytime** - Reset the game and play again
-- ?? **Authentic Styling** - Classic blue and gold Jeopardy! theme
+**Play Now:** [https://mssa-jeopardy-jamesgill.azurewebsites.net](https://mssa-jeopardy-jamesgill.azurewebsites.net)
 
-## ?? Game Categories
+## Features
+
+- **3-Player Mode** - Compete with friends or classmates
+- **Editable Player Names** - Click to customize player names
+- **Classic Jeopardy! Gameplay** - Select categories and point values from an interactive game board
+- **Sound Effects** - Chime sounds when selecting questions
+- **BONUS Questions** - Random bonus questions for extra points
+- **Rotating Question Pool** - Different questions each game from a large question bank
+- **Score Tracking** - Earn points for correct answers, lose points for incorrect ones
+- **60+ Questions** - 6 categories with rotating questions (100-500 points)
+- **Responsive Design** - Works on desktop, tablet, and mobile devices
+- **Replay Anytime** - Reset the game and play again with new questions
+
+## Game Categories
 
 | Category | Topics Covered |
 |----------|---------------|
-| ?? **Azure Fundamentals** | Resource Groups, Azure Functions, Hybrid Cloud, Azure SQL, Pay-As-You-Go |
-| ?? **C# Programming** | void keyword, Classes, try-catch, async/await, LINQ |
-| ?? **Web Development** | HTTP methods, Blazor, Status codes, REST APIs, Middleware |
-| ?? **DevOps & CI/CD** | Git, Azure DevOps, Continuous Integration, Docker, AKS |
-| ??? **Databases** | SELECT statements, NoSQL, Cosmos DB, Entity Framework, ACID |
-| ?? **Security** | Authentication, Microsoft Entra ID, OAuth, XSS, Azure Key Vault |
+| **Azure Fundamentals** | Resource Groups, Azure Functions, Hybrid Cloud, Azure SQL, Pay-As-You-Go |
+| **C# Programming** | void keyword, Classes, try-catch, async/await, LINQ |
+| **Web Development** | HTTP methods, Blazor, Status codes, REST APIs, Middleware |
+| **DevOps & CI/CD** | Git, Azure DevOps, Continuous Integration, Docker, AKS |
+| **Databases** | SELECT statements, NoSQL, Cosmos DB, Entity Framework, ACID |
+| **Security** | Authentication, Microsoft Entra ID, OAuth, XSS, Azure Key Vault |
 
-## ??? Technologies Used
+## Technologies Used
 
 - **Framework:** [.NET 10](https://dotnet.microsoft.com/)
 - **Frontend:** [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
 - **Language:** C# 14
 - **Styling:** Scoped CSS with custom Jeopardy! theme
 - **Architecture:** Client-Server with Interactive WebAssembly rendering
+- **Hosting:** Azure App Service
 
-## ?? Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -79,25 +88,28 @@ This application is built to help MSSA students review and reinforce their learn
 2. Set `MSSA Jeoporady!` as the startup project
 3. Press `F5` to run with debugging or `Ctrl+F5` to run without debugging
 
-## ?? How to Play
+## How to Play
 
 1. **Start the Game** - Click "Play Jeopardy!" from the home page
-2. **Select a Question** - Click on any dollar amount on the game board
-3. **Read the Clue** - A modal will appear with the question
-4. **Think of Your Answer** - Formulate your response (remember: answers are in "What is...?" format)
-5. **Reveal the Answer** - Click "Reveal Answer" to see the correct response
-6. **Score Yourself** - Click "I Got It Right!" or "I Got It Wrong" to update your score
-7. **Continue Playing** - Select another question until the board is complete
-8. **Play Again** - Click "New Game" to reset and play again
+2. **Set Player Names** - Click on player names to customize them
+3. **Select a Question** - Click on any dollar amount on the game board (listen for the chime!)
+4. **Read the Clue** - A modal will appear with the question
+5. **Think of Your Answer** - Formulate your response (remember: answers are in "What is...?" format)
+6. **Reveal the Answer** - Click "Reveal Answer" to see the correct response
+7. **Award Points** - Click the player who answered correctly, or "No One Got It"
+8. **Watch for BONUS** - Random bonus questions appear for double points!
+9. **Continue Playing** - Select another question until the board is complete
+10. **Play Again** - Click "New Game" for a fresh set of questions
 
 ### Scoring
 
 | Result | Points |
 |--------|--------|
-| ? Correct | +Point Value |
-| ? Incorrect | -Point Value |
+| Correct | +Point Value |
+| Incorrect | -Point Value |
+| BONUS Correct | +Double Points |
 
-## ?? Project Structure
+## Project Structure
 
 ```
 MSSA Jeoporady!/
@@ -127,7 +139,7 @@ MSSA Jeoporady!/
 ??? MSSA Jeoporady!.sln                 # Solution file
 ```
 
-## ?? Contributing
+## Contributing
 
 Contributions are welcome! If you'd like to add more questions, fix bugs, or improve the UI:
 
@@ -139,7 +151,7 @@ Contributions are welcome! If you'd like to add more questions, fix bugs, or imp
 
 ### Adding New Questions
 
-To add new questions, edit `JeopardyGameService.cs` and add entries to the appropriate category:
+To add new questions, edit `JeopardyGameService.cs` and add entries to the question pool:
 
 ```csharp
 new JeopardyQuestion 
@@ -151,18 +163,18 @@ new JeopardyQuestion
 }
 ```
 
-## ?? License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## ?? Acknowledgments
+## Acknowledgments
 
 - **Microsoft Software & Systems Academy (MSSA)** - For providing world-class training to military veterans and transitioning service members
 - **Jeopardy!** - The classic game show that inspired this educational tool
 - **MSSA Instructors & Staff** - For their dedication to student success
 - **Fellow MSSA Students** - For the camaraderie and collaborative learning environment
 
-## ?? Contact
+## Contact
 
 **James Gill** - [@JamesGillDev](https://github.com/JamesGillDev)
 

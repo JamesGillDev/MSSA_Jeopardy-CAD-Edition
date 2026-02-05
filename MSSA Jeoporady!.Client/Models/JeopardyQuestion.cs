@@ -7,6 +7,7 @@ public class JeopardyQuestion
     public string Question { get; set; } = string.Empty;
     public string Answer { get; set; } = string.Empty;
     public bool IsAnswered { get; set; }
+    public bool IsBonus { get; set; }
 }
 
 public class JeopardyCategory
