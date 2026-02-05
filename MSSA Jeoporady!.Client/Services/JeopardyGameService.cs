@@ -1,0 +1,135 @@
+using MSSA_Jeoporady_.Client.Models;
+
+namespace MSSA_Jeoporady_.Client.Services;
+
+public class JeopardyGameService
+{
+    public List<JeopardyCategory> Categories { get; private set; } = [];
+    public int Score { get; private set; }
+    public JeopardyQuestion? CurrentQuestion { get; private set; }
+
+    public JeopardyGameService()
+    {
+        InitializeGame();
+    }
+
+    public void InitializeGame()
+    {
+        Score = 0;
+        Categories = GetMSSACategories();
+    }
+
+    public void SelectQuestion(JeopardyQuestion question)
+    {
+        if (!question.IsAnswered)
+        {
+            CurrentQuestion = question;
+        }
+    }
+
+    public void AnswerQuestion(bool isCorrect)
+    {
+        if (CurrentQuestion != null)
+        {
+            CurrentQuestion.IsAnswered = true;
+            if (isCorrect)
+            {
+                Score += CurrentQuestion.PointValue;
+            }
+            else
+            {
+                Score -= CurrentQuestion.PointValue;
+            }
+            CurrentQuestion = null;
+        }
+    }
+
+    public void CloseQuestion()
+    {
+        CurrentQuestion = null;
+    }
+
+    public bool IsGameComplete()
+    {
+        return Categories.All(c => c.Questions.All(q => q.IsAnswered));
+    }
+
+    private static List<JeopardyCategory> GetMSSACategories()
+    {
+        return
+        [
+            new JeopardyCategory
+            {
+                Name = "Azure Fundamentals",
+                Questions =
+                [
+                    new JeopardyQuestion { Category = "Azure Fundamentals", PointValue = 100, Question = "This is the basic unit of deployment in Azure that contains resources like VMs, storage, and databases.", Answer = "What is a Resource Group?" },
+                    new JeopardyQuestion { Category = "Azure Fundamentals", PointValue = 200, Question = "This Azure service provides serverless compute that lets you run code without managing servers.", Answer = "What is Azure Functions?" },
+                    new JeopardyQuestion { Category = "Azure Fundamentals", PointValue = 300, Question = "This cloud model combines on-premises infrastructure with cloud resources.", Answer = "What is Hybrid Cloud?" },
+                    new JeopardyQuestion { Category = "Azure Fundamentals", PointValue = 400, Question = "This Azure service provides a fully managed relational database with built-in intelligence.", Answer = "What is Azure SQL Database?" },
+                    new JeopardyQuestion { Category = "Azure Fundamentals", PointValue = 500, Question = "This pricing model charges you only for resources you actually use, with no upfront costs.", Answer = "What is Pay-As-You-Go?" }
+                ]
+            },
+            new JeopardyCategory
+            {
+                Name = "C# Programming",
+                Questions =
+                [
+                    new JeopardyQuestion { Category = "C# Programming", PointValue = 100, Question = "This keyword is used to define a method that doesn't return a value.", Answer = "What is void?" },
+                    new JeopardyQuestion { Category = "C# Programming", PointValue = 200, Question = "This feature allows you to define a blueprint for creating objects with properties and methods.", Answer = "What is a Class?" },
+                    new JeopardyQuestion { Category = "C# Programming", PointValue = 300, Question = "This keyword is used to handle exceptions that may occur during program execution.", Answer = "What is try-catch?" },
+                    new JeopardyQuestion { Category = "C# Programming", PointValue = 400, Question = "This C# feature allows methods to run concurrently without blocking the main thread.", Answer = "What is async/await?" },
+                    new JeopardyQuestion { Category = "C# Programming", PointValue = 500, Question = "This LINQ method filters a sequence of values based on a predicate.", Answer = "What is Where()?" }
+                ]
+            },
+            new JeopardyCategory
+            {
+                Name = "Web Development",
+                Questions =
+                [
+                    new JeopardyQuestion { Category = "Web Development", PointValue = 100, Question = "This HTTP method is used to retrieve data from a server.", Answer = "What is GET?" },
+                    new JeopardyQuestion { Category = "Web Development", PointValue = 200, Question = "This Microsoft framework allows you to build interactive web UIs using C# instead of JavaScript.", Answer = "What is Blazor?" },
+                    new JeopardyQuestion { Category = "Web Development", PointValue = 300, Question = "This status code indicates that a resource was not found on the server.", Answer = "What is 404?" },
+                    new JeopardyQuestion { Category = "Web Development", PointValue = 400, Question = "This architectural style uses HTTP methods and is commonly used for building web APIs.", Answer = "What is REST?" },
+                    new JeopardyQuestion { Category = "Web Development", PointValue = 500, Question = "This ASP.NET Core feature allows you to add cross-cutting concerns like logging and authentication to your request pipeline.", Answer = "What is Middleware?" }
+                ]
+            },
+            new JeopardyCategory
+            {
+                Name = "DevOps & CI/CD",
+                Questions =
+                [
+                    new JeopardyQuestion { Category = "DevOps & CI/CD", PointValue = 100, Question = "This version control system tracks changes to source code and is widely used in software development.", Answer = "What is Git?" },
+                    new JeopardyQuestion { Category = "DevOps & CI/CD", PointValue = 200, Question = "This Azure service provides unlimited private Git repositories and agile planning tools.", Answer = "What is Azure DevOps?" },
+                    new JeopardyQuestion { Category = "DevOps & CI/CD", PointValue = 300, Question = "This practice involves automatically building and testing code changes when they're committed.", Answer = "What is Continuous Integration (CI)?" },
+                    new JeopardyQuestion { Category = "DevOps & CI/CD", PointValue = 400, Question = "This containerization platform packages applications with their dependencies for consistent deployment.", Answer = "What is Docker?" },
+                    new JeopardyQuestion { Category = "DevOps & CI/CD", PointValue = 500, Question = "This Azure service orchestrates containerized applications at scale using Kubernetes.", Answer = "What is Azure Kubernetes Service (AKS)?" }
+                ]
+            },
+            new JeopardyCategory
+            {
+                Name = "Databases",
+                Questions =
+                [
+                    new JeopardyQuestion { Category = "Databases", PointValue = 100, Question = "This SQL command is used to retrieve data from a database table.", Answer = "What is SELECT?" },
+                    new JeopardyQuestion { Category = "Databases", PointValue = 200, Question = "This type of database stores data in JSON-like documents rather than tables.", Answer = "What is a NoSQL/Document Database?" },
+                    new JeopardyQuestion { Category = "Databases", PointValue = 300, Question = "This Azure service is a globally distributed, multi-model database for any scale.", Answer = "What is Azure Cosmos DB?" },
+                    new JeopardyQuestion { Category = "Databases", PointValue = 400, Question = "This .NET technology maps database tables to C# classes and provides an abstraction layer.", Answer = "What is Entity Framework?" },
+                    new JeopardyQuestion { Category = "Databases", PointValue = 500, Question = "This database concept ensures that transactions are processed reliably using Atomicity, Consistency, Isolation, and Durability.", Answer = "What is ACID?" }
+                ]
+            },
+            new JeopardyCategory
+            {
+                Name = "Security",
+                Questions =
+                [
+                    new JeopardyQuestion { Category = "Security", PointValue = 100, Question = "This process verifies who a user claims to be.", Answer = "What is Authentication?" },
+                    new JeopardyQuestion { Category = "Security", PointValue = 200, Question = "This Azure service manages identities and access for cloud applications.", Answer = "What is Microsoft Entra ID (Azure AD)?" },
+                    new JeopardyQuestion { Category = "Security", PointValue = 300, Question = "This protocol uses tokens to securely authorize access to resources without sharing passwords.", Answer = "What is OAuth?" },
+                    new JeopardyQuestion { Category = "Security", PointValue = 400, Question = "This type of attack tricks users into executing malicious scripts in their browser.", Answer = "What is Cross-Site Scripting (XSS)?" },
+                    new JeopardyQuestion { Category = "Security", PointValue = 500, Question = "This Azure service stores secrets, keys, and certificates securely for cloud applications.", Answer = "What is Azure Key Vault?" }
+                ]
+            }
+        ];
+    }
+}
