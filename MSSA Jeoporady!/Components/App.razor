@@ -19,30 +19,34 @@
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
     <script>
-        // Audio context for generating chime sounds
+        // Audio context for generating sounds
         let audioContext = null;
         
+        function getAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioContext;
+        }
+        
+        // Regular question chime - 3 ascending tones
         function playChime() {
             try {
-                if (!audioContext) {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                
-                // Play 3 ascending chimes
+                const ctx = getAudioContext();
                 const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5
                 const duration = 0.15;
                 
                 frequencies.forEach((freq, index) => {
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
+                    const oscillator = ctx.createOscillator();
+                    const gainNode = ctx.createGain();
                     
                     oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
+                    gainNode.connect(ctx.destination);
                     
                     oscillator.frequency.value = freq;
                     oscillator.type = 'sine';
                     
-                    const startTime = audioContext.currentTime + (index * 0.12);
+                    const startTime = ctx.currentTime + (index * 0.12);
                     
                     gainNode.gain.setValueAtTime(0, startTime);
                     gainNode.gain.linearRampToValueAtTime(0.3, startTime + 0.01);
@@ -50,6 +54,46 @@
                     
                     oscillator.start(startTime);
                     oscillator.stop(startTime + duration);
+                });
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+        
+        // Daily Double - 5 tone fanfare ding-ding-ding-ding-DING!
+        function playDailyDouble() {
+            try {
+                const ctx = getAudioContext();
+                // 5 tones: quick ascending pattern ending on a high note
+                const frequencies = [392.00, 523.25, 659.25, 783.99, 1046.50]; // G4, C5, E5, G5, C6
+                const durations = [0.12, 0.12, 0.12, 0.12, 0.4]; // Last note held longer
+                const volumes = [0.25, 0.28, 0.3, 0.32, 0.4]; // Getting louder
+                
+                let currentTime = ctx.currentTime;
+                
+                frequencies.forEach((freq, index) => {
+                    const oscillator = ctx.createOscillator();
+                    const gainNode = ctx.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(ctx.destination);
+                    
+                    oscillator.frequency.value = freq;
+                    oscillator.type = 'sine';
+                    
+                    const startTime = currentTime;
+                    const duration = durations[index];
+                    const volume = volumes[index];
+                    
+                    gainNode.gain.setValueAtTime(0, startTime);
+                    gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.01);
+                    gainNode.gain.setValueAtTime(volume, startTime + duration * 0.7);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                    
+                    oscillator.start(startTime);
+                    oscillator.stop(startTime + duration);
+                    
+                    currentTime += duration * 0.85; // Slight overlap for smoothness
                 });
             } catch (e) {
                 console.log('Audio not supported');

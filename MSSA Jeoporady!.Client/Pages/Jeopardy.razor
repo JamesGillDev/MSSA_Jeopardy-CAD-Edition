@@ -328,25 +328,15 @@
     display: none;
 }
 
-/* Daily Double styling */
+/* Daily Double styling - single glow, no animation */
 .question-cell.daily-double {
     background: linear-gradient(180deg, #1565c0 0%, #0d47a1 30%, #0a3d91 70%, #062f70 100%);
-    animation: dailyDoublePulse 2s infinite;
-}
-
-@@keyframes dailyDoublePulse {
-    0%, 100% { 
-        box-shadow: 
-            inset 0 3px 6px rgba(255,255,255,0.15),
-            inset 0 -3px 6px rgba(0,0,0,0.4),
-            0 0 8px #ffd700;
-    }
-    50% { 
-        box-shadow: 
-            inset 0 3px 6px rgba(255,255,255,0.15),
-            inset 0 -3px 6px rgba(0,0,0,0.4),
-            0 0 20px #ffd700, 0 0 30px #ff8f00;
-    }
+    box-shadow: 
+        inset 0 3px 6px rgba(255,255,255,0.15),
+        inset 0 -3px 6px rgba(0,0,0,0.4),
+        0 0 15px #ffd700,
+        0 0 25px rgba(255, 215, 0, 0.5);
+    border: 2px solid #ffd700;
 }
 
     .question-modal-overlay {
@@ -583,80 +573,101 @@
 </style>
 
 @code {
-    private JeopardyGameService gameService = new();
-    private bool showAnswer = false;
-    private int? editingPlayer = null;
-    private string editingName = "";
+private JeopardyGameService gameService = new();
+private bool showAnswer = false;
+private int? editingPlayer = null;
+private string editingName = "";
 
-    private async Task SelectQuestion(JeopardyQuestion question)
+private async Task SelectQuestion(JeopardyQuestion question)
+{
+    if (!question.IsAnswered)
     {
-        if (!question.IsAnswered)
+        showAnswer = false;
+        gameService.SelectQuestion(question);
+            
+        // Play different sound for Daily Double vs regular questions
+        if (question.IsBonus)
         {
-            showAnswer = false;
-            gameService.SelectQuestion(question);
+            await PlayDailyDoubleSound();
+        }
+        else
+        {
             await PlayChimeSound();
         }
     }
+}
 
-    private async Task PlayChimeSound()
+private async Task PlayChimeSound()
+{
+    try
     {
-        try
-        {
-            await JS.InvokeVoidAsync("playChime");
-        }
-        catch
-        {
-            // Sound not available, continue without it
-        }
+        await JS.InvokeVoidAsync("playChime");
     }
-
-    private void RevealAnswer()
+    catch
     {
-        showAnswer = true;
+        // Sound not available, continue without it
     }
+}
 
-    private void SubmitAnswer(bool isCorrect, int playerNumber)
+private async Task PlayDailyDoubleSound()
+{
+    try
     {
-        gameService.AnswerQuestion(isCorrect, playerNumber);
-        showAnswer = false;
+        await JS.InvokeVoidAsync("playDailyDouble");
     }
-
-    private void CloseModal()
+    catch
     {
-        gameService.CloseQuestion();
-        showAnswer = false;
+        // Sound not available, continue without it
     }
+}
 
-    private void RestartGame()
+private void RevealAnswer()
+{
+    showAnswer = true;
+}
+
+private void SubmitAnswer(bool isCorrect, int playerNumber)
+{
+    gameService.AnswerQuestion(isCorrect, playerNumber);
+    showAnswer = false;
+}
+
+private void CloseModal()
+{
+    gameService.CloseQuestion();
+    showAnswer = false;
+}
+
+private void RestartGame()
+{
+    gameService.InitializeGame();
+    showAnswer = false;
+    editingPlayer = null;
+}
+
+private void StartEditingPlayer(int playerNum)
+{
+    editingPlayer = playerNum;
+    editingName = gameService.PlayerNames[playerNum];
+}
+
+private void SavePlayerName(int playerNum)
+{
+    if (!string.IsNullOrWhiteSpace(editingName))
     {
-        gameService.InitializeGame();
-        showAnswer = false;
-        editingPlayer = null;
+        gameService.SetPlayerName(playerNum, editingName.Trim());
     }
+    editingPlayer = null;
+    editingName = "";
+}
 
-    private void StartEditingPlayer(int playerNum)
+private void HandleKeyDown(KeyboardEventArgs e, int playerNum)
+{
+    if (e.Key == "Enter")
     {
-        editingPlayer = playerNum;
-        editingName = gameService.PlayerNames[playerNum];
+        SavePlayerName(playerNum);
     }
-
-    private void SavePlayerName(int playerNum)
-    {
-        if (!string.IsNullOrWhiteSpace(editingName))
-        {
-            gameService.SetPlayerName(playerNum, editingName.Trim());
-        }
-        editingPlayer = null;
-        editingName = "";
-    }
-
-    private void HandleKeyDown(KeyboardEventArgs e, int playerNum)
-    {
-        if (e.Key == "Enter")
-        {
-            SavePlayerName(playerNum);
-        }
-        else if (e.Key == "Escape")
+    else if (e.Key == "Escape")
         {
             editingPlayer = null;
             editingName = "";
