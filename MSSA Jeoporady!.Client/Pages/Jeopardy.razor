@@ -116,7 +116,7 @@
                 <div class="category-header">@category.Name</div>
                 @foreach (var question in category.Questions.OrderBy(q => q.PointValue))
                 {
-                    <div class="question-cell @(question.IsAnswered ? "answered" : "") @(question.IsBonus && !question.IsAnswered ? "daily-double" : "")" 
+                    <div class="question-cell @(question.IsAnswered ? "answered" : "")" 
                          @onclick="() => SelectQuestion(question)">
                         @if (!question.IsAnswered)
                         {
@@ -416,31 +416,17 @@
     display: none;
 }
 
-/* Daily Double styling - quick 0.5s flash then looks identical to regular cards */
-.question-cell.daily-double {
-    animation: dailyDoubleFlash 0.5s ease-out forwards;
-}
-
-@@keyframes dailyDoubleFlash {
-    0% {
-        box-shadow: 
-            inset 0 3px 6px rgba(255,255,255,0.2),
-            inset 0 -3px 6px rgba(0,0,0,0.5),
-            inset 3px 0 6px rgba(255,255,255,0.05),
-            inset -3px 0 6px rgba(0,0,0,0.2),
-            0 0 25px #ffd700,
-            0 0 40px rgba(255, 215, 0, 0.8);
-        border-color: #ffd700;
-    }
-    100% {
-        box-shadow: 
-            inset 0 3px 6px rgba(255,255,255,0.2),
-            inset 0 -3px 6px rgba(0,0,0,0.5),
-            inset 3px 0 6px rgba(255,255,255,0.05),
-            inset -3px 0 6px rgba(0,0,0,0.2),
-            2px 2px 6px rgba(0,0,0,0.5);
-        border-color: #0a1158;
-    }
+/* Daily Double - no permanent styling, only flash class */
+.question-cell.daily-double-flash {
+    box-shadow: 
+        inset 0 3px 6px rgba(255,255,255,0.2),
+        inset 0 -3px 6px rgba(0,0,0,0.5),
+        inset 3px 0 6px rgba(255,255,255,0.05),
+        inset -3px 0 6px rgba(0,0,0,0.2),
+        0 0 25px #ffd700,
+        0 0 40px rgba(255, 215, 0, 0.8) !important;
+    border-color: #ffd700 !important;
+    transition: box-shadow 0.5s ease-out, border-color 0.5s ease-out;
 }
 
     .question-modal-overlay {
