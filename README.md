@@ -8,15 +8,15 @@ A fun, interactive Jeopardy!-style quiz game designed for the **Microsoft Softwa
 
 ![MSSA Jeopardy Banner](https://img.shields.io/badge/MSSA-Jeopardy!-gold?style=for-the-badge&labelColor=blue)
 
-## ?? About
+## About
 
 This application is built to help MSSA students review and reinforce their learning in a gamified format. The classic Jeopardy! game show format makes studying more engaging and competitive, whether you're preparing for certifications or just want to test your cloud development knowledge.
 
-## ?? Live Demo
+## Live Demo
 
 **Play Now:** [https://mssa-jeopardy-jamesgill.azurewebsites.net](https://mssa-jeopardy-jamesgill.azurewebsites.net)
 
-## ? Features
+## Features
 
 - **Multi-Player Support** - Add or remove players dynamically (1-10+ players)
 - **Editable Player Names** - Click to customize player names anytime
@@ -29,7 +29,7 @@ This application is built to help MSSA students review and reinforce their learn
 - **Score Tracking** - Earn points for correct answers, lose points for incorrect ones
 - **Responsive Design** - Works on desktop, tablet, and mobile devices
 
-## ?? Game Categories (15 Topics)
+## Game Categories (15 Topics)
 
 | Category | Topics Covered |
 |----------|---------------|
@@ -49,7 +49,7 @@ This application is built to help MSSA students review and reinforce their learn
 | **PowerShell & CLI** | Cmdlets, Pipelines, Azure CLI, Automation Scripts |
 | **Agile & Scrum** | Sprints, User Stories, Kanban, Velocity, SAFe |
 
-## ?? Technologies Used
+## Technologies Used
 
 - **Framework:** [.NET 10](https://dotnet.microsoft.com/)
 - **Frontend:** [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
@@ -58,7 +58,7 @@ This application is built to help MSSA students review and reinforce their learn
 - **Architecture:** Client-Server with Interactive WebAssembly rendering
 - **Hosting:** Azure App Service
 
-## ?? Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -97,7 +97,7 @@ This application is built to help MSSA students review and reinforce their learn
 2. Set `MSSA Jeoporady!` as the startup project
 3. Press `F5` to run with debugging or `Ctrl+F5` to run without debugging
 
-## ?? How to Play
+## How to Play
 
 1. **Select Categories** - Choose 6 categories from 15 available topics
 2. **Set Up Players** - Add players and customize their names
@@ -111,7 +111,7 @@ This application is built to help MSSA students review and reinforce their learn
 10. **Continue Playing** - Select questions until the board is complete
 11. **Play Again** - Click "New Game" for fresh questions or "Change Categories" to pick new topics
 
-### ?? Scoring
+### Scoring
 
 | Result | Points |
 |--------|--------|
@@ -120,7 +120,7 @@ This application is built to help MSSA students review and reinforce their learn
 | Daily Double Correct | +2x Point Value |
 | Daily Double Incorrect | -2x Point Value |
 
-## ?? Project Structure
+## Project Structure
 
 ```
 MSSA Jeoporady!/
@@ -150,7 +150,7 @@ MSSA Jeoporady!/
 ??? MSSA Jeoporady!.sln                 # Solution file
 ```
 
-## ?? Contributing
+## Contributing
 
 Contributions are welcome! If you'd like to add more questions, fix bugs, or improve the UI:
 
@@ -178,18 +178,18 @@ new()
 
 To add a new category, add the category name to `AllCategoryNames` array and add 25 questions (5 per point value) to the question pool.
 
-## ?? License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## ?? Acknowledgments
+## Acknowledgments
 
 - **Microsoft Software & Systems Academy (MSSA)** - For providing world-class training to military veterans and transitioning service members
 - **Jeopardy!** - The classic game show that inspired this educational tool
 - **MSSA Instructors & Staff** - For their dedication to student success
 - **Fellow MSSA Students** - For the camaraderie and collaborative learning environment
 
-## ?? Contact
+## Contact
 
 **James Gill** - [@JamesGillDev](https://github.com/JamesGillDev)
 
