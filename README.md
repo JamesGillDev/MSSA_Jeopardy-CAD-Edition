@@ -8,39 +8,48 @@ A fun, interactive Jeopardy!-style quiz game designed for the **Microsoft Softwa
 
 ![MSSA Jeopardy Banner](https://img.shields.io/badge/MSSA-Jeopardy!-gold?style=for-the-badge&labelColor=blue)
 
-## About
+## ?? About
 
 This application is built to help MSSA students review and reinforce their learning in a gamified format. The classic Jeopardy! game show format makes studying more engaging and competitive, whether you're preparing for certifications or just want to test your cloud development knowledge.
 
-## Live Demo
+## ?? Live Demo
 
 **Play Now:** [https://mssa-jeopardy-jamesgill.azurewebsites.net](https://mssa-jeopardy-jamesgill.azurewebsites.net)
 
-## Features
+## ? Features
 
-- **3-Player Mode** - Compete with friends or classmates
-- **Editable Player Names** - Click to customize player names
-- **Classic Jeopardy! Gameplay** - Select categories and point values from an interactive game board
-- **Sound Effects** - Chime sounds when selecting questions
-- **BONUS Questions** - Random bonus questions for extra points
-- **Rotating Question Pool** - Different questions each game from a large question bank
+- **Multi-Player Support** - Add or remove players dynamically (1-10+ players)
+- **Editable Player Names** - Click to customize player names anytime
+- **Category Selection** - Choose 6 categories from 15 available topics before each game
+- **375 Questions** - Massive question bank with 25 questions per category
+- **Daily Double** - Random hidden bonus questions for 2x points!
+- **Classic TV-Style Board** - Authentic Jeopardy! look with retro CRT screen effects
+- **Sound Effects** - Authentic chime and Daily Double sounds
+- **Rotating Questions** - Different questions each game for endless replayability
 - **Score Tracking** - Earn points for correct answers, lose points for incorrect ones
-- **60+ Questions** - 6 categories with rotating questions (100-500 points)
 - **Responsive Design** - Works on desktop, tablet, and mobile devices
-- **Replay Anytime** - Reset the game and play again with new questions
 
-## Game Categories
+## ?? Game Categories (15 Topics)
 
 | Category | Topics Covered |
 |----------|---------------|
-| **Azure Fundamentals** | Resource Groups, Azure Functions, Hybrid Cloud, Azure SQL, Pay-As-You-Go |
-| **C# Programming** | void keyword, Classes, try-catch, async/await, LINQ |
-| **Web Development** | HTTP methods, Blazor, Status codes, REST APIs, Middleware |
-| **DevOps & CI/CD** | Git, Azure DevOps, Continuous Integration, Docker, AKS |
-| **Databases** | SELECT statements, NoSQL, Cosmos DB, Entity Framework, ACID |
-| **Security** | Authentication, Microsoft Entra ID, OAuth, XSS, Azure Key Vault |
+| **Azure Fundamentals** | Resource Groups, Azure Functions, Hybrid Cloud, Azure SQL, SLAs |
+| **C# Programming** | Classes, async/await, LINQ, Generics, Records, Extension Methods |
+| **Web Development** | HTTP methods, Blazor, REST APIs, Middleware, SignalR |
+| **DevOps & CI/CD** | Git, Azure DevOps, Docker, Kubernetes, Terraform |
+| **Databases** | SQL, NoSQL, Entity Framework, Cosmos DB, ACID |
+| **Security** | Authentication, OAuth, JWT, XSS, Azure Key Vault, Zero Trust |
+| **Networking** | TCP/IP, DNS, VPN, Load Balancing, Azure VNets |
+| **Cloud Architecture** | Microservices, Serverless, CQRS, High Availability, CAP Theorem |
+| **Software Testing** | Unit Testing, TDD, Mocking, Integration Testing, Chaos Engineering |
+| **Data Structures** | Arrays, Trees, Graphs, Hash Tables, Big O Notation |
+| **Operating Systems** | Processes, Threads, Memory Management, Linux Commands |
+| **APIs & Integration** | REST, GraphQL, gRPC, Webhooks, Azure Service Bus |
+| **Machine Learning Basics** | Supervised/Unsupervised Learning, Neural Networks, Azure ML |
+| **PowerShell & CLI** | Cmdlets, Pipelines, Azure CLI, Automation Scripts |
+| **Agile & Scrum** | Sprints, User Stories, Kanban, Velocity, SAFe |
 
-## Technologies Used
+## ?? Technologies Used
 
 - **Framework:** [.NET 10](https://dotnet.microsoft.com/)
 - **Frontend:** [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
@@ -49,7 +58,7 @@ This application is built to help MSSA students review and reinforce their learn
 - **Architecture:** Client-Server with Interactive WebAssembly rendering
 - **Hosting:** Azure App Service
 
-## Getting Started
+## ?? Getting Started
 
 ### Prerequisites
 
@@ -88,28 +97,30 @@ This application is built to help MSSA students review and reinforce their learn
 2. Set `MSSA Jeoporady!` as the startup project
 3. Press `F5` to run with debugging or `Ctrl+F5` to run without debugging
 
-## How to Play
+## ?? How to Play
 
-1. **Start the Game** - Click "Play Jeopardy!" from the home page
-2. **Set Player Names** - Click on player names to customize them
-3. **Select a Question** - Click on any dollar amount on the game board (listen for the chime!)
-4. **Read the Clue** - A modal will appear with the question
-5. **Think of Your Answer** - Formulate your response (remember: answers are in "What is...?" format)
-6. **Reveal the Answer** - Click "Reveal Answer" to see the correct response
-7. **Award Points** - Click the player who answered correctly, or "No One Got It"
-8. **Watch for BONUS** - Random bonus questions appear for double points!
-9. **Continue Playing** - Select another question until the board is complete
-10. **Play Again** - Click "New Game" for a fresh set of questions
+1. **Select Categories** - Choose 6 categories from 15 available topics
+2. **Set Up Players** - Add players and customize their names
+3. **Start the Game** - Click the green "Start Game" button
+4. **Select a Question** - Click any dollar amount on the game board
+5. **Read the Clue** - A modal appears with the question
+6. **Think of Your Answer** - Formulate your response (in "What is...?" format)
+7. **Reveal the Answer** - Click "Reveal Answer" to see the correct response
+8. **Award Points** - Click the player who answered correctly, or "No One Got It"
+9. **Watch for Daily Double** - Hidden bonus questions worth 2x points!
+10. **Continue Playing** - Select questions until the board is complete
+11. **Play Again** - Click "New Game" for fresh questions or "Change Categories" to pick new topics
 
-### Scoring
+### ?? Scoring
 
 | Result | Points |
 |--------|--------|
-| Correct | +Point Value |
-| Incorrect | -Point Value |
-| BONUS Correct | +Double Points |
+| Correct Answer | +Point Value |
+| Incorrect Answer | -Point Value |
+| Daily Double Correct | +2x Point Value |
+| Daily Double Incorrect | -2x Point Value |
 
-## Project Structure
+## ?? Project Structure
 
 ```
 MSSA Jeoporady!/
@@ -139,7 +150,7 @@ MSSA Jeoporady!/
 ??? MSSA Jeoporady!.sln                 # Solution file
 ```
 
-## Contributing
+## ?? Contributing
 
 Contributions are welcome! If you'd like to add more questions, fix bugs, or improve the UI:
 
@@ -154,7 +165,7 @@ Contributions are welcome! If you'd like to add more questions, fix bugs, or imp
 To add new questions, edit `JeopardyGameService.cs` and add entries to the question pool:
 
 ```csharp
-new JeopardyQuestion 
+new() 
 { 
     Category = "Category Name", 
     PointValue = 100, // 100, 200, 300, 400, or 500
@@ -163,18 +174,22 @@ new JeopardyQuestion
 }
 ```
 
-## License
+### Adding New Categories
+
+To add a new category, add the category name to `AllCategoryNames` array and add 25 questions (5 per point value) to the question pool.
+
+## ?? License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## ?? Acknowledgments
 
 - **Microsoft Software & Systems Academy (MSSA)** - For providing world-class training to military veterans and transitioning service members
 - **Jeopardy!** - The classic game show that inspired this educational tool
 - **MSSA Instructors & Staff** - For their dedication to student success
 - **Fellow MSSA Students** - For the camaraderie and collaborative learning environment
 
-## Contact
+## ?? Contact
 
 **James Gill** - [@JamesGillDev](https://github.com/JamesGillDev)
 
