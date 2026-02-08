@@ -10,33 +10,84 @@ public class JeopardyGameService
     public int CurrentPlayer { get; private set; } = 1;
     public int TotalPlayers => PlayerScores.Count;
     public JeopardyQuestion? CurrentQuestion { get; private set; }
+    public List<string> SelectedCategories { get; private set; } = [];
+    public bool GameStarted { get; private set; } = false;
+    
     private static readonly Random _random = new();
     private int _nextPlayerId = 1;
 
+    // All available category names
+    public static readonly string[] AllCategoryNames =
+    [
+        "Azure Fundamentals",
+        "C# Programming", 
+        "Web Development",
+        "DevOps & CI/CD",
+        "Databases",
+        "Security",
+        "Networking",
+        "Cloud Architecture",
+        "Software Testing",
+        "Data Structures",
+        "Operating Systems",
+        "APIs & Integration",
+        "Machine Learning Basics",
+        "PowerShell & CLI",
+        "Agile & Scrum"
+    ];
+
     public JeopardyGameService()
     {
-        InitializeGame();
+        InitializePlayers();
     }
 
-    public void InitializeGame()
+    private void InitializePlayers()
     {
         PlayerScores.Clear();
         PlayerNames.Clear();
         _nextPlayerId = 1;
         
-        // Start with 3 players by default
         for (int i = 0; i < 3; i++)
         {
             AddPlayer();
         }
-        
         CurrentPlayer = 1;
+    }
+
+    public void SetSelectedCategories(List<string> categories)
+    {
+        SelectedCategories = categories.Take(6).ToList(); // Max 6 categories
+    }
+
+    public void StartGame()
+    {
+        if (SelectedCategories.Count == 0)
+        {
+            // Default categories if none selected
+            SelectedCategories = AllCategoryNames.Take(6).ToList();
+        }
+        
+        foreach (var key in PlayerScores.Keys.ToList())
+        {
+            PlayerScores[key] = 0;
+        }
+        CurrentPlayer = PlayerScores.Keys.First();
         Categories = BuildGameBoard();
+        GameStarted = true;
+    }
+
+    public void ResetToMenu()
+    {
+        GameStarted = false;
+        Categories.Clear();
+        foreach (var key in PlayerScores.Keys.ToList())
+        {
+            PlayerScores[key] = 0;
+        }
     }
 
     public void InitializeGameKeepPlayers()
     {
-        // Reset scores but keep players
         foreach (var key in PlayerScores.Keys.ToList())
         {
             PlayerScores[key] = 0;
@@ -55,13 +106,11 @@ public class JeopardyGameService
 
     public bool RemovePlayer(int playerId)
     {
-        if (TotalPlayers <= 1) return false; // Must have at least 1 player
+        if (TotalPlayers <= 1) return false;
         
         if (PlayerScores.Remove(playerId))
         {
             PlayerNames.Remove(playerId);
-            
-            // Adjust current player if needed
             if (CurrentPlayer == playerId || !PlayerScores.ContainsKey(CurrentPlayer))
             {
                 CurrentPlayer = PlayerScores.Keys.First();
@@ -80,10 +129,9 @@ public class JeopardyGameService
     {
         var allQuestions = GetAllQuestionPool();
         var categories = new List<JeopardyCategory>();
-        var categoryNames = new[] { "Azure Fundamentals", "C# Programming", "Web Development", "DevOps & CI/CD", "Databases", "Security" };
         var pointValues = new[] { 100, 200, 300, 400, 500 };
 
-        foreach (var categoryName in categoryNames)
+        foreach (var categoryName in SelectedCategories)
         {
             var categoryQuestions = allQuestions
                 .Where(q => q.Category == categoryName)
@@ -98,11 +146,8 @@ public class JeopardyGameService
                 {
                     var randomIndex = _random.Next(questionsForValue.Count);
                     var question = questionsForValue[randomIndex];
-                    
-                    // Random chance for Daily Double (about 10% of questions)
                     question.IsBonus = _random.Next(10) == 0;
                     question.IsAnswered = false;
-                    
                     selectedQuestions.Add(question);
                 }
             }
@@ -141,13 +186,10 @@ public class JeopardyGameService
             int points = CurrentQuestion.IsBonus ? CurrentQuestion.PointValue * 2 : CurrentQuestion.PointValue;
             
             if (isCorrect)
-            {
                 PlayerScores[playerNumber] += points;
-            }
             else
-            {
                 PlayerScores[playerNumber] -= points;
-            }
+            
             CurrentQuestion = null;
             NextPlayer();
         }
@@ -161,155 +203,482 @@ public class JeopardyGameService
         CurrentPlayer = playerIds[nextIndex];
     }
 
-    public void CloseQuestion()
-    {
-        CurrentQuestion = null;
-    }
+    public void CloseQuestion() => CurrentQuestion = null;
 
-    public bool IsGameComplete()
-    {
-        return Categories.All(c => c.Questions.All(q => q.IsAnswered));
-    }
+    public bool IsGameComplete() => Categories.All(c => c.Questions.All(q => q.IsAnswered));
 
-    public int GetWinner()
-    {
-        return PlayerScores.OrderByDescending(p => p.Value).First().Key;
-    }
+    public int GetWinner() => PlayerScores.OrderByDescending(p => p.Value).First().Key;
 
-    public int GetHighestScore()
-    {
-        return PlayerScores.Values.Max();
-    }
+    public int GetHighestScore() => PlayerScores.Values.Max();
 
     private static List<JeopardyQuestion> GetAllQuestionPool()
     {
         return
         [
-            // AZURE FUNDAMENTALS - Multiple questions per point value for rotation
+            // ==================== AZURE FUNDAMENTALS ====================
             new() { Category = "Azure Fundamentals", PointValue = 100, Question = "This is the basic unit of deployment in Azure that contains resources like VMs, storage, and databases.", Answer = "What is a Resource Group?" },
             new() { Category = "Azure Fundamentals", PointValue = 100, Question = "This portal provides a web-based interface to manage all Azure services.", Answer = "What is the Azure Portal?" },
             new() { Category = "Azure Fundamentals", PointValue = 100, Question = "This term describes Azure's worldwide network of data centers.", Answer = "What are Azure Regions?" },
+            new() { Category = "Azure Fundamentals", PointValue = 100, Question = "This Azure service lets you create isolated networks in the cloud.", Answer = "What is Virtual Network (VNet)?" },
+            new() { Category = "Azure Fundamentals", PointValue = 100, Question = "This is Microsoft's command-line tool for managing Azure resources.", Answer = "What is Azure CLI?" },
             
             new() { Category = "Azure Fundamentals", PointValue = 200, Question = "This Azure service provides serverless compute that lets you run code without managing servers.", Answer = "What is Azure Functions?" },
             new() { Category = "Azure Fundamentals", PointValue = 200, Question = "This service provides virtual machines in the cloud.", Answer = "What is Azure Virtual Machines?" },
             new() { Category = "Azure Fundamentals", PointValue = 200, Question = "This Azure storage type is optimized for storing massive amounts of unstructured data.", Answer = "What is Blob Storage?" },
+            new() { Category = "Azure Fundamentals", PointValue = 200, Question = "This Azure service provides a platform for hosting web applications.", Answer = "What is Azure App Service?" },
+            new() { Category = "Azure Fundamentals", PointValue = 200, Question = "This feature allows you to organize Azure resources using key-value pairs.", Answer = "What are Tags?" },
             
             new() { Category = "Azure Fundamentals", PointValue = 300, Question = "This cloud model combines on-premises infrastructure with cloud resources.", Answer = "What is Hybrid Cloud?" },
             new() { Category = "Azure Fundamentals", PointValue = 300, Question = "This Azure feature automatically adjusts resources based on demand.", Answer = "What is Auto-scaling?" },
             new() { Category = "Azure Fundamentals", PointValue = 300, Question = "This service provides managed Kubernetes orchestration in Azure.", Answer = "What is Azure Kubernetes Service (AKS)?" },
+            new() { Category = "Azure Fundamentals", PointValue = 300, Question = "This Azure service provides message queuing for decoupling applications.", Answer = "What is Azure Queue Storage or Service Bus?" },
+            new() { Category = "Azure Fundamentals", PointValue = 300, Question = "This Azure feature helps estimate costs before deploying resources.", Answer = "What is the Azure Pricing Calculator?" },
             
             new() { Category = "Azure Fundamentals", PointValue = 400, Question = "This Azure service provides a fully managed relational database with built-in intelligence.", Answer = "What is Azure SQL Database?" },
             new() { Category = "Azure Fundamentals", PointValue = 400, Question = "This Azure service provides a content delivery network for fast global content delivery.", Answer = "What is Azure CDN?" },
             new() { Category = "Azure Fundamentals", PointValue = 400, Question = "This tool allows you to define Azure infrastructure as code using JSON templates.", Answer = "What is ARM Templates?" },
+            new() { Category = "Azure Fundamentals", PointValue = 400, Question = "This Azure service monitors the health and performance of your applications.", Answer = "What is Azure Monitor?" },
+            new() { Category = "Azure Fundamentals", PointValue = 400, Question = "This Azure service provides DNS hosting and domain management.", Answer = "What is Azure DNS?" },
             
             new() { Category = "Azure Fundamentals", PointValue = 500, Question = "This pricing model charges you only for resources you actually use, with no upfront costs.", Answer = "What is Pay-As-You-Go?" },
             new() { Category = "Azure Fundamentals", PointValue = 500, Question = "This Azure governance feature helps you organize resources and apply consistent policies.", Answer = "What is Azure Policy?" },
             new() { Category = "Azure Fundamentals", PointValue = 500, Question = "This SLA percentage guarantees about 8.76 hours of downtime per year.", Answer = "What is 99.9%?" },
+            new() { Category = "Azure Fundamentals", PointValue = 500, Question = "This Azure feature provides cost management recommendations and optimization tips.", Answer = "What is Azure Advisor?" },
+            new() { Category = "Azure Fundamentals", PointValue = 500, Question = "This hierarchy level sits above subscriptions for managing multiple Azure environments.", Answer = "What is a Management Group?" },
 
-            // C# PROGRAMMING
+            // ==================== C# PROGRAMMING ====================
             new() { Category = "C# Programming", PointValue = 100, Question = "This keyword is used to define a method that doesn't return a value.", Answer = "What is void?" },
             new() { Category = "C# Programming", PointValue = 100, Question = "This keyword creates a new instance of a class.", Answer = "What is new?" },
             new() { Category = "C# Programming", PointValue = 100, Question = "This data type stores true or false values.", Answer = "What is bool?" },
+            new() { Category = "C# Programming", PointValue = 100, Question = "This keyword is used to define a constant value that cannot be changed.", Answer = "What is const?" },
+            new() { Category = "C# Programming", PointValue = 100, Question = "This operator is used to concatenate strings in C#.", Answer = "What is + (plus)?" },
             
             new() { Category = "C# Programming", PointValue = 200, Question = "This feature allows you to define a blueprint for creating objects with properties and methods.", Answer = "What is a Class?" },
             new() { Category = "C# Programming", PointValue = 200, Question = "This keyword makes a class member accessible only within the same class.", Answer = "What is private?" },
             new() { Category = "C# Programming", PointValue = 200, Question = "This collection type stores key-value pairs for fast lookups.", Answer = "What is a Dictionary?" },
+            new() { Category = "C# Programming", PointValue = 200, Question = "This keyword is used to check if an object is of a specific type.", Answer = "What is is?" },
+            new() { Category = "C# Programming", PointValue = 200, Question = "This type of loop iterates through each element in a collection.", Answer = "What is foreach?" },
             
             new() { Category = "C# Programming", PointValue = 300, Question = "This keyword is used to handle exceptions that may occur during program execution.", Answer = "What is try-catch?" },
             new() { Category = "C# Programming", PointValue = 300, Question = "This OOP principle allows a derived class to provide a specific implementation of a base class method.", Answer = "What is Polymorphism?" },
             new() { Category = "C# Programming", PointValue = 300, Question = "This keyword allows a class to inherit from another class.", Answer = "What is the colon (:) or inheritance?" },
+            new() { Category = "C# Programming", PointValue = 300, Question = "This keyword prevents a class from being inherited.", Answer = "What is sealed?" },
+            new() { Category = "C# Programming", PointValue = 300, Question = "This type of method belongs to the class itself rather than an instance.", Answer = "What is static?" },
             
             new() { Category = "C# Programming", PointValue = 400, Question = "This C# feature allows methods to run concurrently without blocking the main thread.", Answer = "What is async/await?" },
             new() { Category = "C# Programming", PointValue = 400, Question = "This feature lets you define type-safe generic classes and methods.", Answer = "What are Generics?" },
             new() { Category = "C# Programming", PointValue = 400, Question = "This delegate type represents a method that can be passed as a parameter.", Answer = "What is Action or Func?" },
+            new() { Category = "C# Programming", PointValue = 400, Question = "This keyword ensures a variable can only be assigned once, but at runtime.", Answer = "What is readonly?" },
+            new() { Category = "C# Programming", PointValue = 400, Question = "This operator returns the left operand if not null, otherwise the right operand.", Answer = "What is ?? (null-coalescing)?" },
             
             new() { Category = "C# Programming", PointValue = 500, Question = "This LINQ method filters a sequence of values based on a predicate.", Answer = "What is Where()?" },
             new() { Category = "C# Programming", PointValue = 500, Question = "This pattern uses events to notify subscribers when state changes.", Answer = "What is the Observer Pattern?" },
             new() { Category = "C# Programming", PointValue = 500, Question = "This C# 9+ feature provides concise syntax for immutable data types.", Answer = "What are Records?" },
+            new() { Category = "C# Programming", PointValue = 500, Question = "This feature allows you to add methods to existing types without modifying them.", Answer = "What are Extension Methods?" },
+            new() { Category = "C# Programming", PointValue = 500, Question = "This C# feature enables pattern matching with type checking and property inspection.", Answer = "What is switch expression?" },
 
-            // WEB DEVELOPMENT
+            // ==================== WEB DEVELOPMENT ====================
             new() { Category = "Web Development", PointValue = 100, Question = "This HTTP method is used to retrieve data from a server.", Answer = "What is GET?" },
             new() { Category = "Web Development", PointValue = 100, Question = "This HTTP method is used to submit data to be processed by a server.", Answer = "What is POST?" },
             new() { Category = "Web Development", PointValue = 100, Question = "This markup language structures content on web pages.", Answer = "What is HTML?" },
+            new() { Category = "Web Development", PointValue = 100, Question = "This language is used to style web pages with colors, fonts, and layouts.", Answer = "What is CSS?" },
+            new() { Category = "Web Development", PointValue = 100, Question = "This HTTP method is used to delete a resource on the server.", Answer = "What is DELETE?" },
             
             new() { Category = "Web Development", PointValue = 200, Question = "This Microsoft framework allows you to build interactive web UIs using C# instead of JavaScript.", Answer = "What is Blazor?" },
             new() { Category = "Web Development", PointValue = 200, Question = "This data format is commonly used for API responses and is based on JavaScript object notation.", Answer = "What is JSON?" },
             new() { Category = "Web Development", PointValue = 200, Question = "This ASP.NET Core feature handles incoming HTTP requests.", Answer = "What is a Controller?" },
+            new() { Category = "Web Development", PointValue = 200, Question = "This HTTP method is used to update an entire resource on the server.", Answer = "What is PUT?" },
+            new() { Category = "Web Development", PointValue = 200, Question = "This attribute in ASP.NET Core maps HTTP routes to controller actions.", Answer = "What is [Route]?" },
             
             new() { Category = "Web Development", PointValue = 300, Question = "This status code indicates that a resource was not found on the server.", Answer = "What is 404?" },
             new() { Category = "Web Development", PointValue = 300, Question = "This status code indicates a successful HTTP request.", Answer = "What is 200?" },
             new() { Category = "Web Development", PointValue = 300, Question = "This status code indicates the server encountered an internal error.", Answer = "What is 500?" },
+            new() { Category = "Web Development", PointValue = 300, Question = "This status code indicates a resource was created successfully.", Answer = "What is 201?" },
+            new() { Category = "Web Development", PointValue = 300, Question = "This status code indicates the client is not authorized.", Answer = "What is 401?" },
             
             new() { Category = "Web Development", PointValue = 400, Question = "This architectural style uses HTTP methods and is commonly used for building web APIs.", Answer = "What is REST?" },
             new() { Category = "Web Development", PointValue = 400, Question = "This security header prevents clickjacking attacks by controlling iframe embedding.", Answer = "What is X-Frame-Options?" },
             new() { Category = "Web Development", PointValue = 400, Question = "This technique allows servers to push updates to clients in real-time.", Answer = "What is SignalR or WebSockets?" },
+            new() { Category = "Web Development", PointValue = 400, Question = "This HTTP header tells the browser what content type to expect.", Answer = "What is Content-Type?" },
+            new() { Category = "Web Development", PointValue = 400, Question = "This mechanism allows cross-origin requests from web browsers.", Answer = "What is CORS?" },
             
             new() { Category = "Web Development", PointValue = 500, Question = "This ASP.NET Core feature allows you to add cross-cutting concerns like logging and authentication to your request pipeline.", Answer = "What is Middleware?" },
             new() { Category = "Web Development", PointValue = 500, Question = "This design pattern separates an application into Model, View, and Controller components.", Answer = "What is MVC?" },
             new() { Category = "Web Development", PointValue = 500, Question = "This Blazor hosting model runs entirely in the browser via WebAssembly.", Answer = "What is Blazor WebAssembly?" },
+            new() { Category = "Web Development", PointValue = 500, Question = "This ASP.NET Core feature injects dependencies into classes automatically.", Answer = "What is Dependency Injection?" },
+            new() { Category = "Web Development", PointValue = 500, Question = "This query language developed by Facebook provides an alternative to REST APIs.", Answer = "What is GraphQL?" },
 
-            // DEVOPS & CI/CD
+            // ==================== DEVOPS & CI/CD ====================
             new() { Category = "DevOps & CI/CD", PointValue = 100, Question = "This version control system tracks changes to source code and is widely used in software development.", Answer = "What is Git?" },
             new() { Category = "DevOps & CI/CD", PointValue = 100, Question = "This Git command creates a copy of a remote repository on your local machine.", Answer = "What is git clone?" },
             new() { Category = "DevOps & CI/CD", PointValue = 100, Question = "This Git command stages changes for the next commit.", Answer = "What is git add?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 100, Question = "This Git command saves staged changes to the repository.", Answer = "What is git commit?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 100, Question = "This Git command uploads local commits to a remote repository.", Answer = "What is git push?" },
             
             new() { Category = "DevOps & CI/CD", PointValue = 200, Question = "This Azure service provides unlimited private Git repositories and agile planning tools.", Answer = "What is Azure DevOps?" },
             new() { Category = "DevOps & CI/CD", PointValue = 200, Question = "This file defines the steps in an Azure DevOps pipeline.", Answer = "What is azure-pipelines.yml?" },
             new() { Category = "DevOps & CI/CD", PointValue = 200, Question = "This GitHub feature automates workflows when code is pushed or PRs are created.", Answer = "What is GitHub Actions?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 200, Question = "This Git command downloads changes from a remote repository.", Answer = "What is git pull or git fetch?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 200, Question = "This Git command creates a new branch.", Answer = "What is git branch or git checkout -b?" },
             
             new() { Category = "DevOps & CI/CD", PointValue = 300, Question = "This practice involves automatically building and testing code changes when they're committed.", Answer = "What is Continuous Integration (CI)?" },
             new() { Category = "DevOps & CI/CD", PointValue = 300, Question = "This practice automatically deploys code changes to production after passing tests.", Answer = "What is Continuous Deployment (CD)?" },
             new() { Category = "DevOps & CI/CD", PointValue = 300, Question = "This branching strategy uses feature branches that merge into a main branch.", Answer = "What is Git Flow or Feature Branching?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 300, Question = "This Git command combines changes from one branch into another.", Answer = "What is git merge?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 300, Question = "This type of test verifies individual units of code work correctly.", Answer = "What is Unit Testing?" },
             
             new() { Category = "DevOps & CI/CD", PointValue = 400, Question = "This containerization platform packages applications with their dependencies for consistent deployment.", Answer = "What is Docker?" },
             new() { Category = "DevOps & CI/CD", PointValue = 400, Question = "This file defines how to build a Docker container image.", Answer = "What is a Dockerfile?" },
             new() { Category = "DevOps & CI/CD", PointValue = 400, Question = "This tool defines multi-container Docker applications.", Answer = "What is Docker Compose?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 400, Question = "This Git command replays commits on top of another branch.", Answer = "What is git rebase?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 400, Question = "This practice stores and manages container images.", Answer = "What is a Container Registry?" },
             
             new() { Category = "DevOps & CI/CD", PointValue = 500, Question = "This Azure service orchestrates containerized applications at scale using Kubernetes.", Answer = "What is Azure Kubernetes Service (AKS)?" },
             new() { Category = "DevOps & CI/CD", PointValue = 500, Question = "This Infrastructure as Code tool by HashiCorp provisions cloud resources.", Answer = "What is Terraform?" },
             new() { Category = "DevOps & CI/CD", PointValue = 500, Question = "This Azure service provides serverless container hosting without managing infrastructure.", Answer = "What is Azure Container Apps?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 500, Question = "This deployment strategy gradually shifts traffic from old to new versions.", Answer = "What is Blue-Green or Canary Deployment?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 500, Question = "This practice treats infrastructure configuration like application code.", Answer = "What is Infrastructure as Code (IaC)?" },
 
-            // DATABASES
+            // ==================== DATABASES ====================
             new() { Category = "Databases", PointValue = 100, Question = "This SQL command is used to retrieve data from a database table.", Answer = "What is SELECT?" },
             new() { Category = "Databases", PointValue = 100, Question = "This SQL command adds new records to a database table.", Answer = "What is INSERT?" },
             new() { Category = "Databases", PointValue = 100, Question = "This SQL command modifies existing records in a table.", Answer = "What is UPDATE?" },
+            new() { Category = "Databases", PointValue = 100, Question = "This SQL command removes records from a table.", Answer = "What is DELETE?" },
+            new() { Category = "Databases", PointValue = 100, Question = "This SQL command creates a new table in a database.", Answer = "What is CREATE TABLE?" },
             
             new() { Category = "Databases", PointValue = 200, Question = "This type of database stores data in JSON-like documents rather than tables.", Answer = "What is a NoSQL/Document Database?" },
             new() { Category = "Databases", PointValue = 200, Question = "This SQL clause filters records based on a condition.", Answer = "What is WHERE?" },
             new() { Category = "Databases", PointValue = 200, Question = "This database object enforces unique values in a column.", Answer = "What is a Primary Key?" },
+            new() { Category = "Databases", PointValue = 200, Question = "This SQL clause sorts the results of a query.", Answer = "What is ORDER BY?" },
+            new() { Category = "Databases", PointValue = 200, Question = "This database constraint links records between two tables.", Answer = "What is a Foreign Key?" },
             
             new() { Category = "Databases", PointValue = 300, Question = "This Azure service is a globally distributed, multi-model database for any scale.", Answer = "What is Azure Cosmos DB?" },
             new() { Category = "Databases", PointValue = 300, Question = "This SQL operation combines rows from two or more tables based on a related column.", Answer = "What is JOIN?" },
             new() { Category = "Databases", PointValue = 300, Question = "This database design process eliminates redundancy by organizing data into related tables.", Answer = "What is Normalization?" },
+            new() { Category = "Databases", PointValue = 300, Question = "This SQL clause groups rows that have the same values.", Answer = "What is GROUP BY?" },
+            new() { Category = "Databases", PointValue = 300, Question = "This type of JOIN returns all records from the left table.", Answer = "What is LEFT JOIN?" },
             
             new() { Category = "Databases", PointValue = 400, Question = "This .NET technology maps database tables to C# classes and provides an abstraction layer.", Answer = "What is Entity Framework?" },
             new() { Category = "Databases", PointValue = 400, Question = "This EF Core approach generates database schema from C# model classes.", Answer = "What is Code-First?" },
             new() { Category = "Databases", PointValue = 400, Question = "This technique improves query performance by creating data structures for fast lookups.", Answer = "What is Indexing?" },
+            new() { Category = "Databases", PointValue = 400, Question = "This SQL clause filters groups after GROUP BY.", Answer = "What is HAVING?" },
+            new() { Category = "Databases", PointValue = 400, Question = "This database object stores a precompiled SQL query for reuse.", Answer = "What is a Stored Procedure?" },
             
             new() { Category = "Databases", PointValue = 500, Question = "This database concept ensures that transactions are processed reliably using Atomicity, Consistency, Isolation, and Durability.", Answer = "What is ACID?" },
             new() { Category = "Databases", PointValue = 500, Question = "This SQL injection prevention technique uses parameterized queries.", Answer = "What are Prepared Statements?" },
             new() { Category = "Databases", PointValue = 500, Question = "This Cosmos DB feature automatically replicates data across multiple Azure regions.", Answer = "What is Global Distribution?" },
+            new() { Category = "Databases", PointValue = 500, Question = "This database technique splits data across multiple servers for scalability.", Answer = "What is Sharding?" },
+            new() { Category = "Databases", PointValue = 500, Question = "This consistency model provides high availability but eventual consistency.", Answer = "What is BASE (Basically Available, Soft state, Eventually consistent)?" },
 
-            // SECURITY
+            // ==================== SECURITY ====================
             new() { Category = "Security", PointValue = 100, Question = "This process verifies who a user claims to be.", Answer = "What is Authentication?" },
             new() { Category = "Security", PointValue = 100, Question = "This process determines what actions an authenticated user can perform.", Answer = "What is Authorization?" },
             new() { Category = "Security", PointValue = 100, Question = "This cryptographic technique converts data into a fixed-size string.", Answer = "What is Hashing?" },
+            new() { Category = "Security", PointValue = 100, Question = "This security practice requires users to provide multiple forms of verification.", Answer = "What is Multi-Factor Authentication (MFA)?" },
+            new() { Category = "Security", PointValue = 100, Question = "This security feature locks an account after too many failed login attempts.", Answer = "What is Account Lockout?" },
             
             new() { Category = "Security", PointValue = 200, Question = "This Azure service manages identities and access for cloud applications.", Answer = "What is Microsoft Entra ID (Azure AD)?" },
             new() { Category = "Security", PointValue = 200, Question = "This protocol provides secure communication over the internet using encryption.", Answer = "What is HTTPS/TLS?" },
             new() { Category = "Security", PointValue = 200, Question = "This type of token is commonly used for API authentication and contains encoded claims.", Answer = "What is JWT (JSON Web Token)?" },
+            new() { Category = "Security", PointValue = 200, Question = "This encryption type uses the same key for encryption and decryption.", Answer = "What is Symmetric Encryption?" },
+            new() { Category = "Security", PointValue = 200, Question = "This security practice stores passwords as hashed values, not plain text.", Answer = "What is Password Hashing?" },
             
             new() { Category = "Security", PointValue = 300, Question = "This protocol uses tokens to securely authorize access to resources without sharing passwords.", Answer = "What is OAuth?" },
             new() { Category = "Security", PointValue = 300, Question = "This security practice limits user permissions to only what is necessary.", Answer = "What is the Principle of Least Privilege?" },
             new() { Category = "Security", PointValue = 300, Question = "This attack exploits trust a website has in a user's browser by sending unauthorized requests.", Answer = "What is CSRF (Cross-Site Request Forgery)?" },
+            new() { Category = "Security", PointValue = 300, Question = "This encryption type uses a public key for encryption and private key for decryption.", Answer = "What is Asymmetric Encryption?" },
+            new() { Category = "Security", PointValue = 300, Question = "This security layer adds authentication between services in a microservices architecture.", Answer = "What is a Service Mesh or mTLS?" },
             
             new() { Category = "Security", PointValue = 400, Question = "This type of attack tricks users into executing malicious scripts in their browser.", Answer = "What is Cross-Site Scripting (XSS)?" },
             new() { Category = "Security", PointValue = 400, Question = "This attack inserts malicious SQL code into application queries.", Answer = "What is SQL Injection?" },
             new() { Category = "Security", PointValue = 400, Question = "This security header helps prevent XSS attacks by controlling resource loading.", Answer = "What is Content Security Policy (CSP)?" },
+            new() { Category = "Security", PointValue = 400, Question = "This attack floods a server with traffic to make it unavailable.", Answer = "What is DDoS (Distributed Denial of Service)?" },
+            new() { Category = "Security", PointValue = 400, Question = "This security tool scans code for vulnerabilities before deployment.", Answer = "What is Static Application Security Testing (SAST)?" },
             
             new() { Category = "Security", PointValue = 500, Question = "This Azure service stores secrets, keys, and certificates securely for cloud applications.", Answer = "What is Azure Key Vault?" },
             new() { Category = "Security", PointValue = 500, Question = "This authentication method eliminates passwords using devices and biometrics.", Answer = "What is Passwordless Authentication?" },
-            new() { Category = "Security", PointValue = 500, Question = "This Azure feature scans code repositories for exposed secrets and credentials.", Answer = "What is GitHub Advanced Security or Credential Scanning?" }
+            new() { Category = "Security", PointValue = 500, Question = "This Azure feature scans code repositories for exposed secrets and credentials.", Answer = "What is GitHub Advanced Security or Credential Scanning?" },
+            new() { Category = "Security", PointValue = 500, Question = "This security framework provides guidelines for managing cybersecurity risk.", Answer = "What is NIST Cybersecurity Framework?" },
+            new() { Category = "Security", PointValue = 500, Question = "This security concept assumes no user or system should be trusted by default.", Answer = "What is Zero Trust?" },
+
+            // ==================== NETWORKING ====================
+            new() { Category = "Networking", PointValue = 100, Question = "This protocol assigns IP addresses to devices on a network automatically.", Answer = "What is DHCP?" },
+            new() { Category = "Networking", PointValue = 100, Question = "This protocol translates domain names to IP addresses.", Answer = "What is DNS?" },
+            new() { Category = "Networking", PointValue = 100, Question = "This network device forwards data between different networks.", Answer = "What is a Router?" },
+            new() { Category = "Networking", PointValue = 100, Question = "This type of IP address is not routable on the public internet.", Answer = "What is a Private IP Address?" },
+            new() { Category = "Networking", PointValue = 100, Question = "This command tests connectivity between two networked devices.", Answer = "What is ping?" },
+            
+            new() { Category = "Networking", PointValue = 200, Question = "This layer of the OSI model handles routing and IP addressing.", Answer = "What is the Network Layer (Layer 3)?" },
+            new() { Category = "Networking", PointValue = 200, Question = "This protocol provides reliable, ordered delivery of data over networks.", Answer = "What is TCP?" },
+            new() { Category = "Networking", PointValue = 200, Question = "This protocol provides fast, connectionless data transmission.", Answer = "What is UDP?" },
+            new() { Category = "Networking", PointValue = 200, Question = "This Azure service provides load balancing for incoming traffic.", Answer = "What is Azure Load Balancer?" },
+            new() { Category = "Networking", PointValue = 200, Question = "This network security device filters traffic based on rules.", Answer = "What is a Firewall?" },
+            
+            new() { Category = "Networking", PointValue = 300, Question = "This Azure feature allows private connectivity between Azure services.", Answer = "What is Private Endpoint?" },
+            new() { Category = "Networking", PointValue = 300, Question = "This networking concept divides a network into smaller segments.", Answer = "What is Subnetting?" },
+            new() { Category = "Networking", PointValue = 300, Question = "This secure tunnel encrypts traffic between your network and Azure.", Answer = "What is VPN (Virtual Private Network)?" },
+            new() { Category = "Networking", PointValue = 300, Question = "This port number is used by HTTPS.", Answer = "What is 443?" },
+            new() { Category = "Networking", PointValue = 300, Question = "This Azure feature controls inbound and outbound traffic for resources.", Answer = "What is Network Security Group (NSG)?" },
+            
+            new() { Category = "Networking", PointValue = 400, Question = "This Azure service provides a dedicated private connection to Azure.", Answer = "What is Azure ExpressRoute?" },
+            new() { Category = "Networking", PointValue = 400, Question = "This layer of the OSI model handles data encryption and compression.", Answer = "What is the Presentation Layer (Layer 6)?" },
+            new() { Category = "Networking", PointValue = 400, Question = "This IP version uses 128-bit addresses.", Answer = "What is IPv6?" },
+            new() { Category = "Networking", PointValue = 400, Question = "This Azure service provides application-level load balancing.", Answer = "What is Azure Application Gateway?" },
+            new() { Category = "Networking", PointValue = 400, Question = "This technique translates private IP addresses to public ones.", Answer = "What is NAT (Network Address Translation)?" },
+            
+            new() { Category = "Networking", PointValue = 500, Question = "This Azure networking feature connects multiple VNets together.", Answer = "What is VNet Peering?" },
+            new() { Category = "Networking", PointValue = 500, Question = "This networking architecture centralizes connectivity through a hub network.", Answer = "What is Hub and Spoke?" },
+            new() { Category = "Networking", PointValue = 500, Question = "This Azure service provides global DNS-based traffic routing.", Answer = "What is Azure Traffic Manager?" },
+            new() { Category = "Networking", PointValue = 500, Question = "This Azure service provides web application firewall and global load balancing.", Answer = "What is Azure Front Door?" },
+            new() { Category = "Networking", PointValue = 500, Question = "This command displays the network path packets take to reach a destination.", Answer = "What is traceroute (or tracert)?" },
+
+            // ==================== CLOUD ARCHITECTURE ====================
+            new() { Category = "Cloud Architecture", PointValue = 100, Question = "This cloud service model provides virtual machines and storage.", Answer = "What is IaaS (Infrastructure as a Service)?" },
+            new() { Category = "Cloud Architecture", PointValue = 100, Question = "This cloud service model provides a platform for deploying applications.", Answer = "What is PaaS (Platform as a Service)?" },
+            new() { Category = "Cloud Architecture", PointValue = 100, Question = "This cloud service model provides complete applications over the internet.", Answer = "What is SaaS (Software as a Service)?" },
+            new() { Category = "Cloud Architecture", PointValue = 100, Question = "This cloud deployment uses resources from multiple cloud providers.", Answer = "What is Multi-Cloud?" },
+            new() { Category = "Cloud Architecture", PointValue = 100, Question = "This term describes the ability to increase resources as demand grows.", Answer = "What is Scalability?" },
+            
+            new() { Category = "Cloud Architecture", PointValue = 200, Question = "This architectural pattern breaks applications into small, independent services.", Answer = "What are Microservices?" },
+            new() { Category = "Cloud Architecture", PointValue = 200, Question = "This pattern keeps applications running even when components fail.", Answer = "What is High Availability?" },
+            new() { Category = "Cloud Architecture", PointValue = 200, Question = "This Azure feature duplicates data across regions for disaster recovery.", Answer = "What is Geo-Redundancy?" },
+            new() { Category = "Cloud Architecture", PointValue = 200, Question = "This pattern stores frequently accessed data for faster retrieval.", Answer = "What is Caching?" },
+            new() { Category = "Cloud Architecture", PointValue = 200, Question = "This Azure service provides in-memory caching.", Answer = "What is Azure Cache for Redis?" },
+            
+            new() { Category = "Cloud Architecture", PointValue = 300, Question = "This pattern handles failures gracefully by stopping requests to failing services.", Answer = "What is Circuit Breaker?" },
+            new() { Category = "Cloud Architecture", PointValue = 300, Question = "This pattern separates read and write operations for better performance.", Answer = "What is CQRS (Command Query Responsibility Segregation)?" },
+            new() { Category = "Cloud Architecture", PointValue = 300, Question = "This messaging pattern decouples producers and consumers of messages.", Answer = "What is Publish-Subscribe (Pub/Sub)?" },
+            new() { Category = "Cloud Architecture", PointValue = 300, Question = "This pattern ensures changes are tracked and can be replayed.", Answer = "What is Event Sourcing?" },
+            new() { Category = "Cloud Architecture", PointValue = 300, Question = "This Azure service provides event-driven serverless compute.", Answer = "What is Azure Event Grid?" },
+            
+            new() { Category = "Cloud Architecture", PointValue = 400, Question = "This pattern distributes incoming requests across multiple servers.", Answer = "What is Load Balancing?" },
+            new() { Category = "Cloud Architecture", PointValue = 400, Question = "This architecture runs code only when triggered by events.", Answer = "What is Serverless?" },
+            new() { Category = "Cloud Architecture", PointValue = 400, Question = "This pattern limits the rate of requests to protect services.", Answer = "What is Throttling or Rate Limiting?" },
+            new() { Category = "Cloud Architecture", PointValue = 400, Question = "This Azure framework provides best practices for cloud architecture.", Answer = "What is the Azure Well-Architected Framework?" },
+            new() { Category = "Cloud Architecture", PointValue = 400, Question = "This pattern stores data closer to users for better performance.", Answer = "What is Content Delivery Network (CDN)?" },
+            
+            new() { Category = "Cloud Architecture", PointValue = 500, Question = "This pattern handles long-running transactions across microservices.", Answer = "What is the Saga Pattern?" },
+            new() { Category = "Cloud Architecture", PointValue = 500, Question = "This CAP theorem states you can only have two of three: Consistency, Availability, Partition tolerance.", Answer = "What is the CAP Theorem?" },
+            new() { Category = "Cloud Architecture", PointValue = 500, Question = "This pattern provides a single entry point for multiple backend services.", Answer = "What is API Gateway?" },
+            new() { Category = "Cloud Architecture", PointValue = 500, Question = "This recovery metric measures acceptable data loss in time.", Answer = "What is RPO (Recovery Point Objective)?" },
+            new() { Category = "Cloud Architecture", PointValue = 500, Question = "This recovery metric measures acceptable downtime.", Answer = "What is RTO (Recovery Time Objective)?" },
+
+            // ==================== SOFTWARE TESTING ====================
+            new() { Category = "Software Testing", PointValue = 100, Question = "This type of testing verifies individual units of code work correctly.", Answer = "What is Unit Testing?" },
+            new() { Category = "Software Testing", PointValue = 100, Question = "This testing framework is commonly used for C# unit tests.", Answer = "What is xUnit, NUnit, or MSTest?" },
+            new() { Category = "Software Testing", PointValue = 100, Question = "This practice writes tests before writing the actual code.", Answer = "What is TDD (Test-Driven Development)?" },
+            new() { Category = "Software Testing", PointValue = 100, Question = "This keyword in testing asserts an expected value equals an actual value.", Answer = "What is Assert?" },
+            new() { Category = "Software Testing", PointValue = 100, Question = "This type of testing checks if the entire system works as expected.", Answer = "What is End-to-End (E2E) Testing?" },
+            
+            new() { Category = "Software Testing", PointValue = 200, Question = "This type of testing verifies multiple components work together correctly.", Answer = "What is Integration Testing?" },
+            new() { Category = "Software Testing", PointValue = 200, Question = "This testing technique replaces dependencies with fake implementations.", Answer = "What is Mocking?" },
+            new() { Category = "Software Testing", PointValue = 200, Question = "This metric measures what percentage of code is executed by tests.", Answer = "What is Code Coverage?" },
+            new() { Category = "Software Testing", PointValue = 200, Question = "This pattern organizes tests into Arrange, Act, Assert sections.", Answer = "What is AAA (Arrange-Act-Assert)?" },
+            new() { Category = "Software Testing", PointValue = 200, Question = "This tool automates browser-based testing.", Answer = "What is Selenium or Playwright?" },
+            
+            new() { Category = "Software Testing", PointValue = 300, Question = "This type of testing checks if the application meets business requirements.", Answer = "What is Acceptance Testing?" },
+            new() { Category = "Software Testing", PointValue = 300, Question = "This testing approach tests the system without knowing internal code.", Answer = "What is Black Box Testing?" },
+            new() { Category = "Software Testing", PointValue = 300, Question = "This testing approach tests with knowledge of internal code structure.", Answer = "What is White Box Testing?" },
+            new() { Category = "Software Testing", PointValue = 300, Question = "This type of testing ensures new changes don't break existing functionality.", Answer = "What is Regression Testing?" },
+            new() { Category = "Software Testing", PointValue = 300, Question = "This C# library is commonly used for creating mock objects.", Answer = "What is Moq?" },
+            
+            new() { Category = "Software Testing", PointValue = 400, Question = "This type of testing measures system performance under load.", Answer = "What is Load Testing or Performance Testing?" },
+            new() { Category = "Software Testing", PointValue = 400, Question = "This type of testing pushes the system beyond normal limits.", Answer = "What is Stress Testing?" },
+            new() { Category = "Software Testing", PointValue = 400, Question = "This practice tests software with random or unexpected inputs.", Answer = "What is Fuzz Testing?" },
+            new() { Category = "Software Testing", PointValue = 400, Question = "This testing technique tests boundaries between valid and invalid inputs.", Answer = "What is Boundary Testing?" },
+            new() { Category = "Software Testing", PointValue = 400, Question = "This CI/CD practice automatically runs tests when code is pushed.", Answer = "What is Automated Testing or Test Automation?" },
+            
+            new() { Category = "Software Testing", PointValue = 500, Question = "This practice intentionally introduces failures to test system resilience.", Answer = "What is Chaos Engineering?" },
+            new() { Category = "Software Testing", PointValue = 500, Question = "This testing pyramid suggests having more unit tests than integration tests.", Answer = "What is the Testing Pyramid?" },
+            new() { Category = "Software Testing", PointValue = 500, Question = "This type of testing verifies the application is secure from attacks.", Answer = "What is Security Testing or Penetration Testing?" },
+            new() { Category = "Software Testing", PointValue = 500, Question = "This practice tests the behavior of the system from the user's perspective.", Answer = "What is BDD (Behavior-Driven Development)?" },
+            new() { Category = "Software Testing", PointValue = 500, Question = "This tool by Netflix randomly terminates instances to test resilience.", Answer = "What is Chaos Monkey?" },
+
+            // ==================== DATA STRUCTURES ====================
+            new() { Category = "Data Structures", PointValue = 100, Question = "This data structure stores elements in a linear order with indices.", Answer = "What is an Array?" },
+            new() { Category = "Data Structures", PointValue = 100, Question = "This data structure follows Last-In-First-Out (LIFO) principle.", Answer = "What is a Stack?" },
+            new() { Category = "Data Structures", PointValue = 100, Question = "This data structure follows First-In-First-Out (FIFO) principle.", Answer = "What is a Queue?" },
+            new() { Category = "Data Structures", PointValue = 100, Question = "This C# collection dynamically resizes as elements are added.", Answer = "What is a List?" },
+            new() { Category = "Data Structures", PointValue = 100, Question = "This data structure stores unique elements only.", Answer = "What is a Set or HashSet?" },
+            
+            new() { Category = "Data Structures", PointValue = 200, Question = "This data structure stores key-value pairs for O(1) lookups.", Answer = "What is a Hash Table or Dictionary?" },
+            new() { Category = "Data Structures", PointValue = 200, Question = "This data structure consists of nodes with pointers to next elements.", Answer = "What is a Linked List?" },
+            new() { Category = "Data Structures", PointValue = 200, Question = "This tree structure maintains sorted data for efficient searching.", Answer = "What is a Binary Search Tree?" },
+            new() { Category = "Data Structures", PointValue = 200, Question = "This data structure maps keys to values using a hash function.", Answer = "What is a Hash Map?" },
+            new() { Category = "Data Structures", PointValue = 200, Question = "This linked list type has pointers in both directions.", Answer = "What is a Doubly Linked List?" },
+            
+            new() { Category = "Data Structures", PointValue = 300, Question = "This balanced tree ensures O(log n) operations.", Answer = "What is an AVL Tree or Red-Black Tree?" },
+            new() { Category = "Data Structures", PointValue = 300, Question = "This data structure represents relationships between nodes.", Answer = "What is a Graph?" },
+            new() { Category = "Data Structures", PointValue = 300, Question = "This tree-based structure always removes the minimum (or maximum) element.", Answer = "What is a Heap or Priority Queue?" },
+            new() { Category = "Data Structures", PointValue = 300, Question = "This tree structure stores strings efficiently with shared prefixes.", Answer = "What is a Trie?" },
+            new() { Category = "Data Structures", PointValue = 300, Question = "This graph traversal visits all neighbors before going deeper.", Answer = "What is Breadth-First Search (BFS)?" },
+            
+            new() { Category = "Data Structures", PointValue = 400, Question = "This graph traversal goes as deep as possible before backtracking.", Answer = "What is Depth-First Search (DFS)?" },
+            new() { Category = "Data Structures", PointValue = 400, Question = "This algorithmic complexity describes constant time operations.", Answer = "What is O(1)?" },
+            new() { Category = "Data Structures", PointValue = 400, Question = "This algorithmic complexity describes linear time operations.", Answer = "What is O(n)?" },
+            new() { Category = "Data Structures", PointValue = 400, Question = "This algorithmic complexity describes logarithmic time operations.", Answer = "What is O(log n)?" },
+            new() { Category = "Data Structures", PointValue = 400, Question = "This data structure tracks disjoint sets efficiently.", Answer = "What is Union-Find or Disjoint Set?" },
+            
+            new() { Category = "Data Structures", PointValue = 500, Question = "This algorithm finds the shortest path in a weighted graph.", Answer = "What is Dijkstra's Algorithm?" },
+            new() { Category = "Data Structures", PointValue = 500, Question = "This sorting algorithm has O(n log n) average complexity.", Answer = "What is Quick Sort or Merge Sort?" },
+            new() { Category = "Data Structures", PointValue = 500, Question = "This tree structure segments ranges for efficient queries.", Answer = "What is a Segment Tree?" },
+            new() { Category = "Data Structures", PointValue = 500, Question = "This data structure combines hash tables with linked lists for ordering.", Answer = "What is a LinkedHashMap?" },
+            new() { Category = "Data Structures", PointValue = 500, Question = "This probabilistic data structure tests if an element might be in a set.", Answer = "What is a Bloom Filter?" },
+
+            // ==================== OPERATING SYSTEMS ====================
+            new() { Category = "Operating Systems", PointValue = 100, Question = "This component manages memory, processes, and hardware.", Answer = "What is the Kernel?" },
+            new() { Category = "Operating Systems", PointValue = 100, Question = "This running instance of a program has its own memory space.", Answer = "What is a Process?" },
+            new() { Category = "Operating Systems", PointValue = 100, Question = "This lightweight unit of execution shares memory with its process.", Answer = "What is a Thread?" },
+            new() { Category = "Operating Systems", PointValue = 100, Question = "This OS command lists files in a directory on Linux.", Answer = "What is ls?" },
+            new() { Category = "Operating Systems", PointValue = 100, Question = "This OS command lists files in a directory on Windows.", Answer = "What is dir?" },
+            
+            new() { Category = "Operating Systems", PointValue = 200, Question = "This memory management technique gives processes virtual address spaces.", Answer = "What is Virtual Memory?" },
+            new() { Category = "Operating Systems", PointValue = 200, Question = "This Linux command changes file permissions.", Answer = "What is chmod?" },
+            new() { Category = "Operating Systems", PointValue = 200, Question = "This Windows feature isolates processes from each other.", Answer = "What is Process Isolation?" },
+            new() { Category = "Operating Systems", PointValue = 200, Question = "This environment variable contains the directories to search for executables.", Answer = "What is PATH?" },
+            new() { Category = "Operating Systems", PointValue = 200, Question = "This Linux command displays running processes.", Answer = "What is ps or top?" },
+            
+            new() { Category = "Operating Systems", PointValue = 300, Question = "This condition occurs when two processes wait for each other indefinitely.", Answer = "What is Deadlock?" },
+            new() { Category = "Operating Systems", PointValue = 300, Question = "This scheduling algorithm gives each process equal time slices.", Answer = "What is Round Robin?" },
+            new() { Category = "Operating Systems", PointValue = 300, Question = "This Linux command searches for text patterns in files.", Answer = "What is grep?" },
+            new() { Category = "Operating Systems", PointValue = 300, Question = "This mechanism allows processes to communicate with each other.", Answer = "What is IPC (Inter-Process Communication)?" },
+            new() { Category = "Operating Systems", PointValue = 300, Question = "This Linux command displays disk usage.", Answer = "What is df or du?" },
+            
+            new() { Category = "Operating Systems", PointValue = 400, Question = "This synchronization primitive allows only one thread access at a time.", Answer = "What is a Mutex?" },
+            new() { Category = "Operating Systems", PointValue = 400, Question = "This synchronization primitive limits concurrent access to a resource.", Answer = "What is a Semaphore?" },
+            new() { Category = "Operating Systems", PointValue = 400, Question = "This Linux command creates a symbolic link.", Answer = "What is ln -s?" },
+            new() { Category = "Operating Systems", PointValue = 400, Question = "This memory issue occurs when memory is allocated but never freed.", Answer = "What is a Memory Leak?" },
+            new() { Category = "Operating Systems", PointValue = 400, Question = "This Linux command shows network connections and ports.", Answer = "What is netstat or ss?" },
+            
+            new() { Category = "Operating Systems", PointValue = 500, Question = "This OS concept moves memory pages between RAM and disk.", Answer = "What is Paging or Swapping?" },
+            new() { Category = "Operating Systems", PointValue = 500, Question = "This condition occurs when page faults happen excessively.", Answer = "What is Thrashing?" },
+            new() { Category = "Operating Systems", PointValue = 500, Question = "This Linux feature isolates process trees with namespaces.", Answer = "What are Containers (cgroups/namespaces)?" },
+            new() { Category = "Operating Systems", PointValue = 500, Question = "This scheduling algorithm prioritizes shorter jobs first.", Answer = "What is Shortest Job First (SJF)?" },
+            new() { Category = "Operating Systems", PointValue = 500, Question = "This OS architecture runs services in user space rather than kernel.", Answer = "What is Microkernel?" },
+
+            // ==================== APIS & INTEGRATION ====================
+            new() { Category = "APIs & Integration", PointValue = 100, Question = "This acronym stands for Application Programming Interface.", Answer = "What is API?" },
+            new() { Category = "APIs & Integration", PointValue = 100, Question = "This HTTP header identifies the client making the request.", Answer = "What is User-Agent?" },
+            new() { Category = "APIs & Integration", PointValue = 100, Question = "This API architectural style uses XML for message format.", Answer = "What is SOAP?" },
+            new() { Category = "APIs & Integration", PointValue = 100, Question = "This API documentation format describes RESTful APIs.", Answer = "What is OpenAPI (Swagger)?" },
+            new() { Category = "APIs & Integration", PointValue = 100, Question = "This HTTP method retrieves a resource without modifying it.", Answer = "What is GET?" },
+            
+            new() { Category = "APIs & Integration", PointValue = 200, Question = "This pattern returns a subset of results with pagination info.", Answer = "What is Paging or Pagination?" },
+            new() { Category = "APIs & Integration", PointValue = 200, Question = "This header carries authentication credentials for APIs.", Answer = "What is Authorization?" },
+            new() { Category = "APIs & Integration", PointValue = 200, Question = "This API versioning approach puts version in the URL path.", Answer = "What is URL Versioning?" },
+            new() { Category = "APIs & Integration", PointValue = 200, Question = "This Azure service manages, publishes, and secures APIs.", Answer = "What is Azure API Management?" },
+            new() { Category = "APIs & Integration", PointValue = 200, Question = "This data format is lighter than XML and commonly used in REST APIs.", Answer = "What is JSON?" },
+            
+            new() { Category = "APIs & Integration", PointValue = 300, Question = "This authentication flow is used for server-to-server API calls.", Answer = "What is Client Credentials?" },
+            new() { Category = "APIs & Integration", PointValue = 300, Question = "This pattern limits API requests per time period.", Answer = "What is Rate Limiting?" },
+            new() { Category = "APIs & Integration", PointValue = 300, Question = "This HTTP status code indicates too many requests.", Answer = "What is 429?" },
+            new() { Category = "APIs & Integration", PointValue = 300, Question = "This notification mechanism calls a URL when events occur.", Answer = "What is a Webhook?" },
+            new() { Category = "APIs & Integration", PointValue = 300, Question = "This protocol enables real-time bidirectional communication.", Answer = "What is WebSocket?" },
+            
+            new() { Category = "APIs & Integration", PointValue = 400, Question = "This query language lets clients request specific data from APIs.", Answer = "What is GraphQL?" },
+            new() { Category = "APIs & Integration", PointValue = 400, Question = "This messaging protocol is lightweight and used in IoT.", Answer = "What is MQTT?" },
+            new() { Category = "APIs & Integration", PointValue = 400, Question = "This Google-developed framework uses Protocol Buffers for RPC.", Answer = "What is gRPC?" },
+            new() { Category = "APIs & Integration", PointValue = 400, Question = "This integration pattern transforms data between different formats.", Answer = "What is Data Transformation or ETL?" },
+            new() { Category = "APIs & Integration", PointValue = 400, Question = "This Azure service connects applications and data across cloud and on-premises.", Answer = "What is Azure Logic Apps?" },
+            
+            new() { Category = "APIs & Integration", PointValue = 500, Question = "This pattern aggregates calls to multiple backend services.", Answer = "What is Backend for Frontend (BFF)?" },
+            new() { Category = "APIs & Integration", PointValue = 500, Question = "This messaging pattern ensures messages are delivered at least once.", Answer = "What is At-Least-Once Delivery?" },
+            new() { Category = "APIs & Integration", PointValue = 500, Question = "This Azure service provides enterprise messaging with topics and queues.", Answer = "What is Azure Service Bus?" },
+            new() { Category = "APIs & Integration", PointValue = 500, Question = "This protocol enables secure service-to-service authentication.", Answer = "What is mTLS (Mutual TLS)?" },
+            new() { Category = "APIs & Integration", PointValue = 500, Question = "This architectural style makes APIs self-descriptive with hypermedia links.", Answer = "What is HATEOAS?" },
+
+            // ==================== MACHINE LEARNING BASICS ====================
+            new() { Category = "Machine Learning Basics", PointValue = 100, Question = "This type of ML learns from labeled training data.", Answer = "What is Supervised Learning?" },
+            new() { Category = "Machine Learning Basics", PointValue = 100, Question = "This type of ML finds patterns in unlabeled data.", Answer = "What is Unsupervised Learning?" },
+            new() { Category = "Machine Learning Basics", PointValue = 100, Question = "This ML technique predicts continuous numeric values.", Answer = "What is Regression?" },
+            new() { Category = "Machine Learning Basics", PointValue = 100, Question = "This ML technique categorizes data into discrete classes.", Answer = "What is Classification?" },
+            new() { Category = "Machine Learning Basics", PointValue = 100, Question = "This Azure service provides pre-built AI models and APIs.", Answer = "What is Azure Cognitive Services?" },
+            
+            new() { Category = "Machine Learning Basics", PointValue = 200, Question = "This unsupervised technique groups similar data points together.", Answer = "What is Clustering?" },
+            new() { Category = "Machine Learning Basics", PointValue = 200, Question = "This metric measures how well a classification model performs.", Answer = "What is Accuracy?" },
+            new() { Category = "Machine Learning Basics", PointValue = 200, Question = "This technique splits data into training and testing sets.", Answer = "What is Train-Test Split?" },
+            new() { Category = "Machine Learning Basics", PointValue = 200, Question = "This Azure service provides a platform for building ML models.", Answer = "What is Azure Machine Learning?" },
+            new() { Category = "Machine Learning Basics", PointValue = 200, Question = "This problem occurs when a model performs well on training data but poorly on new data.", Answer = "What is Overfitting?" },
+            
+            new() { Category = "Machine Learning Basics", PointValue = 300, Question = "This neural network architecture is commonly used for image recognition.", Answer = "What is CNN (Convolutional Neural Network)?" },
+            new() { Category = "Machine Learning Basics", PointValue = 300, Question = "This technique reduces the number of features in a dataset.", Answer = "What is Dimensionality Reduction or PCA?" },
+            new() { Category = "Machine Learning Basics", PointValue = 300, Question = "This ML technique learns through trial and error with rewards.", Answer = "What is Reinforcement Learning?" },
+            new() { Category = "Machine Learning Basics", PointValue = 300, Question = "This simple algorithm classifies based on nearest neighbors.", Answer = "What is K-Nearest Neighbors (KNN)?" },
+            new() { Category = "Machine Learning Basics", PointValue = 300, Question = "This tree-based algorithm is used for classification and regression.", Answer = "What is Decision Tree?" },
+            
+            new() { Category = "Machine Learning Basics", PointValue = 400, Question = "This ensemble method combines multiple decision trees.", Answer = "What is Random Forest?" },
+            new() { Category = "Machine Learning Basics", PointValue = 400, Question = "This neural network architecture processes sequential data.", Answer = "What is RNN (Recurrent Neural Network) or LSTM?" },
+            new() { Category = "Machine Learning Basics", PointValue = 400, Question = "This technique iteratively builds models that correct previous errors.", Answer = "What is Gradient Boosting?" },
+            new() { Category = "Machine Learning Basics", PointValue = 400, Question = "This metric measures the trade-off between precision and recall.", Answer = "What is F1 Score?" },
+            new() { Category = "Machine Learning Basics", PointValue = 400, Question = "This AI service provides natural language understanding capabilities.", Answer = "What is Azure Language Service or LUIS?" },
+            
+            new() { Category = "Machine Learning Basics", PointValue = 500, Question = "This architecture powers large language models like GPT.", Answer = "What is Transformer?" },
+            new() { Category = "Machine Learning Basics", PointValue = 500, Question = "This technique uses pre-trained models on new tasks.", Answer = "What is Transfer Learning?" },
+            new() { Category = "Machine Learning Basics", PointValue = 500, Question = "This validation technique trains on all data except one fold.", Answer = "What is Cross-Validation?" },
+            new() { Category = "Machine Learning Basics", PointValue = 500, Question = "This Azure service provides AI-powered search capabilities.", Answer = "What is Azure AI Search (Cognitive Search)?" },
+            new() { Category = "Machine Learning Basics", PointValue = 500, Question = "This technique generates new data similar to training data.", Answer = "What is Data Augmentation or GANs?" },
+
+            // ==================== POWERSHELL & CLI ====================
+            new() { Category = "PowerShell & CLI", PointValue = 100, Question = "This PowerShell cmdlet displays output to the console.", Answer = "What is Write-Host or Write-Output?" },
+            new() { Category = "PowerShell & CLI", PointValue = 100, Question = "This cmdlet retrieves items from a specified location.", Answer = "What is Get-ChildItem?" },
+            new() { Category = "PowerShell & CLI", PointValue = 100, Question = "This symbol pipes output from one command to another.", Answer = "What is | (pipe)?" },
+            new() { Category = "PowerShell & CLI", PointValue = 100, Question = "This cmdlet displays help for PowerShell commands.", Answer = "What is Get-Help?" },
+            new() { Category = "PowerShell & CLI", PointValue = 100, Question = "This Azure CLI command logs you into Azure.", Answer = "What is az login?" },
+            
+            new() { Category = "PowerShell & CLI", PointValue = 200, Question = "This cmdlet filters objects based on property values.", Answer = "What is Where-Object?" },
+            new() { Category = "PowerShell & CLI", PointValue = 200, Question = "This cmdlet selects specific properties from objects.", Answer = "What is Select-Object?" },
+            new() { Category = "PowerShell & CLI", PointValue = 200, Question = "This Az module cmdlet creates a new resource group.", Answer = "What is New-AzResourceGroup?" },
+            new() { Category = "PowerShell & CLI", PointValue = 200, Question = "This cmdlet loops through items in a collection.", Answer = "What is ForEach-Object?" },
+            new() { Category = "PowerShell & CLI", PointValue = 200, Question = "This special variable holds the current pipeline object.", Answer = "What is $_ or $PSItem?" },
+            
+            new() { Category = "PowerShell & CLI", PointValue = 300, Question = "This cmdlet exports data to a CSV file.", Answer = "What is Export-Csv?" },
+            new() { Category = "PowerShell & CLI", PointValue = 300, Question = "This cmdlet converts objects to JSON format.", Answer = "What is ConvertTo-Json?" },
+            new() { Category = "PowerShell & CLI", PointValue = 300, Question = "This cmdlet calls REST APIs from PowerShell.", Answer = "What is Invoke-RestMethod?" },
+            new() { Category = "PowerShell & CLI", PointValue = 300, Question = "This cmdlet sets an environment variable.", Answer = "What is $env:VARIABLE or Set-Item?" },
+            new() { Category = "PowerShell & CLI", PointValue = 300, Question = "This Azure CLI command lists all resource groups.", Answer = "What is az group list?" },
+            
+            new() { Category = "PowerShell & CLI", PointValue = 400, Question = "This cmdlet sorts objects by specified properties.", Answer = "What is Sort-Object?" },
+            new() { Category = "PowerShell & CLI", PointValue = 400, Question = "This cmdlet groups objects by a property value.", Answer = "What is Group-Object?" },
+            new() { Category = "PowerShell & CLI", PointValue = 400, Question = "This cmdlet measures properties of objects (count, sum, etc.).", Answer = "What is Measure-Object?" },
+            new() { Category = "PowerShell & CLI", PointValue = 400, Question = "This cmdlet runs commands on remote computers.", Answer = "What is Invoke-Command?" },
+            new() { Category = "PowerShell & CLI", PointValue = 400, Question = "This PowerShell feature stores credentials securely.", Answer = "What is Get-Credential or SecureString?" },
+            
+            new() { Category = "PowerShell & CLI", PointValue = 500, Question = "This cmdlet creates a PowerShell scheduled job.", Answer = "What is Register-ScheduledJob?" },
+            new() { Category = "PowerShell & CLI", PointValue = 500, Question = "This PowerShell feature allows running commands in parallel.", Answer = "What is ForEach-Object -Parallel or Jobs?" },
+            new() { Category = "PowerShell & CLI", PointValue = 500, Question = "This cmdlet imports a PowerShell module.", Answer = "What is Import-Module?" },
+            new() { Category = "PowerShell & CLI", PointValue = 500, Question = "This feature defines reusable blocks of code in PowerShell.", Answer = "What is a Function?" },
+            new() { Category = "PowerShell & CLI", PointValue = 500, Question = "This Azure CLI output format is useful for scripting.", Answer = "What is --output tsv or --output json?" },
+
+            // ==================== AGILE & SCRUM ====================
+            new() { Category = "Agile & Scrum", PointValue = 100, Question = "This time-boxed iteration in Scrum typically lasts 1-4 weeks.", Answer = "What is a Sprint?" },
+            new() { Category = "Agile & Scrum", PointValue = 100, Question = "This role is responsible for maximizing product value and managing the backlog.", Answer = "What is the Product Owner?" },
+            new() { Category = "Agile & Scrum", PointValue = 100, Question = "This role facilitates Scrum events and removes impediments.", Answer = "What is the Scrum Master?" },
+            new() { Category = "Agile & Scrum", PointValue = 100, Question = "This prioritized list contains all work for the product.", Answer = "What is the Product Backlog?" },
+            new() { Category = "Agile & Scrum", PointValue = 100, Question = "This daily meeting is time-boxed to 15 minutes.", Answer = "What is the Daily Standup (Daily Scrum)?" },
+            
+            new() { Category = "Agile & Scrum", PointValue = 200, Question = "This meeting at the end of a sprint reviews what was done.", Answer = "What is the Sprint Review?" },
+            new() { Category = "Agile & Scrum", PointValue = 200, Question = "This meeting identifies improvements for the next sprint.", Answer = "What is the Sprint Retrospective?" },
+            new() { Category = "Agile & Scrum", PointValue = 200, Question = "This list contains items selected for the current sprint.", Answer = "What is the Sprint Backlog?" },
+            new() { Category = "Agile & Scrum", PointValue = 200, Question = "This user-centered format describes features: 'As a... I want... So that...'", Answer = "What is a User Story?" },
+            new() { Category = "Agile & Scrum", PointValue = 200, Question = "This technique estimates work using relative sizing.", Answer = "What is Story Points?" },
+            
+            new() { Category = "Agile & Scrum", PointValue = 300, Question = "This meeting plans the work for the upcoming sprint.", Answer = "What is Sprint Planning?" },
+            new() { Category = "Agile & Scrum", PointValue = 300, Question = "This criteria defines when a user story is complete.", Answer = "What is Definition of Done?" },
+            new() { Category = "Agile & Scrum", PointValue = 300, Question = "This visual board shows workflow and limits work in progress.", Answer = "What is a Kanban Board?" },
+            new() { Category = "Agile & Scrum", PointValue = 300, Question = "This Agile principle values working software over comprehensive documentation.", Answer = "What is the Agile Manifesto?" },
+            new() { Category = "Agile & Scrum", PointValue = 300, Question = "This estimation technique uses cards with Fibonacci numbers.", Answer = "What is Planning Poker?" },
+            
+            new() { Category = "Agile & Scrum", PointValue = 400, Question = "This metric shows work completed versus time in a sprint.", Answer = "What is a Burndown Chart?" },
+            new() { Category = "Agile & Scrum", PointValue = 400, Question = "This metric measures how much work a team can complete per sprint.", Answer = "What is Velocity?" },
+            new() { Category = "Agile & Scrum", PointValue = 400, Question = "This large work item can be broken down into smaller user stories.", Answer = "What is an Epic?" },
+            new() { Category = "Agile & Scrum", PointValue = 400, Question = "This practice delivers small increments frequently to get fast feedback.", Answer = "What is Continuous Delivery or Iterative Development?" },
+            new() { Category = "Agile & Scrum", PointValue = 400, Question = "This meeting refines and estimates backlog items before sprint planning.", Answer = "What is Backlog Refinement (Grooming)?" },
+            
+            new() { Category = "Agile & Scrum", PointValue = 500, Question = "This framework scales Scrum for large organizations.", Answer = "What is SAFe (Scaled Agile Framework)?" },
+            new() { Category = "Agile & Scrum", PointValue = 500, Question = "This Kanban metric measures how long work takes from start to finish.", Answer = "What is Lead Time or Cycle Time?" },
+            new() { Category = "Agile & Scrum", PointValue = 500, Question = "This practice limits the number of items in each workflow stage.", Answer = "What is WIP Limits (Work in Progress Limits)?" },
+            new() { Category = "Agile & Scrum", PointValue = 500, Question = "This technique shows cumulative work over time.", Answer = "What is a Cumulative Flow Diagram?" },
+            new() { Category = "Agile & Scrum", PointValue = 500, Question = "This DevOps practice emphasizes shared responsibility between dev and ops.", Answer = "What is DevOps Culture or You Build It, You Run It?" }
         ];
     }
 }
