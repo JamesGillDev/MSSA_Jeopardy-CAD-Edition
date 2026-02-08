@@ -1,4 +1,4 @@
-@page "/jeopardy"
+﻿@page "/jeopardy"
 @using MSSA_Jeoporady_.Client.Models
 @using MSSA_Jeoporady_.Client.Services
 @inject IJSRuntime JS
@@ -25,7 +25,7 @@
                         <span class="category-name">@cat</span>
                         @if (isSelected)
                         {
-                            <span class="check-mark">?</span>
+                            <span class="check-mark">✓</span>
                         }
                     </div>
                 }
@@ -49,12 +49,12 @@
                             else
                             {
                                 <span class="player-name" @onclick="() => StartEditingPlayer(pid)">
-                                    @gameService.PlayerNames[pid] ??
+                                    @gameService.PlayerNames[pid] ✏️
                                 </span>
                             }
                             @if (gameService.TotalPlayers > 1)
                             {
-                                <button class="btn-remove-player-setup" @onclick="() => RemovePlayer(pid)">�</button>
+                                <button class="btn-remove-player-setup" @onclick="() => RemovePlayer(pid)">×</button>
                             }
                         </div>
                     }
@@ -93,7 +93,7 @@
                             {
                                 <span class="player-name" @onclick="() => StartEditingPlayer(pid)">
                                     @gameService.PlayerNames[pid]
-                                    <span class="edit-icon">??</span>
+                                    <span class="edit-icon">✏️</span>
                                 </span>
                             }
                             <span class="player-points @(gameService.PlayerScores[pid] >= 0 ? "positive" : "negative")">
@@ -101,7 +101,7 @@
                             </span>
                             @if (gameService.TotalPlayers > 1)
                             {
-                                <button class="btn-remove-player" @onclick="() => RemovePlayer(pid)" title="Remove player">�</button>
+                                <button class="btn-remove-player" @onclick="() => RemovePlayer(pid)" title="Remove player">×</button>
                             }
                         </div>
                     }
@@ -325,20 +325,24 @@
     cursor: not-allowed;
 }
 
-.btn-back-menu {
+.btn-back-menu, .btn-restart {
     background: linear-gradient(180deg, #ff9800 0%, #e65100 100%);
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 0.9rem;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
-    margin-left: 10px;
+    margin: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.btn-back-menu:hover {
+.btn-back-menu:hover, .btn-restart:hover {
     transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
 }
 
 .jeopardy-container {
@@ -787,14 +791,14 @@
         transform: scale(1.05);
     }
 
-    .btn-restart, .btn-play-again {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .btn-play-again {
+        background: linear-gradient(180deg, #ff9800 0%, #e65100 100%);
         color: white;
     }
 
-    .btn-restart:hover, .btn-play-again:hover {
+    .btn-play-again:hover {
         transform: scale(1.05);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
     }
 
     .game-controls {
