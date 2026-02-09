@@ -133,30 +133,30 @@ This application is built to help MSSA students review and reinforce their learn
 
 ```
 MSSA Jeoporady!/
-??? MSSA Jeoporady!/                    # Server project
-?   ??? Components/
-?   ?   ??? Layout/
-?   ?   ?   ??? MainLayout.razor        # Main layout template
-?   ?   ?   ??? NavMenu.razor           # Navigation menu
-?   ?   ??? Pages/
-?   ?   ?   ??? Home.razor              # Welcome/landing page
-?   ?   ?   ??? Error.razor             # Error page
-?   ?   ?   ??? NotFound.razor          # 404 page
-?   ?   ??? App.razor                   # Root component
-?   ?   ??? Routes.razor                # Routing configuration
-?   ??? wwwroot/                        # Static assets
-?   ??? Program.cs                      # Application entry point
-?
-??? MSSA Jeoporady!.Client/             # WebAssembly client project
-?   ??? Models/
-?   ?   ??? JeopardyQuestion.cs         # Data models
-?   ??? Services/
-?   ?   ??? JeopardyGameService.cs      # Game logic & questions
-?   ??? Pages/
-?   ?   ??? Jeopardy.razor              # Main game board component
-?   ??? Program.cs                      # Client entry point
-?
-??? MSSA Jeoporady!.sln                 # Solution file
+|-- MSSA Jeoporady!/                    # Server project
+|   |-- Components/
+|   |   |-- Layout/
+|   |   |   |-- MainLayout.razor        # Main layout template
+|   |   |   `-- NavMenu.razor           # Navigation menu
+|   |   `-- Pages/
+|   |       |-- Home.razor              # Welcome/landing page
+|   |       |-- Error.razor             # Error page
+|   |       `-- NotFound.razor          # 404 page
+|   |-- App.razor                       # Root component
+|   |-- Routes.razor                    # Routing configuration
+|   |-- wwwroot/                        # Static assets
+|   `-- Program.cs                      # Application entry point
+|
+|-- MSSA Jeoporady!.Client/             # WebAssembly client project
+|   |-- Models/
+|   |   `-- JeopardyQuestion.cs         # Data models
+|   |-- Pages/
+|   |   `-- Jeopardy.razor              # Main game board component
+|   |-- Services/
+|   |   `-- JeopardyGameService.cs      # Game logic & questions
+|   `-- Program.cs                      # Client entry point
+|
+`-- MSSA Jeoporady!.sln                 # Solution file
 ```
 
 ## Contributing
