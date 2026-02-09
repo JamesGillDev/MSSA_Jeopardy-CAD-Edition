@@ -2,7 +2,7 @@
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-purple)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blue)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-BSL%201.1-blue.svg)](LICENSE)
 
 A fun, interactive Jeopardy!-style quiz game designed for the **Microsoft Software & Systems Academy (MSSA) Cloud Application Development Program**. Test your knowledge across key topics covered in the CAD curriculum!
 
@@ -189,7 +189,7 @@ To add a new category, add the category name to `AllCategoryNames` array and add
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Business Source License 1.1 (BSL 1.1) - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
