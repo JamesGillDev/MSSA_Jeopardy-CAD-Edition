@@ -33,7 +33,10 @@ public class JeopardyGameService
         "APIs & Integration",
         "Machine Learning Basics",
         "PowerShell & CLI",
-        "Agile & Scrum"
+        "Agile & Scrum",
+        "AZ-900 Exam Prep",
+        "AZ-204 Exam Prep",
+        "AI-900 Exam Prep"
     ];
 
     public JeopardyGameService()
@@ -678,7 +681,100 @@ public class JeopardyGameService
             new() { Category = "Agile & Scrum", PointValue = 500, Question = "This Kanban metric measures how long work takes from start to finish.", Answer = "What is Lead Time or Cycle Time?" },
             new() { Category = "Agile & Scrum", PointValue = 500, Question = "This practice limits the number of items in each workflow stage.", Answer = "What is WIP Limits (Work in Progress Limits)?" },
             new() { Category = "Agile & Scrum", PointValue = 500, Question = "This technique shows cumulative work over time.", Answer = "What is a Cumulative Flow Diagram?" },
-            new() { Category = "Agile & Scrum", PointValue = 500, Question = "This DevOps practice emphasizes shared responsibility between dev and ops.", Answer = "What is DevOps Culture or You Build It, You Run It?" }
+            new() { Category = "Agile & Scrum", PointValue = 500, Question = "This DevOps practice emphasizes shared responsibility between dev and ops.", Answer = "What is DevOps Culture or You Build It, You Run It?" },
+
+            // ==================== AZ-900 EXAM PREP (Azure Fundamentals) ====================
+            new() { Category = "AZ-900 Exam Prep", PointValue = 100, Question = "This cloud computing model provides the highest level of control over hardware.", Answer = "What is IaaS (Infrastructure as a Service)?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 100, Question = "This Azure service provides virtual machines running Windows or Linux.", Answer = "What is Azure Virtual Machines?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 100, Question = "This term describes the ability of a system to grow resources to meet demand.", Answer = "What is Scalability?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 100, Question = "This pricing model has no upfront costs and you only pay for what you use.", Answer = "What is Pay-As-You-Go (Consumption-based)?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 100, Question = "This Azure portal feature lets you estimate monthly costs before deployment.", Answer = "What is the Pricing Calculator?" },
+
+            new() { Category = "AZ-900 Exam Prep", PointValue = 200, Question = "This cloud benefit ensures applications remain available during failures.", Answer = "What is High Availability?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 200, Question = "This Azure feature provides two or more data centers in a region.", Answer = "What are Availability Zones?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 200, Question = "This document describes the uptime guarantees Microsoft provides.", Answer = "What is an SLA (Service Level Agreement)?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 200, Question = "This Azure service provides PaaS hosting for web applications.", Answer = "What is Azure App Service?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 200, Question = "This cloud model uses both on-premises and cloud resources.", Answer = "What is Hybrid Cloud?" },
+
+            new() { Category = "AZ-900 Exam Prep", PointValue = 300, Question = "This Azure service provides serverless event-driven code execution.", Answer = "What is Azure Functions?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 300, Question = "This governance tool enforces organizational standards on Azure resources.", Answer = "What is Azure Policy?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 300, Question = "This feature allows you to group subscriptions for management and billing.", Answer = "What are Management Groups?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 300, Question = "This Azure storage tier is best for frequently accessed data.", Answer = "What is Hot tier?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 300, Question = "This identity service was formerly known as Azure Active Directory.", Answer = "What is Microsoft Entra ID?" },
+
+            new() { Category = "AZ-900 Exam Prep", PointValue = 400, Question = "This defense-in-depth layer includes firewalls and DDoS protection.", Answer = "What is the Perimeter layer?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 400, Question = "This Azure service provides recommendations to improve security, reliability, and cost.", Answer = "What is Azure Advisor?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 400, Question = "This compliance feature shows how Azure meets regulatory requirements.", Answer = "What is the Trust Center or Compliance Manager?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 400, Question = "This Azure service collects and analyzes telemetry from cloud resources.", Answer = "What is Azure Monitor?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 400, Question = "This access control model grants permissions based on job function.", Answer = "What is RBAC (Role-Based Access Control)?" },
+
+            new() { Category = "AZ-900 Exam Prep", PointValue = 500, Question = "This capital expense model is reduced by moving to cloud computing.", Answer = "What is CapEx (Capital Expenditure)?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 500, Question = "This Azure feature prevents accidental deletion of critical resources.", Answer = "What are Resource Locks?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 500, Question = "This tool helps migrate on-premises workloads to Azure.", Answer = "What is Azure Migrate?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 500, Question = "This Azure feature replicates data to a secondary region automatically.", Answer = "What is Geo-Redundant Storage (GRS)?" },
+            new() { Category = "AZ-900 Exam Prep", PointValue = 500, Question = "This compliance certification ensures Azure meets US government security requirements.", Answer = "What is FedRAMP?" },
+
+            // ==================== AZ-204 EXAM PREP (Developing Solutions for Azure) ====================
+            new() { Category = "AZ-204 Exam Prep", PointValue = 100, Question = "This Azure service runs containerized applications without managing servers.", Answer = "What is Azure Container Instances?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 100, Question = "This Azure Functions trigger type responds to HTTP requests.", Answer = "What is HTTP Trigger?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 100, Question = "This file defines Azure Function bindings and triggers.", Answer = "What is function.json?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 100, Question = "This App Service feature allows deployment without downtime.", Answer = "What are Deployment Slots?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 100, Question = "This Azure storage type stores unstructured data like images and videos.", Answer = "What is Blob Storage?" },
+
+            new() { Category = "AZ-204 Exam Prep", PointValue = 200, Question = "This Cosmos DB consistency level provides the strongest guarantees.", Answer = "What is Strong consistency?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 200, Question = "This Azure service securely stores application secrets and certificates.", Answer = "What is Azure Key Vault?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 200, Question = "This authentication library is recommended for Azure AD integration.", Answer = "What is MSAL (Microsoft Authentication Library)?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 200, Question = "This caching service improves application performance with in-memory data.", Answer = "What is Azure Cache for Redis?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 200, Question = "This Azure messaging service supports queues and publish-subscribe patterns.", Answer = "What is Azure Service Bus?" },
+
+            new() { Category = "AZ-204 Exam Prep", PointValue = 300, Question = "This Blob Storage feature generates time-limited access URLs.", Answer = "What is a SAS (Shared Access Signature)?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 300, Question = "This Application Insights feature tracks user behavior and page views.", Answer = "What is User Analytics or Usage Analysis?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 300, Question = "This Azure CDN feature caches content at edge locations.", Answer = "What is Content Caching or POP (Point of Presence)?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 300, Question = "This Docker command builds an image from a Dockerfile.", Answer = "What is docker build?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 300, Question = "This Azure service orchestrates containerized applications at scale.", Answer = "What is Azure Kubernetes Service (AKS)?" },
+
+            new() { Category = "AZ-204 Exam Prep", PointValue = 400, Question = "This Durable Functions pattern runs multiple functions in parallel.", Answer = "What is Fan-out/Fan-in?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 400, Question = "This authentication flow is used for daemon/service applications.", Answer = "What is Client Credentials flow?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 400, Question = "This Event Grid feature filters events before delivery.", Answer = "What is Event Filtering or Subject Filtering?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 400, Question = "This API Management policy transforms request/response data.", Answer = "What is set-body or transformation policy?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 400, Question = "This Azure feature assigns an identity to resources without credentials.", Answer = "What is Managed Identity?" },
+
+            new() { Category = "AZ-204 Exam Prep", PointValue = 500, Question = "This Cosmos DB feature automatically indexes all properties.", Answer = "What is Automatic Indexing?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 500, Question = "This Application Insights query language analyzes telemetry data.", Answer = "What is KQL (Kusto Query Language)?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 500, Question = "This Blob Storage lifecycle management action moves data between tiers.", Answer = "What is tierToCool or tierToArchive?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 500, Question = "This Azure Functions hosting plan provides dedicated compute resources.", Answer = "What is Premium Plan or Dedicated (App Service) Plan?" },
+            new() { Category = "AZ-204 Exam Prep", PointValue = 500, Question = "This Cosmos DB partitioning strategy distributes data across physical partitions.", Answer = "What is Partition Key?" },
+
+            // ==================== AI-900 EXAM PREP (Azure AI Fundamentals) ====================
+            new() { Category = "AI-900 Exam Prep", PointValue = 100, Question = "This type of AI mimics human intelligence to perform tasks.", Answer = "What is Artificial Intelligence?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 100, Question = "This ML type learns from labeled training data.", Answer = "What is Supervised Learning?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 100, Question = "This ML type finds patterns in unlabeled data.", Answer = "What is Unsupervised Learning?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 100, Question = "This Azure service provides pre-built AI APIs for vision, speech, and language.", Answer = "What is Azure AI Services (Cognitive Services)?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 100, Question = "This ML task predicts a continuous numeric value.", Answer = "What is Regression?" },
+
+            new() { Category = "AI-900 Exam Prep", PointValue = 200, Question = "This ML task assigns data to discrete categories.", Answer = "What is Classification?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 200, Question = "This Azure service extracts text from images and documents.", Answer = "What is Azure AI Vision (Computer Vision) or Document Intelligence?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 200, Question = "This AI service converts speech to text.", Answer = "What is Speech-to-Text or Azure Speech Service?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 200, Question = "This unsupervised ML technique groups similar data points.", Answer = "What is Clustering?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 200, Question = "This Azure service builds custom machine learning models.", Answer = "What is Azure Machine Learning?" },
+
+            new() { Category = "AI-900 Exam Prep", PointValue = 300, Question = "This Computer Vision feature detects and identifies faces.", Answer = "What is Face Detection or Face API?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 300, Question = "This NLP task determines if text is positive, negative, or neutral.", Answer = "What is Sentiment Analysis?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 300, Question = "This Azure service understands user intent from natural language.", Answer = "What is Azure AI Language (LUIS) or Conversational Language Understanding?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 300, Question = "This NLP feature extracts important words and phrases from text.", Answer = "What is Key Phrase Extraction?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 300, Question = "This AI service translates text between languages.", Answer = "What is Azure AI Translator?" },
+
+            new() { Category = "AI-900 Exam Prep", PointValue = 400, Question = "This responsible AI principle ensures AI systems treat all people fairly.", Answer = "What is Fairness?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 400, Question = "This responsible AI principle ensures AI decisions can be explained.", Answer = "What is Transparency or Explainability?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 400, Question = "This Azure service creates conversational AI chatbots.", Answer = "What is Azure Bot Service or Azure AI Bot?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 400, Question = "This NLP feature identifies people, places, and organizations in text.", Answer = "What is Named Entity Recognition (NER)?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 400, Question = "This Computer Vision feature generates text descriptions of images.", Answer = "What is Image Captioning or Dense Captions?" },
+
+            new() { Category = "AI-900 Exam Prep", PointValue = 500, Question = "This responsible AI principle ensures AI systems are secure and reliable.", Answer = "What is Reliability and Safety?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 500, Question = "This Azure OpenAI model generates human-like text responses.", Answer = "What is GPT (Generative Pre-trained Transformer)?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 500, Question = "This ML evaluation metric measures model accuracy for classification.", Answer = "What is Precision, Recall, or F1 Score?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 500, Question = "This responsible AI principle ensures humans maintain control over AI.", Answer = "What is Human Oversight or Accountability?" },
+            new() { Category = "AI-900 Exam Prep", PointValue = 500, Question = "This Azure service indexes documents for AI-powered search.", Answer = "What is Azure AI Search (Cognitive Search)?" }
         ];
     }
 }

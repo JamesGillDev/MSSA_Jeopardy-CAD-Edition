@@ -18,10 +18,11 @@ This application is built to help MSSA students review and reinforce their learn
 
 ## Features
 
+
 - **Multi-Player Support** - Add or remove players dynamically (1-10+ players)
 - **Editable Player Names** - Click to customize player names anytime
-- **Category Selection** - Choose 6 categories from 15 available topics before each game
-- **375 Questions** - Massive question bank with 25 questions per category
+- **Category Selection** - Choose 6 categories from 18 available topics before each game
+- **450 Questions** - Massive question bank with 25 questions per category
 - **Daily Double** - Random hidden bonus questions for 2x points!
 - **Classic TV-Style Board** - Authentic Jeopardy! look with retro CRT screen effects
 - **Sound Effects** - Authentic chime and Daily Double sounds
@@ -29,7 +30,7 @@ This application is built to help MSSA students review and reinforce their learn
 - **Score Tracking** - Earn points for correct answers, lose points for incorrect ones
 - **Responsive Design** - Works on desktop, tablet, and mobile devices
 
-## Game Categories (15 Topics)
+## Game Categories (18 Topics)
 
 | Category | Topics Covered |
 |----------|---------------|
@@ -48,6 +49,14 @@ This application is built to help MSSA students review and reinforce their learn
 | **Machine Learning Basics** | Supervised/Unsupervised Learning, Neural Networks, Azure ML |
 | **PowerShell & CLI** | Cmdlets, Pipelines, Azure CLI, Automation Scripts |
 | **Agile & Scrum** | Sprints, User Stories, Kanban, Velocity, SAFe |
+
+### ?? Microsoft Certification Exam Prep
+
+| Certification | Exam Topics |
+|--------------|-------------|
+| **AZ-900 Exam Prep** | Azure Fundamentals - Cloud concepts, Core services, Security, Pricing, SLAs |
+| **AZ-204 Exam Prep** | Developing Solutions - Functions, Cosmos DB, Storage, Security, Monitoring |
+| **AI-900 Exam Prep** | AI Fundamentals - ML concepts, Computer Vision, NLP, Responsible AI |
 
 ## Technologies Used
 
