@@ -13,23 +13,21 @@
         <div class="category-selection">
             <h1>MSSA JEOPARDY!</h1>
             <h2>Select 6 Categories</h2>
-            <p class="selection-count">Selected: @selectedCategories.Count / 6</p>
-            
-            <div class="category-grid">
-                @foreach (var category in JeopardyGameService.AllCategoryNames)
-                {
-                    var cat = category;
-                    var isSelected = selectedCategories.Contains(cat);
-                    <div class="category-option @(isSelected ? "selected" : "") @(selectedCategories.Count >= 6 && !isSelected ? "disabled" : "")"
-                         @onclick="() => ToggleCategory(cat)">
-                        <span class="category-name">@cat</span>
-                        @if (isSelected)
-                        {
-                            <span class="check-mark">✓</span>
-                        }
-                    </div>
-                }
-            </div>
+            <p class="available-count">Available Categories: @JeopardyGameService.AllCategoryNames.Length</p>
+            <p class="selection-hint">Tip: Deselect one of your current 6 categories to choose a different one.</p>
+            @foreach (var category in JeopardyGameService.AllCategoryNames)
+            {
+                var cat = category;
+                var isSelected = selectedCategories.Contains(cat);
+                <div class="category-option @(isSelected ? "selected" : "") @(selectedCategories.Count >= 6 && !isSelected ? "disabled" : "")"
+                     @onclick="() => ToggleCategory(cat)">
+                    <span class="category-name">@cat</span>
+                    @if (isSelected)
+                    {
+                        <span class="check-mark">✓</span>
+                    }
+                </div>
+            }
 
             <div class="players-setup">
                 <h3>Players</h3>
@@ -227,7 +225,19 @@
 .selection-count {
     font-size: 1rem;
     color: #ffd700;
-    margin-bottom: 20px;
+    margin-bottom: 4px;
+}
+
+.available-count {
+    font-size: 0.95rem;
+    color: #e3f2fd;
+    margin-bottom: 2px;
+}
+
+.selection-hint {
+    font-size: 0.9rem;
+    color: #bbdefb;
+    margin-bottom: 16px;
 }
 
 .category-grid {
@@ -235,6 +245,9 @@
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 10px;
     max-width: 900px;
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 6px;
     margin: 0 auto 25px auto;
 }
 
