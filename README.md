@@ -49,14 +49,14 @@ This application is built to help MSSA students review and reinforce their learn
 | **Machine Learning Basics** | Supervised/Unsupervised Learning, Neural Networks, Azure ML |
 | **PowerShell & CLI** | Cmdlets, Pipelines, Azure CLI, Automation Scripts |
 | **Agile & Scrum** | Sprints, User Stories, Kanban, Velocity, SAFe |
-
-### ?? Microsoft Certification Exam Prep
-
-| Certification | Exam Topics |
-|--------------|-------------|
 | **AZ-900 Exam Prep** | Azure Fundamentals - Cloud concepts, Core services, Security, Pricing, SLAs |
 | **AZ-204 Exam Prep** | Developing Solutions - Functions, Cosmos DB, Storage, Security, Monitoring |
 | **AI-900 Exam Prep** | AI Fundamentals - ML concepts, Computer Vision, NLP, Responsible AI |
+| **Algorithms (C#)** | Sorting, Searching, Graph, Dynamic Programming, C# Patterns |
+| **DP-3001 (Azure Data)** | Azure SQL, Cosmos DB, Synapse, Data Lake, Data Factory |
+| **DP-080 (Data Fundamentals)** | Relational, NoSQL, Keys, Constraints, Data Types |
+| **DP-3020 (Advanced Data)** | Integration, Quality, Analytics, Azure Purview, Data Modeling |
+| **MS-4010 (Security)** | Access Control, Attacks, Principles, Azure Security, Frameworks |
 
 ## Technologies Used
 
