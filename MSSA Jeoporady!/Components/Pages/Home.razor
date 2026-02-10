@@ -1,17 +1,10 @@
 ﻿@page "/"
 
+@using MSSA_Jeoporady_.Client.Services
+
 @code {
-    // Replace this with your actual category source or inject a service
-    private List<string> Categories = new()
-    {
-        "Azure Fundamentals",
-        "C# Programming",
-        "Web Development",
-        "DevOps and CI/CD",
-        "Databases",
-        "Security"
-        // Add new categories here, or load from a shared source
-    };
+    // Use the static property from JeopardyGameService for consistency
+    private List<string> Categories = JeopardyGameService.AllCategoryNames.ToList();
 }
 
 <PageTitle>MSSA Jeopardy! - Home</PageTitle>
