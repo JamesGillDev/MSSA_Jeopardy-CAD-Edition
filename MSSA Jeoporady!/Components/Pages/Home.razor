@@ -5,6 +5,38 @@
 
 @code {
     private List<string> Categories => JeopardyGameService.AllCategoryNames.ToList();
+        private static readonly Dictionary<string, string> CategoryDescriptions = new()
+    {
+        ["Azure Fundamentals"] = "Cloud concepts, services, and architecture",
+        ["C# Programming"] = "Object-oriented programming, LINQ, async/await",
+        ["Web Development"] = "ASP.NET Core, Blazor, REST APIs",
+        ["DevOps & CI/CD"] = "Git, Azure DevOps, Docker, Kubernetes",
+        ["Databases"] = "SQL, Entity Framework, Cosmos DB",
+        ["Security"] = "Authentication, Authorization, Azure Key Vault",
+        ["Networking"] = "TCP/IP, DNS, VPN, load balancing",
+        ["Cloud Architecture"] = "Microservices, resilience, scalability patterns",
+        ["Software Testing"] = "Unit tests, integration tests, TDD",
+        ["Data Structures"] = "Arrays, trees, graphs, and complexity",
+        ["Operating Systems"] = "Processes, threads, and memory management",
+        ["APIs & Integration"] = "REST, GraphQL, messaging, and webhooks",
+        ["Machine Learning Basics"] = "ML fundamentals and model evaluation",
+        ["PowerShell & CLI"] = "Automation scripting and command-line tooling",
+        ["Agile & Scrum"] = "Ceremonies, planning, and delivery practices",
+        ["AZ-900 Exam Prep"] = "Azure fundamentals exam prep topics",
+        ["AZ-204 Exam Prep"] = "Azure developer exam prep topics",
+        ["AI-900 Exam Prep"] = "AI fundamentals exam prep topics",
+        ["Algorithms (C#)"] = "Sorting, searching, graph, and dynamic programming",
+        ["DP-3001 (Azure Data)"] = "Azure SQL, Synapse, and data platform services",
+        ["DP-080 (Data Fundamentals)"] = "Relational and non-relational data basics",
+        ["DP-3020 (Advanced Data)"] = "Data integration, governance, and analytics",
+        ["MS-4010 (Security)"] = "Security principles, threats, and Azure security services"
+    };
+
+    private static string GetCategoryDescription(string category) =>
+        CategoryDescriptions.TryGetValue(category, out var description)
+            ? description
+            : "MSSA curriculum topic";
+
 }
 
 <PageTitle>MSSA Jeopardy! - Home</PageTitle>
@@ -24,7 +56,7 @@
         <ul class="topic-list">
             @foreach (var cat in Categories)
             {
-                <li><strong>@cat</strong></li>
+                <li><strong>@cat</strong> - @GetCategoryDescription(cat)</li>
             }
         </ul>
         <a href="jeopardy" class="play-button">Play Jeopardy!</a>

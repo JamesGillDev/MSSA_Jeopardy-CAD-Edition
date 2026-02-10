@@ -878,7 +878,7 @@
     private bool showAnswer = false;
     private int? editingPlayer = null;
     private string editingName = "";
-    private List<string> selectedCategories = new() { "Azure Fundamentals", "C# Programming", "Web Development", "DevOps & CI/CD", "Databases", "Security" };
+    private List<string> selectedCategories = JeopardyGameService.AllCategoryNames.Take(6).ToList();
 
     private void ToggleCategory(string category)
     {
