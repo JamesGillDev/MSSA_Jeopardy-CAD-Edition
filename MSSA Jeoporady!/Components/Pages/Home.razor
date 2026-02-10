@@ -1,5 +1,19 @@
 ﻿@page "/"
 
+@code {
+    // Replace this with your actual category source or inject a service
+    private List<string> Categories = new()
+    {
+        "Azure Fundamentals",
+        "C# Programming",
+        "Web Development",
+        "DevOps and CI/CD",
+        "Databases",
+        "Security"
+        // Add new categories here, or load from a shared source
+    };
+}
+
 <PageTitle>MSSA Jeopardy! - Home</PageTitle>
 
 <div class="home-container">
@@ -15,12 +29,10 @@
             Challenge yourself and your teammates with questions covering the key topics from the MSSA Cloud Application Development curriculum:
         </p>
         <ul class="topic-list">
-            <li><strong>Azure Fundamentals</strong> - Cloud concepts, services, and architecture</li>
-            <li><strong>C# Programming</strong> - Object-oriented programming, LINQ, async/await</li>
-            <li><strong>Web Development</strong> - ASP.NET Core, Blazor, REST APIs</li>
-            <li><strong>DevOps and CI/CD</strong> - Git, Azure DevOps, Docker, Kubernetes</li>
-            <li><strong>Databases</strong> - SQL, Entity Framework, Cosmos DB</li>
-            <li><strong>Security</strong> - Authentication, Authorization, Azure Key Vault</li>
+            @foreach (var cat in Categories)
+            {
+                <li><strong>@cat</strong></li>
+            }
         </ul>
         <a href="jeopardy" class="play-button">Play Jeopardy!</a>
     </div>
