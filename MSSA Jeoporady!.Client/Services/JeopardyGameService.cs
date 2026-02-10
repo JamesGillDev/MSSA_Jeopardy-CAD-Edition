@@ -36,7 +36,13 @@ public class JeopardyGameService
         "Agile & Scrum",
         "AZ-900 Exam Prep",
         "AZ-204 Exam Prep",
-        "AI-900 Exam Prep"
+        "AI-900 Exam Prep",
+        // New categories
+        "Algorithms (C#)", // C# Algorithms
+        "DP-3001 (Azure Data)", // Azure Data
+        "DP-080 (Data Fundamentals)", // Data Fundamentals
+        "DP-3020 (Advanced Data)", // Advanced Data
+        "MS-4010 (Security)" // Security
     ];
 
     public JeopardyGameService()
@@ -774,7 +780,162 @@ public class JeopardyGameService
             new() { Category = "AI-900 Exam Prep", PointValue = 500, Question = "This Azure OpenAI model generates human-like text responses.", Answer = "What is GPT (Generative Pre-trained Transformer)?" },
             new() { Category = "AI-900 Exam Prep", PointValue = 500, Question = "This ML evaluation metric measures model accuracy for classification.", Answer = "What is Precision, Recall, or F1 Score?" },
             new() { Category = "AI-900 Exam Prep", PointValue = 500, Question = "This responsible AI principle ensures humans maintain control over AI.", Answer = "What is Human Oversight or Accountability?" },
-            new() { Category = "AI-900 Exam Prep", PointValue = 500, Question = "This Azure service indexes documents for AI-powered search.", Answer = "What is Azure AI Search (Cognitive Search)?" }
+            new() { Category = "AI-900 Exam Prep", PointValue = 500, Question = "This Azure service indexes documents for AI-powered search.", Answer = "What is Azure AI Search (Cognitive Search)?" },
+
+            // ==================== ALGORITHMS (C#) ====================
+            new() { Category = "Algorithms (C#)", PointValue = 100, Question = "This algorithm sorts an array by repeatedly stepping through the list, comparing adjacent elements and swapping them if they are in the wrong order.", Answer = "What is Bubble Sort?" },
+            new() { Category = "Algorithms (C#)", PointValue = 100, Question = "This algorithm repeatedly finds the minimum element and puts it at the beginning.", Answer = "What is Selection Sort?" },
+            new() { Category = "Algorithms (C#)", PointValue = 100, Question = "This algorithm inserts each element into its correct position in a sorted part of the array.", Answer = "What is Insertion Sort?" },
+            new() { Category = "Algorithms (C#)", PointValue = 100, Question = "This algorithm divides the array into halves, sorts each half, and merges them.", Answer = "What is Merge Sort?" },
+            new() { Category = "Algorithms (C#)", PointValue = 100, Question = "This algorithm sorts by partitioning the array and recursively sorting the partitions.", Answer = "What is Quick Sort?" },
+
+            new() { Category = "Algorithms (C#)", PointValue = 200, Question = "This search algorithm finds the position of a target value within a sorted array in O(log n) time.", Answer = "What is Binary Search?" },
+            new() { Category = "Algorithms (C#)", PointValue = 200, Question = "This search algorithm checks each element in a list until it finds the target.", Answer = "What is Linear Search?" },
+            new() { Category = "Algorithms (C#)", PointValue = 200, Question = "This algorithm finds the shortest path in an unweighted graph.", Answer = "What is Breadth-First Search (BFS)?" },
+            new() { Category = "Algorithms (C#)", PointValue = 200, Question = "This algorithm is used to traverse a tree by visiting the root, then left and right subtrees.", Answer = "What is Preorder Traversal?" },
+            new() { Category = "Algorithms (C#)", PointValue = 200, Question = "This algorithm is used to traverse a tree by visiting left subtree, root, then right subtree.", Answer = "What is Inorder Traversal?" },
+
+            new() { Category = "Algorithms (C#)", PointValue = 300, Question = "This algorithm finds the shortest path in a weighted graph and is often used in navigation systems.", Answer = "What is Dijkstra's Algorithm?" },
+            new() { Category = "Algorithms (C#)", PointValue = 300, Question = "This algorithm finds the minimum spanning tree of a graph.", Answer = "What is Kruskal's Algorithm?" },
+            new() { Category = "Algorithms (C#)", PointValue = 300, Question = "This algorithm is used for topological sorting of a directed acyclic graph.", Answer = "What is Kahn's Algorithm?" },
+            new() { Category = "Algorithms (C#)", PointValue = 300, Question = "This algorithm is used to detect cycles in a graph.", Answer = "What is Depth-First Search (DFS)?" },
+            new() { Category = "Algorithms (C#)", PointValue = 300, Question = "This algorithm is used to find strongly connected components in a graph.", Answer = "What is Kosaraju's Algorithm?" },
+
+            new() { Category = "Algorithms (C#)", PointValue = 400, Question = "This algorithm divides the input array into two halves, sorts them, and then merges them.", Answer = "What is Merge Sort?" },
+            new() { Category = "Algorithms (C#)", PointValue = 400, Question = "This algorithm sorts by partitioning the array and recursively sorting the partitions.", Answer = "What is Quick Sort?" },
+            new() { Category = "Algorithms (C#)", PointValue = 400, Question = "This algorithm is used for finding the longest increasing subsequence.", Answer = "What is Dynamic Programming?" },
+            new() { Category = "Algorithms (C#)", PointValue = 400, Question = "This algorithm is used to solve the knapsack problem efficiently.", Answer = "What is Dynamic Programming?" },
+            new() { Category = "Algorithms (C#)", PointValue = 400, Question = "This algorithm is used to find the maximum subarray sum in O(n) time.", Answer = "What is Kadane's Algorithm?" },
+
+            new() { Category = "Algorithms (C#)", PointValue = 500, Question = "This algorithm is used to traverse or search tree or graph data structures, visiting all the nodes at the present depth before moving on to the nodes at the next depth level.", Answer = "What is Breadth-First Search (BFS)?" },
+            new() { Category = "Algorithms (C#)", PointValue = 500, Question = "This algorithm is used to find the shortest path in a graph with negative weights.", Answer = "What is Bellman-Ford Algorithm?" },
+            new() { Category = "Algorithms (C#)", PointValue = 500, Question = "This algorithm is used to find all strongly connected components in a directed graph.", Answer = "What is Tarjan's Algorithm?" },
+            new() { Category = "Algorithms (C#)", PointValue = 500, Question = "This algorithm is used to find the lowest common ancestor in a binary tree.", Answer = "What is Binary Lifting?" },
+            new() { Category = "Algorithms (C#)", PointValue = 500, Question = "This algorithm is used to find the shortest path between all pairs of nodes in a graph.", Answer = "What is Floyd-Warshall Algorithm?" },
+
+            // ==================== DP-3001 (Azure Data) ====================
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 100, Question = "This Azure service provides a fully managed relational database with built-in intelligence.", Answer = "What is Azure SQL Database?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 100, Question = "This Azure service provides a scalable NoSQL database.", Answer = "What is Azure Cosmos DB?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 100, Question = "This Azure service is used for data warehousing and analytics.", Answer = "What is Azure Synapse Analytics?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 100, Question = "This Azure service is designed for storing and analyzing large amounts of unstructured data.", Answer = "What is Azure Data Lake?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 100, Question = "This tool is used to move data between different Azure data stores.", Answer = "What is Azure Data Factory?" },
+
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 200, Question = "This Azure service is used for big data analytics and can process massive amounts of data quickly.", Answer = "What is Azure Synapse Analytics?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 200, Question = "This Azure service provides a managed PostgreSQL database.", Answer = "What is Azure Database for PostgreSQL?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 200, Question = "This Azure service provides a managed MySQL database.", Answer = "What is Azure Database for MySQL?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 200, Question = "This Azure service provides a managed MariaDB database.", Answer = "What is Azure Database for MariaDB?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 200, Question = "This Azure service provides a scalable, distributed cache.", Answer = "What is Azure Cache for Redis?" },
+
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 300, Question = "This Azure service is designed for storing and analyzing large amounts of unstructured data.", Answer = "What is Azure Data Lake?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 300, Question = "This Azure service provides a fully managed Apache Spark analytics platform.", Answer = "What is Azure Databricks?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 300, Question = "This Azure service provides a managed Hadoop cluster.", Answer = "What is Azure HDInsight?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 300, Question = "This Azure service provides a scalable event ingestion platform.", Answer = "What is Azure Event Hubs?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 300, Question = "This Azure service provides a managed message broker for enterprise messaging.", Answer = "What is Azure Service Bus?" },
+
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 400, Question = "This tool is used to move data between different Azure data stores.", Answer = "What is Azure Data Factory?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 400, Question = "This Azure service provides a managed ETL (Extract, Transform, Load) platform.", Answer = "What is Azure Data Factory?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 400, Question = "This Azure service provides a managed data catalog.", Answer = "What is Azure Purview?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 400, Question = "This Azure service provides a managed data integration platform.", Answer = "What is Azure Data Factory?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 400, Question = "This Azure service provides a managed data lake analytics platform.", Answer = "What is Azure Data Lake Analytics?" },
+
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 500, Question = "This Azure feature provides high availability and disaster recovery for SQL databases.", Answer = "What is Geo-Replication?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 500, Question = "This Azure feature provides automatic failover for SQL databases.", Answer = "What is Auto-failover groups?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 500, Question = "This Azure feature provides point-in-time restore for SQL databases.", Answer = "What is Point-in-time Restore?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 500, Question = "This Azure feature provides backup and restore for SQL databases.", Answer = "What is Automated Backups?" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 500, Question = "This Azure feature provides geo-redundant storage for SQL databases.", Answer = "What is Geo-Redundant Storage (GRS)?" },
+
+            // ==================== DP-080 (Data Fundamentals) ====================
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 100, Question = "This type of database stores data in tables with rows and columns.", Answer = "What is a Relational Database?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 100, Question = "This type of database stores data as key-value pairs.", Answer = "What is a Key-Value Store?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 100, Question = "This type of database stores data as documents.", Answer = "What is a Document Database?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 100, Question = "This type of database stores data as graphs.", Answer = "What is a Graph Database?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 100, Question = "This type of database stores data as columns.", Answer = "What is a Columnar Database?" },
+
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 200, Question = "This language is used to query and manipulate data in relational databases.", Answer = "What is SQL?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 200, Question = "This language is used to query and manipulate data in NoSQL databases.", Answer = "What is NoSQL?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 200, Question = "This language is used to query and manipulate data in document databases.", Answer = "What is MongoDB Query Language?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 200, Question = "This language is used to query and manipulate data in graph databases.", Answer = "What is Gremlin?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 200, Question = "This language is used to query and manipulate data in columnar databases.", Answer = "What is CQL (Cassandra Query Language)?" },
+
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 300, Question = "This process organizes data to reduce redundancy and improve data integrity.", Answer = "What is Normalization?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 300, Question = "This process denormalizes data for performance.", Answer = "What is Denormalization?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 300, Question = "This process ensures data is accurate and consistent.", Answer = "What is Data Validation?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 300, Question = "This process ensures data is unique.", Answer = "What is Uniqueness Constraint?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 300, Question = "This process ensures data is not null.", Answer = "What is NOT NULL Constraint?" },
+
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 400, Question = "This type of key uniquely identifies each record in a table.", Answer = "What is a Primary Key?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 400, Question = "This type of key is used to link two tables together.", Answer = "What is a Foreign Key?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 400, Question = "This type of key is a candidate key that is not chosen as the primary key.", Answer = "What is an Alternate Key?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 400, Question = "This type of key is a combination of two or more columns used to identify a record uniquely.", Answer = "What is a Composite Key?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 400, Question = "This type of key is used to enforce uniqueness in a table.", Answer = "What is a Unique Key?" },
+
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 500, Question = "This type of database is optimized for storing and retrieving documents, such as JSON or XML.", Answer = "What is a Document Database?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 500, Question = "This type of database is optimized for storing and retrieving graphs.", Answer = "What is a Graph Database?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 500, Question = "This type of database is optimized for storing and retrieving columns.", Answer = "What is a Columnar Database?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 500, Question = "This type of database is optimized for storing and retrieving key-value pairs.", Answer = "What is a Key-Value Store?" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 500, Question = "This type of database is optimized for storing and retrieving time-series data.", Answer = "What is a Time-Series Database?" },
+
+            // ==================== DP-3020 (Advanced Data) ====================
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 100, Question = "This process involves combining data from multiple sources into a single, unified view.", Answer = "What is Data Integration?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 100, Question = "This process involves cleaning and transforming raw data.", Answer = "What is Data Preparation?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 100, Question = "This process involves collecting data from various sources.", Answer = "What is Data Ingestion?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 100, Question = "This process involves storing data in a central repository.", Answer = "What is Data Warehousing?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 100, Question = "This process involves organizing data for analysis.", Answer = "What is Data Modeling?" },
+
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 200, Question = "This technique is used to ensure data is accurate, complete, and reliable.", Answer = "What is Data Quality?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 200, Question = "This technique is used to remove duplicate data.", Answer = "What is Data Deduplication?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 200, Question = "This technique is used to validate data against business rules.", Answer = "What is Data Validation?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 200, Question = "This technique is used to standardize data formats.", Answer = "What is Data Standardization?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 200, Question = "This technique is used to enrich data with additional information.", Answer = "What is Data Enrichment?" },
+
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 300, Question = "This type of analytics predicts future trends based on historical data.", Answer = "What is Predictive Analytics?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 300, Question = "This type of analytics provides insights into what happened in the past.", Answer = "What is Descriptive Analytics?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 300, Question = "This type of analytics provides recommendations for actions.", Answer = "What is Prescriptive Analytics?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 300, Question = "This type of analytics provides real-time insights.", Answer = "What is Real-Time Analytics?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 300, Question = "This type of analytics provides insights into why something happened.", Answer = "What is Diagnostic Analytics?" },
+
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 400, Question = "This Azure service provides enterprise-grade data cataloging and governance.", Answer = "What is Azure Purview?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 400, Question = "This Azure service provides a managed data integration platform.", Answer = "What is Azure Data Factory?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 400, Question = "This Azure service provides a managed data lake analytics platform.", Answer = "What is Azure Data Lake Analytics?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 400, Question = "This Azure service provides a managed Apache Spark analytics platform.", Answer = "What is Azure Databricks?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 400, Question = "This Azure service provides a managed Hadoop cluster.", Answer = "What is Azure HDInsight?" },
+
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 500, Question = "This process involves transforming raw data into meaningful insights for decision-making.", Answer = "What is Data Analytics?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 500, Question = "This process involves visualizing data for analysis.", Answer = "What is Data Visualization?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 500, Question = "This process involves building machine learning models from data.", Answer = "What is Machine Learning?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 500, Question = "This process involves deploying machine learning models to production.", Answer = "What is MLOps?" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 500, Question = "This process involves monitoring data pipelines for reliability.", Answer = "What is Data Pipeline Monitoring?" },
+
+            // ==================== MS-4010 (Security) ====================
+            new() { Category = "MS-4010 (Security)", PointValue = 100, Question = "This process ensures only authorized users can access resources.", Answer = "What is Access Control?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 100, Question = "This process verifies the identity of a user or system.", Answer = "What is Authentication?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 100, Question = "This process determines what actions an authenticated user can perform.", Answer = "What is Authorization?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 100, Question = "This process protects data from unauthorized access.", Answer = "What is Data Encryption?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 100, Question = "This process ensures data is not altered during transmission.", Answer = "What is Data Integrity?" },
+
+            new() { Category = "MS-4010 (Security)", PointValue = 200, Question = "This type of attack attempts to make a service unavailable by overwhelming it with traffic.", Answer = "What is a Denial of Service (DoS) attack?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 200, Question = "This type of attack tricks users into revealing confidential information.", Answer = "What is Phishing?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 200, Question = "This type of attack injects malicious code into a website.", Answer = "What is Cross-Site Scripting (XSS)?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 200, Question = "This type of attack exploits vulnerabilities in software.", Answer = "What is Exploit?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 200, Question = "This type of attack intercepts communication between two parties.", Answer = "What is Man-in-the-Middle (MitM) attack?" },
+
+            new() { Category = "MS-4010 (Security)", PointValue = 300, Question = "This security principle states that users should only have the permissions they need to do their job.", Answer = "What is the Principle of Least Privilege?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 300, Question = "This security principle requires multiple forms of verification.", Answer = "What is Multi-Factor Authentication (MFA)?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 300, Question = "This security principle ensures that actions can be traced to individuals.", Answer = "What is Accountability?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 300, Question = "This security principle ensures that data is available when needed.", Answer = "What is Availability?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 300, Question = "This security principle ensures that data is protected from unauthorized changes.", Answer = "What is Integrity?" },
+
+            new() { Category = "MS-4010 (Security)", PointValue = 400, Question = "This Azure service helps manage secrets, keys, and certificates securely.", Answer = "What is Azure Key Vault?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 400, Question = "This Azure service provides identity and access management.", Answer = "What is Microsoft Entra ID (Azure AD)?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 400, Question = "This Azure service provides security monitoring and threat protection.", Answer = "What is Microsoft Defender for Cloud?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 400, Question = "This Azure service provides distributed denial-of-service (DDoS) protection.", Answer = "What is Azure DDoS Protection?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 400, Question = "This Azure service provides secure remote access to virtual networks.", Answer = "What is Azure Bastion?" },
+
+            new() { Category = "MS-4010 (Security)", PointValue = 500, Question = "This security framework provides guidelines for managing cybersecurity risk.", Answer = "What is NIST Cybersecurity Framework?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 500, Question = "This security framework is widely used for information security management.", Answer = "What is ISO/IEC 27001?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 500, Question = "This security framework is used for risk management in the US government.", Answer = "What is FISMA?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 500, Question = "This security framework is used for payment card industry data security.", Answer = "What is PCI DSS?" },
+            new() { Category = "MS-4010 (Security)", PointValue = 500, Question = "This security framework is used for health information security in the US.", Answer = "What is HIPAA?" },
         ];
     }
 }
