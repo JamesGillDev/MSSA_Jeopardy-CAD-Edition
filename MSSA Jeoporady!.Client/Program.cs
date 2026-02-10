@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MSSA_Jeoporady_.Client.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+builder.Services.AddSingleton<JeopardyGameService>();
 
 await builder.Build().RunAsync();

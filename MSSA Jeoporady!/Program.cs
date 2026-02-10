@@ -1,5 +1,6 @@
 using MSSA_Jeoporady_.Client.Pages;
 using MSSA_Jeoporady_.Components;
+using MSSA_Jeoporady_.Client.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddSingleton<JeopardyGameService>();
 
 var app = builder.Build();
 

@@ -1,10 +1,10 @@
 ﻿@page "/"
 
 @using MSSA_Jeoporady_.Client.Services
+@inject JeopardyGameService GameService
 
 @code {
-    // Use the static property from JeopardyGameService for consistency
-    private List<string> Categories = JeopardyGameService.AllCategoryNames.ToList();
+    private List<string> Categories => JeopardyGameService.AllCategoryNames.ToList();
 }
 
 <PageTitle>MSSA Jeopardy! - Home</PageTitle>
