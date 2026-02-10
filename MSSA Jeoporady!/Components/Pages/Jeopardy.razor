@@ -1,0 +1,52 @@
+@page "/jeopardy"
+@using MSSA_Jeoporady_.Client.Services
+@inject JeopardyGameService GameService
+
+<PageTitle>Jeopardy Game</PageTitle>
+
+<div class="jeopardy-board">
+    @if (GameService.Categories != null && GameService.Categories.Count > 0)
+    {
+        <table>
+            <thead>
+                <tr>
+                    @foreach (var category in GameService.Categories)
+                    {
+                        <th>@category.Name</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (int row = 0; row < 5; row++)
+                {
+                    <tr>
+                        @foreach (var category in GameService.Categories)
+                        {
+                            var question = category.Questions.ElementAtOrDefault(row);
+                            <td>
+                                @if (question != null && !question.IsAnswered)
+                                {
+                                    <button @onclick="() => GameService.SelectQuestion(question)">
+                                        @question.PointValue
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No categories selected. Please start a new game.</p>
+    }
+</div>
+
+@code {
+    // Add any UI logic or event handlers here
+}
