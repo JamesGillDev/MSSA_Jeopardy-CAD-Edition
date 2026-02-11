@@ -1,12 +1,2 @@
-@inject JeopardyGameService GameService
-
-@foreach (var category in GameService.Categories)
-{
-    <h3>@category.Name</h3>
-    <ul>
-        @foreach (var question in category.Questions)
-        {
-            <li>@question.Question</li>
-        }
-    </ul>
-}
+@* This page is not supported in the server project because JeopardyGameService is only available in the Client (WASM) project. *@
+<p style="color: red; font-weight: bold;">This page is only available in the Blazor WebAssembly (Client) app.</p>
