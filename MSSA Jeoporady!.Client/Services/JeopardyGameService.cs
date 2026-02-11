@@ -76,6 +76,12 @@ public class JeopardyGameService
             SelectedCategories = AllCategoryNames.Take(6).ToList();
         }
         
+        // Defensive: Ensure at least one player exists
+        if (PlayerScores.Count == 0)
+        {
+            AddPlayer();
+        }
+
         foreach (var key in PlayerScores.Keys.ToList())
         {
             PlayerScores[key] = 0;
