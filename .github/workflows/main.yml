@@ -1,0 +1,48 @@
+name: Build and deploy ASP.Net Core app to Azure Web App - mssa-jeopardy-jamesgill
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: mssa-jeopardy-jamesgill
+  DOTNET_CORE_VERSION: '10.0.x'
+  SERVER_PROJECT: 'MSSA Jeoporady!/MSSA Jeoporady!/MSSA Jeoporady!.csproj'
+  PUBLISH_DIR: 'publish'
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+
+      - name: dotnet --info
+        run: dotnet --info
+
+      - name: Restore
+        run: dotnet restore "${{ env.SERVER_PROJECT }}"
+
+      - name: Build
+        run: dotnet build "${{ env.SERVER_PROJECT }}" -c Release --no-restore
+
+      - name: Publish
+        run: dotnet publish "${{ env.SERVER_PROJECT }}" -c Release --no-build -o "${{ env.PUBLISH_DIR }}"
+
+      - name: List publish output (sanity check)
+        run: dir "${{ env.PUBLISH_DIR }}"
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EB08E5A0384E4D569CDCB3CA0BA565B7 }}
+          package: ${{ env.PUBLISH_DIR }}
