@@ -235,6 +235,15 @@
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 10px;
     max-width: 900px;
+
+    /* Keep the page usable when the category list grows.
+       This ensures new categories remain visible via an internal scroll area
+       while keeping the Start Game button reachable. */
+    max-height: min(55vh, 420px);
+    overflow-y: auto;
+    padding-right: 6px;
+    -webkit-overflow-scrolling: touch;
+
     margin: 0 auto 25px auto;
 }
 

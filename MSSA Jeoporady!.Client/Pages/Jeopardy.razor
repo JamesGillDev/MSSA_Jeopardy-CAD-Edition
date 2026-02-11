@@ -1,4 +1,4 @@
-﻿@page "/jeopardy-server-legacy"
+﻿@page "/jeopardy"
 @using MSSA_Jeoporady_.Client.Models
 @using MSSA_Jeoporady_.Client.Services
 @inject IJSRuntime JS
@@ -13,21 +13,29 @@
         <div class="category-selection">
             <h1>MSSA JEOPARDY!</h1>
             <h2>Select 6 Categories</h2>
+            <p class="selection-count">Selected: @selectedCategories.Count / 6</p>
             <p class="available-count">Available Categories: @JeopardyGameService.AllCategoryNames.Length</p>
             <p class="selection-hint">Tip: Deselect one of your current 6 categories to choose a different one.</p>
-            @foreach (var category in JeopardyGameService.AllCategoryNames)
-            {
-                var cat = category;
-                var isSelected = selectedCategories.Contains(cat);
-                <div class="category-option @(isSelected ? "selected" : "") @(selectedCategories.Count >= 6 && !isSelected ? "disabled" : "")"
-                     @onclick="() => ToggleCategory(cat)">
-                    <span class="category-name">@cat</span>
-                    @if (isSelected)
-                    {
-                        <span class="check-mark">✓</span>
-                    }
-                </div>
-            }
+
+            <div class="preset-actions">
+                <button class="btn-preset" @onclick="UseNewCategoryPreset">Use New Categories</button>
+                <button class="btn-preset" @onclick="UseClassicCategoryPreset">Use Classic Categories</button>
+            </div>
+            <div class="category-grid">
+                @foreach (var category in JeopardyGameService.AllCategoryNames)
+                {
+                    var cat = category;
+                    var isSelected = selectedCategories.Contains(cat);
+                    <div class="category-option @(isSelected ? "selected" : "") @(selectedCategories.Count >= 6 && !isSelected ? "disabled" : "")"
+                         @onclick="() => ToggleCategory(cat)">
+                        <span class="category-name">@cat</span>
+                        @if (isSelected)
+                        {
+                            <span class="check-mark">✓</span>
+                        }
+                    </div>
+                }
+            </div>
 
             <div class="players-setup">
                 <h3>Players</h3>
@@ -891,7 +899,15 @@
     private bool showAnswer = false;
     private int? editingPlayer = null;
     private string editingName = "";
-    private List<string> selectedCategories = JeopardyGameService.AllCategoryNames.Take(6).ToList();
+    private List<string> selectedCategories = new()
+    {
+        "Algorithms (C#)",
+        "DP-3001 (Azure Data)",
+        "DP-080 (Data Fundamentals)",
+        "DP-3020 (Advanced Data)",
+        "MS-4010 (Security)",
+        "Azure Fundamentals"
+    };
 
     private void ToggleCategory(string category)
     {
@@ -1028,5 +1044,23 @@
             editingPlayer = null;
             editingName = "";
         }
+    }
+
+    private void UseNewCategoryPreset()
+    {
+        selectedCategories = new List<string>
+        {
+            "Algorithms (C#)",
+            "DP-3001 (Azure Data)",
+            "DP-080 (Data Fundamentals)",
+            "DP-3020 (Advanced Data)",
+            "MS-4010 (Security)",
+            "Azure Fundamentals"
+        };
+    }
+
+    private void UseClassicCategoryPreset()
+    {
+        selectedCategories = JeopardyGameService.AllCategoryNames.Take(6).ToList();
     }
 }
