@@ -1,0 +1,526 @@
+﻿@page "/jeopardy"
+@using MSSA_Jeoporady_.Client.Models
+@using MSSA_Jeoporady_.Client.Services
+@rendermode InteractiveWebAssembly
+
+<PageTitle>MSSA Jeopardy!</PageTitle>
+
+<div class="jeopardy-container">
+    <div class="jeopardy-header">
+        <h1>MSSA Cloud Application Development</h1>
+        <h2>JEOPARDY!</h2>
+        <div class="players-display">
+            @for (int i = 1; i <= 3; i++)
+            {
+                var playerNum = i;
+                <div class="player-score @(gameService.CurrentPlayer == playerNum ? "active-player" : "")">
+                    @if (editingPlayer == playerNum)
+                    {
+                        <input type="text" class="player-name-input" 
+                               @bind="editingName" 
+                               @bind:event="oninput"
+                               @onblur="() => SavePlayerName(playerNum)"
+                               @onkeydown="(e) => HandleKeyDown(e, playerNum)" />
+                    }
+                    else
+                    {
+                        <span class="player-name" @onclick="() => StartEditingPlayer(playerNum)">
+                            @gameService.PlayerNames[playerNum]
+                            <span class="edit-icon">(edit)</span>
+                        </span>
+                    }
+                    <span class="player-points @(gameService.PlayerScores[playerNum] >= 0 ? "positive" : "negative")">
+                        $@gameService.PlayerScores[playerNum].ToString("N0")
+                    </span>
+                </div>
+            }
+        </div>
+        <div class="current-turn">
+            Current Turn: <strong>@gameService.PlayerNames[gameService.CurrentPlayer]</strong>
+        </div>
+    </div>
+
+    @if (gameService.IsGameComplete())
+    {
+        <div class="game-complete">
+            <h2>Game Complete!</h2>
+            <p>Winner: <strong>@gameService.PlayerNames[gameService.GetWinner()]</strong> with $@gameService.GetHighestScore().ToString("N0")!</p>
+            <div class="final-scores">
+                <h3>Final Scores:</h3>
+                @for (int i = 1; i <= 3; i++)
+                {
+                    var playerNum = i;
+                    <p>@gameService.PlayerNames[playerNum]: $@gameService.PlayerScores[playerNum].ToString("N0")</p>
+                }
+            </div>
+            <button class="btn-play-again" @onclick="RestartGame">Play Again</button>
+        </div>
+    }
+    else if (gameService.CurrentQuestion != null)
+    {
+        <div class="question-modal-overlay" @onclick="CloseModal">
+            <div class="question-modal" @onclick:stopPropagation="true">
+                <div class="question-category">@gameService.CurrentQuestion.Category</div>
+                <div class="question-value">$@gameService.CurrentQuestion.PointValue</div>
+                <div class="question-text">@gameService.CurrentQuestion.Question</div>
+                
+                @if (showAnswer)
+                {
+                    <div class="answer-section">
+                        <div class="answer-text">@gameService.CurrentQuestion.Answer</div>
+                        <div class="player-answer-section">
+                            <p>Who answered correctly?</p>
+                            <div class="answer-buttons">
+                                <button class="btn-player btn-p1" @onclick="() => SubmitAnswer(true, 1)">@gameService.PlayerNames[1]</button>
+                                <button class="btn-player btn-p2" @onclick="() => SubmitAnswer(true, 2)">@gameService.PlayerNames[2]</button>
+                                <button class="btn-player btn-p3" @onclick="() => SubmitAnswer(true, 3)">@gameService.PlayerNames[3]</button>
+                            </div>
+                            <button class="btn-incorrect" @onclick="() => SubmitAnswer(false, gameService.CurrentPlayer)">No One Got It</button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <button class="btn-reveal" @onclick="RevealAnswer">Reveal Answer</button>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="game-board">
+        @foreach (var category in gameService.Categories)
+        {
+            <div class="category-column">
+                <div class="category-header">@category.Name</div>
+                @foreach (var question in category.Questions.OrderBy(q => q.PointValue))
+                {
+                    <div class="question-cell @(question.IsAnswered ? "answered" : "")" 
+                         @onclick="() => SelectQuestion(question)">
+                        @if (!question.IsAnswered)
+                        {
+                            <span>$@question.PointValue</span>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="game-controls">
+        <button class="btn-restart" @onclick="RestartGame">New Game</button>
+    </div>
+</div>
+
+<style>
+.jeopardy-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.jeopardy-header {
+    text-align: center;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, #060ce9 0%, #1a237e 100%);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.jeopardy-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+}
+
+.jeopardy-header h2 {
+    margin: 10px 0 20px 0;
+    font-size: 3rem;
+    font-weight: bold;
+    text-shadow: 3px 3px 0 #000;
+    letter-spacing: 5px;
+}
+
+.players-display {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.player-score {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 25px;
+    border-radius: 10px;
+    min-width: 150px;
+    transition: all 0.3s ease;
+}
+
+.player-score.active-player {
+    background: rgba(255, 215, 0, 0.3);
+    border: 2px solid #ffd700;
+    transform: scale(1.05);
+}
+
+.player-name {
+    display: block;
+    font-size: 1rem;
+    font-weight: 300;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.player-name:hover {
+    text-decoration: underline;
+}
+
+.edit-icon {
+    font-size: 0.7rem;
+    opacity: 0.5;
+    margin-left: 5px;
+}
+
+.player-name:hover .edit-icon {
+    opacity: 1;
+}
+
+.player-name-input {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid #ffd700;
+    border-radius: 5px;
+    color: white;
+    padding: 5px 10px;
+    font-size: 1rem;
+    text-align: center;
+    width: 120px;
+    outline: none;
+}
+
+.player-name-input:focus {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: #fff;
+}
+
+.player-points {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.player-points.positive {
+    color: #4caf50;
+}
+
+.player-points.negative {
+    color: #f44336;
+}
+
+.current-turn {
+    font-size: 1.2rem;
+    color: #ffd700;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: start;
+}
+
+.category-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.category-header {
+    background: linear-gradient(135deg, #060ce9 0%, #1a237e 100%);
+    color: white;
+    padding: 15px 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.question-cell {
+    background: linear-gradient(135deg, #060ce9 0%, #0d47a1 100%);
+    color: #ffd700;
+    padding: 25px 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    text-shadow: 2px 2px 0 #000;
+}
+
+.question-cell:hover:not(.answered) {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+}
+
+.question-cell.answered {
+    background: #1a237e;
+    cursor: default;
+    opacity: 0.5;
+    height: 80px;
+}
+
+    .question-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .question-modal {
+        background: linear-gradient(135deg, #060ce9 0%, #1a237e 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 15px;
+        max-width: 700px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .question-category {
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        opacity: 0.8;
+        margin-bottom: 10px;
+    }
+
+    .question-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #ffd700;
+        text-shadow: 2px 2px 0 #000;
+        margin-bottom: 30px;
+    }
+
+    .question-text {
+        font-size: 1.5rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .answer-section {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .answer-text {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #ffd700;
+        margin-bottom: 25px;
+        text-shadow: 2px 2px 0 #000;
+    }
+
+    .player-answer-section p {
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+    }
+
+    .answer-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    .btn-reveal, .btn-correct, .btn-incorrect, .btn-restart, .btn-play-again, .btn-player {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-reveal {
+        background: #ffd700;
+        color: #1a237e;
+    }
+
+    .btn-reveal:hover {
+        background: #ffed4a;
+        transform: scale(1.05);
+    }
+
+    .btn-player {
+        background: #4caf50;
+        color: white;
+    }
+
+    .btn-p1 { background: #2196F3; }
+    .btn-p2 { background: #4CAF50; }
+    .btn-p3 { background: #FF9800; }
+
+    .btn-player:hover {
+        transform: scale(1.05);
+        filter: brightness(1.1);
+    }
+
+    .btn-incorrect {
+        background: #f44336;
+        color: white;
+    }
+
+    .btn-incorrect:hover {
+        background: #ef5350;
+        transform: scale(1.05);
+    }
+
+    .btn-restart, .btn-play-again {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-restart:hover, .btn-play-again:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .game-controls {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .game-complete {
+        text-align: center;
+        background: linear-gradient(135deg, #060ce9 0%, #1a237e 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .game-complete h2 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .game-complete p {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .final-scores {
+        margin: 20px 0;
+    }
+
+    .final-scores h3 {
+        margin-bottom: 10px;
+    }
+
+    @@media (max-width: 900px) {
+        .game-board {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .jeopardy-header h2 {
+            font-size: 2rem;
+        }
+        
+        .question-cell {
+            font-size: 1.2rem;
+            padding: 20px 8px;
+        }
+
+        .players-display {
+            gap: 15px;
+        }
+
+        .player-score {
+            min-width: 100px;
+            padding: 10px 15px;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .game-board {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .question-modal {
+            padding: 25px;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+
+@code {
+    private JeopardyGameService gameService = new();
+    private bool showAnswer = false;
+
+    private void SelectQuestion(JeopardyQuestion question)
+    {
+        if (!question.IsAnswered)
+        {
+            showAnswer = false;
+            gameService.SelectQuestion(question);
+        }
+    }
+
+    private void RevealAnswer()
+    {
+        showAnswer = true;
+    }
+
+    private void SubmitAnswer(bool isCorrect, int playerNumber)
+    {
+        gameService.AnswerQuestion(isCorrect, playerNumber);
+        showAnswer = false;
+    }
+
+    private void CloseModal()
+    {
+        gameService.CloseQuestion();
+        showAnswer = false;
+    }
+
+    private void RestartGame()
+    {
+        gameService.InitializeGame();
+        showAnswer = false;
+    }
+}

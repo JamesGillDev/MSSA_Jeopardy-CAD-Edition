@@ -1,0 +1,10 @@
+@using MSSA_Jeopardy_.Services
+@using MSSA_Jeopardy_.Models
+@inject JeopardyGameService GameService
+
+<ul>
+@foreach (var cat in GameService    .AllCategoryNames)
+{
+    <li>@cat</li>
+}
+</ul>

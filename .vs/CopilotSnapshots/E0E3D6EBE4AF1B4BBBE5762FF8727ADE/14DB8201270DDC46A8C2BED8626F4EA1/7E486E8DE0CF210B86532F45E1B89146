@@ -1,0 +1,2 @@
+﻿@* This page is not supported in the server project because JeopardyGameService is only available in the Client (WASM) project. *@
+<p style="color: red; font-weight: bold;">This page is only available in the Blazor WebAssembly (Client) app.</p>

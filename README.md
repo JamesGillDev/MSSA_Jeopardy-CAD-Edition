@@ -94,7 +94,7 @@ This application is built to help MSSA students review and reinforce their learn
 
 4. **Run the application**
    ```bash
-   cd "MSSA Jeoporady!"
+   cd "MSSA Jeopardy!"
    dotnet run
    ```
 
@@ -102,8 +102,8 @@ This application is built to help MSSA students review and reinforce their learn
 
 ### Running in Visual Studio
 
-1. Open `MSSA Jeoporady!.sln` in Visual Studio 2022
-2. Set `MSSA Jeoporady!` as the startup project
+1. Open `MSSA Jeopardy!.sln` in Visual Studio 2022
+2. Set `MSSA Jeopardy!` as the startup project
 3. Press `F5` to run with debugging or `Ctrl+F5` to run without debugging
 
 ## How to Play
@@ -132,8 +132,8 @@ This application is built to help MSSA students review and reinforce their learn
 ## Project Structure
 
 ```
-MSSA Jeoporady!/
-|-- MSSA Jeoporady!/                    # Server project
+MSSA Jeopardy!/
+|-- MSSA Jeopardy!/                    # Server project
 |   |-- Components/
 |   |   |-- Layout/
 |   |   |   |-- MainLayout.razor        # Main layout template
@@ -147,7 +147,7 @@ MSSA Jeoporady!/
 |   |-- wwwroot/                        # Static assets
 |   `-- Program.cs                      # Application entry point
 |
-|-- MSSA Jeoporady!.Client/             # WebAssembly client project
+|-- MSSA Jeopardy!.Client/             # WebAssembly client project
 |   |-- Models/
 |   |   `-- JeopardyQuestion.cs         # Data models
 |   |-- Pages/
@@ -156,7 +156,7 @@ MSSA Jeoporady!/
 |   |   `-- JeopardyGameService.cs      # Game logic & questions
 |   `-- Program.cs                      # Client entry point
 |
-`-- MSSA Jeoporady!.sln                 # Solution file
+`-- MSSA Jeopardy!.slnx                 # Solution file
 ```
 
 ## Contributing

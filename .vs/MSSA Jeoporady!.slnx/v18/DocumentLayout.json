@@ -1,0 +1,199 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\MSSA Code-github\\MSSA Jeoporady!\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DFD0B693-ECB0-6C1B-1A6B-9CE2E3E8D077}|MSSA Jeoporady!\\MSSA Jeoporady!.csproj|c:\\mssa code-github\\mssa jeoporady!\\mssa jeoporady!\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DFD0B693-ECB0-6C1B-1A6B-9CE2E3E8D077}|MSSA Jeoporady!\\MSSA Jeoporady!.csproj|solutionrelative:mssa jeoporady!\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DFD0B693-ECB0-6C1B-1A6B-9CE2E3E8D077}|MSSA Jeoporady!\\MSSA Jeoporady!.csproj|c:\\mssa code-github\\mssa jeoporady!\\mssa jeoporady!\\components\\pages\\gameboard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DFD0B693-ECB0-6C1B-1A6B-9CE2E3E8D077}|MSSA Jeoporady!\\MSSA Jeoporady!.csproj|solutionrelative:mssa jeoporady!\\components\\pages\\gameboard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\MSSA Code-github\\MSSA Jeoporady!\\LICENSE||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:LICENSE||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\MSSA Code-github\\MSSA Jeoporady!\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DFD0B693-ECB0-6C1B-1A6B-9CE2E3E8D077}|MSSA Jeoporady!\\MSSA Jeoporady!.csproj|c:\\mssa code-github\\mssa jeoporady!\\mssa jeoporady!\\components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DFD0B693-ECB0-6C1B-1A6B-9CE2E3E8D077}|MSSA Jeoporady!\\MSSA Jeoporady!.csproj|solutionrelative:mssa jeoporady!\\components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DFD0B693-ECB0-6C1B-1A6B-9CE2E3E8D077}|MSSA Jeoporady!\\MSSA Jeoporady!.csproj|c:\\mssa code-github\\mssa jeoporady!\\mssa jeoporady!\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DFD0B693-ECB0-6C1B-1A6B-9CE2E3E8D077}|MSSA Jeoporady!\\MSSA Jeoporady!.csproj|solutionrelative:mssa jeoporady!\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B8769DC-3628-6069-3C00-964D742A5E41}|MSSA Jeoporady!.Client\\MSSA Jeoporady!.Client.csproj|c:\\mssa code-github\\mssa jeoporady!\\mssa jeoporady!.client\\pages\\jeopardy.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{7B8769DC-3628-6069-3C00-964D742A5E41}|MSSA Jeoporady!.Client\\MSSA Jeoporady!.Client.csproj|solutionrelative:mssa jeoporady!.client\\pages\\jeopardy.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B8769DC-3628-6069-3C00-964D742A5E41}|MSSA Jeoporady!.Client\\MSSA Jeoporady!.Client.csproj|c:\\mssa code-github\\mssa jeoporady!\\mssa jeoporady!.client\\models\\jeopardyquestion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B8769DC-3628-6069-3C00-964D742A5E41}|MSSA Jeoporady!.Client\\MSSA Jeoporady!.Client.csproj|solutionrelative:mssa jeoporady!.client\\models\\jeopardyquestion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\MSSA Code-github\\MSSA Jeoporady!\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DFD0B693-ECB0-6C1B-1A6B-9CE2E3E8D077}|MSSA Jeoporady!\\MSSA Jeoporady!.csproj|c:\\mssa code-github\\mssa jeoporady!\\mssa jeoporady!\\components\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DFD0B693-ECB0-6C1B-1A6B-9CE2E3E8D077}|MSSA Jeoporady!\\MSSA Jeoporady!.csproj|solutionrelative:mssa jeoporady!\\components\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B8769DC-3628-6069-3C00-964D742A5E41}|MSSA Jeoporady!.Client\\MSSA Jeoporady!.Client.csproj|c:\\mssa code-github\\mssa jeoporady!\\mssa jeoporady!.client\\services\\jeopardygameservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B8769DC-3628-6069-3C00-964D742A5E41}|MSSA Jeoporady!.Client\\MSSA Jeoporady!.Client.csproj|solutionrelative:mssa jeoporady!.client\\services\\jeopardygameservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "GameBoard.razor",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!\\Components\\Pages\\GameBoard.razor",
+              "RelativeDocumentMoniker": "MSSA Jeoporady!\\Components\\Pages\\GameBoard.razor",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!\\Components\\Pages\\GameBoard.razor",
+              "RelativeToolTip": "MSSA Jeoporady!\\Components\\Pages\\GameBoard.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-11T16:25:01.273Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LICENSE",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\LICENSE",
+              "RelativeDocumentMoniker": "LICENSE",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\LICENSE",
+              "RelativeToolTip": "LICENSE",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-02-09T15:09:48.877Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "JeopardyGameService.cs",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!.Client\\Services\\JeopardyGameService.cs",
+              "RelativeDocumentMoniker": "MSSA Jeoporady!.Client\\Services\\JeopardyGameService.cs",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!.Client\\Services\\JeopardyGameService.cs",
+              "RelativeToolTip": "MSSA Jeoporady!.Client\\Services\\JeopardyGameService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-08T04:04:06.467Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "App.razor",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!\\Components\\App.razor",
+              "RelativeDocumentMoniker": "MSSA Jeoporady!\\Components\\App.razor",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!\\Components\\App.razor",
+              "RelativeToolTip": "MSSA Jeoporady!\\Components\\App.razor",
+              "ViewState": "AgIAABYAAAAAAAAAAAAAAGgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-05T22:06:00.248Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainLayout.razor",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!\\Components\\Layout\\MainLayout.razor",
+              "RelativeDocumentMoniker": "MSSA Jeoporady!\\Components\\Layout\\MainLayout.razor",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!\\Components\\Layout\\MainLayout.razor",
+              "RelativeToolTip": "MSSA Jeoporady!\\Components\\Layout\\MainLayout.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-05T22:01:15.764Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "README.md",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\README.md",
+              "RelativeDocumentMoniker": "README.md",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\README.md",
+              "RelativeToolTip": "README.md",
+              "ViewState": "AgIAANcAAAAAAAAAAAAAANcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-05T21:18:45.296Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": ".gitignore",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\.gitignore",
+              "RelativeDocumentMoniker": ".gitignore",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\.gitignore",
+              "RelativeToolTip": ".gitignore",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-02-05T21:17:08.967Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "NavMenu.razor",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!\\Components\\Layout\\NavMenu.razor",
+              "RelativeDocumentMoniker": "MSSA Jeoporady!\\Components\\Layout\\NavMenu.razor",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!\\Components\\Layout\\NavMenu.razor",
+              "RelativeToolTip": "MSSA Jeoporady!\\Components\\Layout\\NavMenu.razor",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-05T21:06:54.512Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Home.razor",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!\\Components\\Pages\\Home.razor",
+              "RelativeDocumentMoniker": "MSSA Jeoporady!\\Components\\Pages\\Home.razor",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!\\Components\\Pages\\Home.razor",
+              "RelativeToolTip": "MSSA Jeoporady!\\Components\\Pages\\Home.razor",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAIsAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-05T21:06:54.356Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Jeopardy.razor",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!.Client\\Pages\\Jeopardy.razor",
+              "RelativeDocumentMoniker": "MSSA Jeoporady!.Client\\Pages\\Jeopardy.razor",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!.Client\\Pages\\Jeopardy.razor",
+              "RelativeToolTip": "MSSA Jeoporady!.Client\\Pages\\Jeopardy.razor",
+              "ViewState": "AgIAAA8EAAAAAAAAAAAUwCoEAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-05T21:06:28.601Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "JeopardyQuestion.cs",
+              "DocumentMoniker": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!.Client\\Models\\JeopardyQuestion.cs",
+              "RelativeDocumentMoniker": "MSSA Jeoporady!.Client\\Models\\JeopardyQuestion.cs",
+              "ToolTip": "C:\\MSSA Code-github\\MSSA Jeoporady!\\MSSA Jeoporady!.Client\\Models\\JeopardyQuestion.cs",
+              "RelativeToolTip": "MSSA Jeoporady!.Client\\Models\\JeopardyQuestion.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-05T21:05:53.014Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

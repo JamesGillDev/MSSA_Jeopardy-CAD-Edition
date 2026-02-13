@@ -1,0 +1,271 @@
+﻿using MSSA_Jeoporady_.Client.Models;
+
+namespace MSSA_Jeoporady_.Client.Services;
+
+public class JeopardyGameService
+{
+    public List<JeopardyCategory> Categories { get; private set; } = [];
+    public Dictionary<int, int> PlayerScores { get; private set; } = [];
+    public Dictionary<int, string> PlayerNames { get; private set; } = [];
+    public int CurrentPlayer { get; private set; } = 1;
+    public int TotalPlayers { get; private set; } = 3;
+    public JeopardyQuestion? CurrentQuestion { get; private set; }
+    private static readonly Random _random = new();
+
+    public JeopardyGameService()
+    {
+        InitializeGame();
+    }
+
+    public void InitializeGame()
+    {
+        PlayerScores = new Dictionary<int, int>
+        {
+            { 1, 0 },
+            { 2, 0 },
+            { 3, 0 }
+        };
+        PlayerNames = new Dictionary<int, string>
+        {
+            { 1, "Player 1" },
+            { 2, "Player 2" },
+            { 3, "Player 3" }
+        };
+        CurrentPlayer = 1;
+        Categories = BuildGameBoard();
+    }
+
+    private List<JeopardyCategory> BuildGameBoard()
+    {
+        var allQuestions = GetAllQuestionPool();
+        var categories = new List<JeopardyCategory>();
+        var categoryNames = new[] { "Azure Fundamentals", "C# Programming", "Web Development", "DevOps & CI/CD", "Databases", "Security" };
+        var pointValues = new[] { 100, 200, 300, 400, 500 };
+
+        foreach (var categoryName in categoryNames)
+        {
+            var categoryQuestions = allQuestions
+                .Where(q => q.Category == categoryName)
+                .GroupBy(q => q.PointValue)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            var selectedQuestions = new List<JeopardyQuestion>();
+
+            foreach (var pointValue in pointValues)
+            {
+                if (categoryQuestions.TryGetValue(pointValue, out var questionsForValue) && questionsForValue.Count > 0)
+                {
+                    var randomIndex = _random.Next(questionsForValue.Count);
+                    var question = questionsForValue[randomIndex];
+                    
+                    // Random chance for BONUS (about 10% of questions)
+                    question.IsBonus = _random.Next(10) == 0;
+                    question.IsAnswered = false;
+                    
+                    selectedQuestions.Add(question);
+                }
+            }
+
+            categories.Add(new JeopardyCategory
+            {
+                Name = categoryName,
+                Questions = selectedQuestions
+            });
+        }
+
+        return categories;
+    }
+
+    public void SetPlayerName(int playerNumber, string name)
+    {
+        if (PlayerNames.ContainsKey(playerNumber) && !string.IsNullOrWhiteSpace(name))
+        {
+            PlayerNames[playerNumber] = name;
+        }
+    }
+
+    public void SelectQuestion(JeopardyQuestion question)
+    {
+        if (!question.IsAnswered)
+        {
+            CurrentQuestion = question;
+        }
+    }
+
+    public void AnswerQuestion(bool isCorrect, int playerNumber)
+    {
+        if (CurrentQuestion != null)
+        {
+            CurrentQuestion.IsAnswered = true;
+            int points = CurrentQuestion.IsBonus ? CurrentQuestion.PointValue * 2 : CurrentQuestion.PointValue;
+            
+            if (isCorrect)
+            {
+                PlayerScores[playerNumber] += points;
+            }
+            else
+            {
+                PlayerScores[playerNumber] -= points;
+            }
+            CurrentQuestion = null;
+            NextPlayer();
+        }
+    }
+
+    public void NextPlayer()
+    {
+        CurrentPlayer = (CurrentPlayer % TotalPlayers) + 1;
+    }
+
+    public void CloseQuestion()
+    {
+        CurrentQuestion = null;
+    }
+
+    public bool IsGameComplete()
+    {
+        return Categories.All(c => c.Questions.All(q => q.IsAnswered));
+    }
+
+    public int GetWinner()
+    {
+        return PlayerScores.OrderByDescending(p => p.Value).First().Key;
+    }
+
+    public int GetHighestScore()
+    {
+        return PlayerScores.Values.Max();
+    }
+
+    private static List<JeopardyQuestion> GetAllQuestionPool()
+    {
+        return
+        [
+            // AZURE FUNDAMENTALS - Multiple questions per point value for rotation
+            new() { Category = "Azure Fundamentals", PointValue = 100, Question = "This is the basic unit of deployment in Azure that contains resources like VMs, storage, and databases.", Answer = "What is a Resource Group?" },
+            new() { Category = "Azure Fundamentals", PointValue = 100, Question = "This portal provides a web-based interface to manage all Azure services.", Answer = "What is the Azure Portal?" },
+            new() { Category = "Azure Fundamentals", PointValue = 100, Question = "This term describes Azure's worldwide network of data centers.", Answer = "What are Azure Regions?" },
+            
+            new() { Category = "Azure Fundamentals", PointValue = 200, Question = "This Azure service provides serverless compute that lets you run code without managing servers.", Answer = "What is Azure Functions?" },
+            new() { Category = "Azure Fundamentals", PointValue = 200, Question = "This service provides virtual machines in the cloud.", Answer = "What is Azure Virtual Machines?" },
+            new() { Category = "Azure Fundamentals", PointValue = 200, Question = "This Azure storage type is optimized for storing massive amounts of unstructured data.", Answer = "What is Blob Storage?" },
+            
+            new() { Category = "Azure Fundamentals", PointValue = 300, Question = "This cloud model combines on-premises infrastructure with cloud resources.", Answer = "What is Hybrid Cloud?" },
+            new() { Category = "Azure Fundamentals", PointValue = 300, Question = "This Azure feature automatically adjusts resources based on demand.", Answer = "What is Auto-scaling?" },
+            new() { Category = "Azure Fundamentals", PointValue = 300, Question = "This service provides managed Kubernetes orchestration in Azure.", Answer = "What is Azure Kubernetes Service (AKS)?" },
+            
+            new() { Category = "Azure Fundamentals", PointValue = 400, Question = "This Azure service provides a fully managed relational database with built-in intelligence.", Answer = "What is Azure SQL Database?" },
+            new() { Category = "Azure Fundamentals", PointValue = 400, Question = "This Azure service provides a content delivery network for fast global content delivery.", Answer = "What is Azure CDN?" },
+            new() { Category = "Azure Fundamentals", PointValue = 400, Question = "This tool allows you to define Azure infrastructure as code using JSON templates.", Answer = "What is ARM Templates?" },
+            
+            new() { Category = "Azure Fundamentals", PointValue = 500, Question = "This pricing model charges you only for resources you actually use, with no upfront costs.", Answer = "What is Pay-As-You-Go?" },
+            new() { Category = "Azure Fundamentals", PointValue = 500, Question = "This Azure governance feature helps you organize resources and apply consistent policies.", Answer = "What is Azure Policy?" },
+            new() { Category = "Azure Fundamentals", PointValue = 500, Question = "This SLA percentage guarantees about 8.76 hours of downtime per year.", Answer = "What is 99.9%?" },
+
+            // C# PROGRAMMING
+            new() { Category = "C# Programming", PointValue = 100, Question = "This keyword is used to define a method that doesn't return a value.", Answer = "What is void?" },
+            new() { Category = "C# Programming", PointValue = 100, Question = "This keyword creates a new instance of a class.", Answer = "What is new?" },
+            new() { Category = "C# Programming", PointValue = 100, Question = "This data type stores true or false values.", Answer = "What is bool?" },
+            
+            new() { Category = "C# Programming", PointValue = 200, Question = "This feature allows you to define a blueprint for creating objects with properties and methods.", Answer = "What is a Class?" },
+            new() { Category = "C# Programming", PointValue = 200, Question = "This keyword makes a class member accessible only within the same class.", Answer = "What is private?" },
+            new() { Category = "C# Programming", PointValue = 200, Question = "This collection type stores key-value pairs for fast lookups.", Answer = "What is a Dictionary?" },
+            
+            new() { Category = "C# Programming", PointValue = 300, Question = "This keyword is used to handle exceptions that may occur during program execution.", Answer = "What is try-catch?" },
+            new() { Category = "C# Programming", PointValue = 300, Question = "This OOP principle allows a derived class to provide a specific implementation of a base class method.", Answer = "What is Polymorphism?" },
+            new() { Category = "C# Programming", PointValue = 300, Question = "This keyword allows a class to inherit from another class.", Answer = "What is the colon (:) or inheritance?" },
+            
+            new() { Category = "C# Programming", PointValue = 400, Question = "This C# feature allows methods to run concurrently without blocking the main thread.", Answer = "What is async/await?" },
+            new() { Category = "C# Programming", PointValue = 400, Question = "This feature lets you define type-safe generic classes and methods.", Answer = "What are Generics?" },
+            new() { Category = "C# Programming", PointValue = 400, Question = "This delegate type represents a method that can be passed as a parameter.", Answer = "What is Action or Func?" },
+            
+            new() { Category = "C# Programming", PointValue = 500, Question = "This LINQ method filters a sequence of values based on a predicate.", Answer = "What is Where()?" },
+            new() { Category = "C# Programming", PointValue = 500, Question = "This pattern uses events to notify subscribers when state changes.", Answer = "What is the Observer Pattern?" },
+            new() { Category = "C# Programming", PointValue = 500, Question = "This C# 9+ feature provides concise syntax for immutable data types.", Answer = "What are Records?" },
+
+            // WEB DEVELOPMENT
+            new() { Category = "Web Development", PointValue = 100, Question = "This HTTP method is used to retrieve data from a server.", Answer = "What is GET?" },
+            new() { Category = "Web Development", PointValue = 100, Question = "This HTTP method is used to submit data to be processed by a server.", Answer = "What is POST?" },
+            new() { Category = "Web Development", PointValue = 100, Question = "This markup language structures content on web pages.", Answer = "What is HTML?" },
+            
+            new() { Category = "Web Development", PointValue = 200, Question = "This Microsoft framework allows you to build interactive web UIs using C# instead of JavaScript.", Answer = "What is Blazor?" },
+            new() { Category = "Web Development", PointValue = 200, Question = "This data format is commonly used for API responses and is based on JavaScript object notation.", Answer = "What is JSON?" },
+            new() { Category = "Web Development", PointValue = 200, Question = "This ASP.NET Core feature handles incoming HTTP requests.", Answer = "What is a Controller?" },
+            
+            new() { Category = "Web Development", PointValue = 300, Question = "This status code indicates that a resource was not found on the server.", Answer = "What is 404?" },
+            new() { Category = "Web Development", PointValue = 300, Question = "This status code indicates a successful HTTP request.", Answer = "What is 200?" },
+            new() { Category = "Web Development", PointValue = 300, Question = "This status code indicates the server encountered an internal error.", Answer = "What is 500?" },
+            
+            new() { Category = "Web Development", PointValue = 400, Question = "This architectural style uses HTTP methods and is commonly used for building web APIs.", Answer = "What is REST?" },
+            new() { Category = "Web Development", PointValue = 400, Question = "This security header prevents clickjacking attacks by controlling iframe embedding.", Answer = "What is X-Frame-Options?" },
+            new() { Category = "Web Development", PointValue = 400, Question = "This technique allows servers to push updates to clients in real-time.", Answer = "What is SignalR or WebSockets?" },
+            
+            new() { Category = "Web Development", PointValue = 500, Question = "This ASP.NET Core feature allows you to add cross-cutting concerns like logging and authentication to your request pipeline.", Answer = "What is Middleware?" },
+            new() { Category = "Web Development", PointValue = 500, Question = "This design pattern separates an application into Model, View, and Controller components.", Answer = "What is MVC?" },
+            new() { Category = "Web Development", PointValue = 500, Question = "This Blazor hosting model runs entirely in the browser via WebAssembly.", Answer = "What is Blazor WebAssembly?" },
+
+            // DEVOPS & CI/CD
+            new() { Category = "DevOps & CI/CD", PointValue = 100, Question = "This version control system tracks changes to source code and is widely used in software development.", Answer = "What is Git?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 100, Question = "This Git command creates a copy of a remote repository on your local machine.", Answer = "What is git clone?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 100, Question = "This Git command stages changes for the next commit.", Answer = "What is git add?" },
+            
+            new() { Category = "DevOps & CI/CD", PointValue = 200, Question = "This Azure service provides unlimited private Git repositories and agile planning tools.", Answer = "What is Azure DevOps?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 200, Question = "This file defines the steps in an Azure DevOps pipeline.", Answer = "What is azure-pipelines.yml?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 200, Question = "This GitHub feature automates workflows when code is pushed or PRs are created.", Answer = "What is GitHub Actions?" },
+            
+            new() { Category = "DevOps & CI/CD", PointValue = 300, Question = "This practice involves automatically building and testing code changes when they're committed.", Answer = "What is Continuous Integration (CI)?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 300, Question = "This practice automatically deploys code changes to production after passing tests.", Answer = "What is Continuous Deployment (CD)?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 300, Question = "This branching strategy uses feature branches that merge into a main branch.", Answer = "What is Git Flow or Feature Branching?" },
+            
+            new() { Category = "DevOps & CI/CD", PointValue = 400, Question = "This containerization platform packages applications with their dependencies for consistent deployment.", Answer = "What is Docker?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 400, Question = "This file defines how to build a Docker container image.", Answer = "What is a Dockerfile?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 400, Question = "This tool defines multi-container Docker applications.", Answer = "What is Docker Compose?" },
+            
+            new() { Category = "DevOps & CI/CD", PointValue = 500, Question = "This Azure service orchestrates containerized applications at scale using Kubernetes.", Answer = "What is Azure Kubernetes Service (AKS)?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 500, Question = "This Infrastructure as Code tool by HashiCorp provisions cloud resources.", Answer = "What is Terraform?" },
+            new() { Category = "DevOps & CI/CD", PointValue = 500, Question = "This Azure service provides serverless container hosting without managing infrastructure.", Answer = "What is Azure Container Apps?" },
+
+            // DATABASES
+            new() { Category = "Databases", PointValue = 100, Question = "This SQL command is used to retrieve data from a database table.", Answer = "What is SELECT?" },
+            new() { Category = "Databases", PointValue = 100, Question = "This SQL command adds new records to a database table.", Answer = "What is INSERT?" },
+            new() { Category = "Databases", PointValue = 100, Question = "This SQL command modifies existing records in a table.", Answer = "What is UPDATE?" },
+            
+            new() { Category = "Databases", PointValue = 200, Question = "This type of database stores data in JSON-like documents rather than tables.", Answer = "What is a NoSQL/Document Database?" },
+            new() { Category = "Databases", PointValue = 200, Question = "This SQL clause filters records based on a condition.", Answer = "What is WHERE?" },
+            new() { Category = "Databases", PointValue = 200, Question = "This database object enforces unique values in a column.", Answer = "What is a Primary Key?" },
+            
+            new() { Category = "Databases", PointValue = 300, Question = "This Azure service is a globally distributed, multi-model database for any scale.", Answer = "What is Azure Cosmos DB?" },
+            new() { Category = "Databases", PointValue = 300, Question = "This SQL operation combines rows from two or more tables based on a related column.", Answer = "What is JOIN?" },
+            new() { Category = "Databases", PointValue = 300, Question = "This database design process eliminates redundancy by organizing data into related tables.", Answer = "What is Normalization?" },
+            
+            new() { Category = "Databases", PointValue = 400, Question = "This .NET technology maps database tables to C# classes and provides an abstraction layer.", Answer = "What is Entity Framework?" },
+            new() { Category = "Databases", PointValue = 400, Question = "This EF Core approach generates database schema from C# model classes.", Answer = "What is Code-First?" },
+            new() { Category = "Databases", PointValue = 400, Question = "This technique improves query performance by creating data structures for fast lookups.", Answer = "What is Indexing?" },
+            
+            new() { Category = "Databases", PointValue = 500, Question = "This database concept ensures that transactions are processed reliably using Atomicity, Consistency, Isolation, and Durability.", Answer = "What is ACID?" },
+            new() { Category = "Databases", PointValue = 500, Question = "This SQL injection prevention technique uses parameterized queries.", Answer = "What are Prepared Statements?" },
+            new() { Category = "Databases", PointValue = 500, Question = "This Cosmos DB feature automatically replicates data across multiple Azure regions.", Answer = "What is Global Distribution?" },
+
+            // SECURITY
+            new() { Category = "Security", PointValue = 100, Question = "This process verifies who a user claims to be.", Answer = "What is Authentication?" },
+            new() { Category = "Security", PointValue = 100, Question = "This process determines what actions an authenticated user can perform.", Answer = "What is Authorization?" },
+            new() { Category = "Security", PointValue = 100, Question = "This cryptographic technique converts data into a fixed-size string.", Answer = "What is Hashing?" },
+            
+            new() { Category = "Security", PointValue = 200, Question = "This Azure service manages identities and access for cloud applications.", Answer = "What is Microsoft Entra ID (Azure AD)?" },
+            new() { Category = "Security", PointValue = 200, Question = "This protocol provides secure communication over the internet using encryption.", Answer = "What is HTTPS/TLS?" },
+            new() { Category = "Security", PointValue = 200, Question = "This type of token is commonly used for API authentication and contains encoded claims.", Answer = "What is JWT (JSON Web Token)?" },
+            
+            new() { Category = "Security", PointValue = 300, Question = "This protocol uses tokens to securely authorize access to resources without sharing passwords.", Answer = "What is OAuth?" },
+            new() { Category = "Security", PointValue = 300, Question = "This security practice limits user permissions to only what is necessary.", Answer = "What is the Principle of Least Privilege?" },
+            new() { Category = "Security", PointValue = 300, Question = "This attack exploits trust a website has in a user's browser by sending unauthorized requests.", Answer = "What is CSRF (Cross-Site Request Forgery)?" },
+            
+            new() { Category = "Security", PointValue = 400, Question = "This type of attack tricks users into executing malicious scripts in their browser.", Answer = "What is Cross-Site Scripting (XSS)?" },
+            new() { Category = "Security", PointValue = 400, Question = "This attack inserts malicious SQL code into application queries.", Answer = "What is SQL Injection?" },
+            new() { Category = "Security", PointValue = 400, Question = "This security header helps prevent XSS attacks by controlling resource loading.", Answer = "What is Content Security Policy (CSP)?" },
+            
+            new() { Category = "Security", PointValue = 500, Question = "This Azure service stores secrets, keys, and certificates securely for cloud applications.", Answer = "What is Azure Key Vault?" },
+            new() { Category = "Security", PointValue = 500, Question = "This authentication method eliminates passwords using devices and biometrics.", Answer = "What is Passwordless Authentication?" },
+            new() { Category = "Security", PointValue = 500, Question = "This Azure feature scans code repositories for exposed secrets and credentials.", Answer = "What is GitHub Advanced Security or Credential Scanning?" }
+        ];
+    }
+}
