@@ -1,0 +1,177 @@
+﻿@page "/"
+
+@using MSSA_Jeopardy_.Services
+@inject JeopardyGameService GameService
+
+@code {
+    private List<string> Categories => GameService.AllCategoryNames.ToList();
+        private static readonly Dictionary<string, string> CategoryDescriptions = new()
+    {
+        ["Azure Fundamentals"] = "Cloud concepts, services, and architecture",
+        ["C# Programming"] = "Object-oriented programming, LINQ, async/await",
+        ["Web Development"] = "ASP.NET Core, Blazor, REST APIs",
+        ["DevOps & CI/CD"] = "Git, Azure DevOps, Docker, Kubernetes",
+        ["Databases"] = "SQL, Entity Framework, Cosmos DB",
+        ["Security"] = "Authentication, Authorization, Azure Key Vault",
+        ["Networking"] = "TCP/IP, DNS, VPN, load balancing",
+        ["Cloud Architecture"] = "Microservices, resilience, scalability patterns",
+        ["Software Testing"] = "Unit tests, integration tests, TDD",
+        ["Data Structures"] = "Arrays, trees, graphs, and complexity",
+        ["Operating Systems"] = "Processes, threads, and memory management",
+        ["APIs & Integration"] = "REST, GraphQL, messaging, and webhooks",
+        ["Machine Learning Basics"] = "ML fundamentals and model evaluation",
+        ["PowerShell & CLI"] = "Automation scripting and command-line tooling",
+        ["Agile & Scrum"] = "Ceremonies, planning, and delivery practices",
+        ["AZ-900 Exam Prep"] = "Azure fundamentals exam prep topics",
+        ["AZ-204 Exam Prep"] = "Azure developer exam prep topics",
+        ["AI-900 Exam Prep"] = "AI fundamentals exam prep topics",
+        ["Algorithms (C#)"] = "Sorting, searching, graph, and dynamic programming",
+        ["DP-3001 (Azure Data)"] = "Azure SQL, Synapse, and data platform services",
+        ["DP-080 (Data Fundamentals)"] = "Relational and non-relational data basics",
+        ["DP-3020 (Advanced Data)"] = "Data integration, governance, and analytics",
+        ["MS-4010 (Security)"] = "Security principles, threats, and Azure security services"
+    };
+
+    private static string GetCategoryDescription(string category) =>
+        CategoryDescriptions.TryGetValue(category, out var description)
+            ? description
+            : "MSSA curriculum topic";
+
+}
+
+<PageTitle>MSSA Jeopardy! - Home</PageTitle>
+
+<div class="home-container">
+    <div class="hero-section">
+        <h1>Welcome to MSSA Jeopardy!</h1>
+        <p class="subtitle">Microsoft Software & Systems Academy</p>
+        <p class="description">Cloud Application Development Program</p>
+    </div>
+
+    <div class="intro-card">
+        <h2>Test Your Knowledge - 3 Player Game!</h2>
+        <p>
+            Challenge yourself and your teammates with questions covering the key topics from the MSSA Cloud Application Development curriculum:
+        </p>
+        <ul class="topic-list">
+            @foreach (var cat in Categories)
+            {
+                <li><strong>@cat</strong> - @GetCategoryDescription(cat)</li>
+            }
+        </ul>
+        <a href="jeopardy" class="play-button">Play Jeopardy!</a>
+    </div>
+
+    <div class="rules-card">
+        <h3>How to Play</h3>
+        <ol>
+            <li>Three players compete against each other</li>
+            <li>Select a category and point value from the game board</li>
+            <li>Read the clue and discuss among players</li>
+            <li>Click "Reveal Answer" to see the correct response</li>
+            <li>Click the button for the player who answered correctly (or "No One Got It")</li>
+            <li>Correct answers add points, incorrect answers subtract points</li>
+            <li>The player with the highest score at the end wins!</li>
+        </ol>
+    </div>
+</div>
+
+<style>
+    .home-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .hero-section {
+        text-align: center;
+        background: linear-gradient(135deg, #060ce9 0%, #1a237e 100%);
+        color: white;
+        padding: 40px 20px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-section h1 {
+        font-size: 2.5rem;
+        margin: 0 0 10px 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .subtitle {
+        font-size: 1.3rem;
+        margin: 0 0 5px 0;
+        opacity: 0.9;
+    }
+
+    .description {
+        font-size: 1.1rem;
+        margin: 0;
+        opacity: 0.8;
+        font-style: italic;
+    }
+
+    .intro-card, .rules-card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .intro-card h2 {
+        color: #1a237e;
+        margin-top: 0;
+    }
+
+    .topic-list {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+    }
+
+    .topic-list li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 1rem;
+    }
+
+    .topic-list li:last-child {
+        border-bottom: none;
+    }
+
+    .play-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #060ce9 0%, #1a237e 100%);
+        color: white;
+        padding: 15px 40px;
+        font-size: 1.3rem;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 8px;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(6, 12, 233, 0.3);
+    }
+
+    .play-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(6, 12, 233, 0.4);
+        color: white;
+    }
+
+    .rules-card h3 {
+        color: #1a237e;
+        margin-top: 0;
+    }
+
+    .rules-card ol {
+        padding-left: 20px;
+    }
+
+    .rules-card li {
+        padding: 8px 0;
+        line-height: 1.5;
+    }
+</style>

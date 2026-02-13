@@ -1,16 +1,16 @@
-# MSSA Jeopardy - Cloud Application Development Edition
+﻿# MSSA Jeopardy! - Cloud Application Development Edition
 
-[![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-purple)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blue)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
 [![License](https://img.shields.io/badge/License-BSL%201.1-blue.svg)](LICENSE)
 
-A fun, interactive Jeopardy-style quiz game designed for the **Microsoft Software & Systems Academy (MSSA) Cloud Application Development Program**. Test your knowledge across key topics covered in the CAD curriculum!
+A fun, interactive Jeopardy!-style quiz game designed for the **Microsoft Software & Systems Academy (MSSA) Cloud Application Development Program**. Test your knowledge across key topics covered in the CAD curriculum!
 
-![MSSA Jeopardy Banner](https://img.shields.io/badge/MSSA-Jeopardy-gold?style=for-the-badge&labelColor=blue)
+![MSSA Jeopardy Banner](https://img.shields.io/badge/MSSA-Jeopardy!-gold?style=for-the-badge&labelColor=blue)
 
 ## About
 
-This application is built to help MSSA students review and reinforce their learning in a gamified format. The classic Jeopardy game show format makes studying more engaging and competitive, whether you're preparing for certifications or just want to test your cloud development knowledge.
+This application is built to help MSSA students review and reinforce their learning in a gamified format. The classic Jeopardy! game show format makes studying more engaging and competitive, whether you're preparing for certifications or just want to test your cloud development knowledge.
 
 ## Live Demo
 
@@ -24,7 +24,7 @@ This application is built to help MSSA students review and reinforce their learn
 - **Category Selection** - Choose 6 categories from 18 available topics before each game
 - **450 Questions** - Massive question bank with 25 questions per category
 - **Daily Double** - Random hidden bonus questions for 2x points!
-- **Classic TV-Style Board** - Authentic Jeopardy look with retro CRT screen effects
+- **Classic TV-Style Board** - Authentic Jeopardy! look with retro CRT screen effects
 - **Sound Effects** - Authentic chime and Daily Double sounds
 - **Rotating Questions** - Different questions each game for endless replayability
 - **Score Tracking** - Earn points for correct answers, lose points for incorrect ones
@@ -63,7 +63,7 @@ This application is built to help MSSA students review and reinforce their learn
 - **Framework:** [.NET 10](https://dotnet.microsoft.com/)
 - **Frontend:** [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
 - **Language:** C# 14
-- **Styling:** Scoped CSS with custom Jeopardy theme
+- **Styling:** Scoped CSS with custom Jeopardy! theme
 - **Architecture:** Client-Server with Interactive WebAssembly rendering
 - **Hosting:** Azure App Service
 
@@ -94,7 +94,7 @@ This application is built to help MSSA students review and reinforce their learn
 
 4. **Run the application**
    ```bash
-   cd "MSSA Jeopardy"
+   cd "MSSA Jeopardy!"
    dotnet run
    ```
 
@@ -102,8 +102,8 @@ This application is built to help MSSA students review and reinforce their learn
 
 ### Running in Visual Studio
 
-1. Open `MSSA Jeopardy.sln` in Visual Studio 2022
-2. Set `MSSA Jeopardy` as the startup project
+1. Open `MSSA Jeopardy!.sln` in Visual Studio 2022
+2. Set `MSSA Jeopardy!` as the startup project
 3. Press `F5` to run with debugging or `Ctrl+F5` to run without debugging
 
 ## How to Play

@@ -1,6 +1,6 @@
-# MSSA Jeopardy - Cloud Application Development Edition
+﻿# MSSA Jeopardy - Cloud Application Development Edition
 
-[![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-purple)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blue)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
 [![License](https://img.shields.io/badge/License-BSL%201.1-blue.svg)](LICENSE)
 
