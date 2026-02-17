@@ -1,0 +1,15 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+.vscode/
+.idea/
+*.log
+Thumbs.db
+.DS_Store
+publish/
+appsettings.*.json
+*.pfx
+*.snk
+node_modules/
