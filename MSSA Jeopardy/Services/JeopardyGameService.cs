@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace MSSA_Jeopardy_.Services
 {
+    #nullable enable
     public class JeopardyGameService
     {
         public List<string> AllCategoryNames { get; set; } = new List<string>

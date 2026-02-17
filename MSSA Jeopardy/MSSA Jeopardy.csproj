@@ -6,8 +6,4 @@
 		<!-- Workaround for DiscoverPrecompressedAssets duplicate-key crash -->
 		<CompressionEnabled>false</CompressionEnabled>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\MSSA Jeopardy!.Client\MSSA Jeopardy!.Client.csproj" />
-	</ItemGroup>
 </Project>
