@@ -1,215 +1,56 @@
-# MSSA Jeopardy - Cloud Application Development Edition
+# MSSA Jeopardy - CAD Edition (v2.1)
 
 [![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blue)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
-[![License](https://img.shields.io/badge/License-BSL%201.1-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A fun, interactive Jeopardy-style quiz game designed for the **Microsoft Software & Systems Academy (MSSA) Cloud Application Development Program**. Test your knowledge across key topics covered in the CAD curriculum!
-
-![MSSA Jeopardy Banner](https://img.shields.io/badge/MSSA-Jeopardy-gold?style=for-the-badge&labelColor=blue)
-
-## About
-
-This application is built to help MSSA students review and reinforce their learning in a gamified format. The classic Jeopardy game show format makes studying more engaging and competitive, whether you're preparing for certifications or just want to test your cloud development knowledge.
-
-## Live Demo
-
-**Play Now:** [https://mssa-jeopardy-jamesgill.azurewebsites.net](https://mssa-jeopardy-jamesgill.azurewebsites.net)
-
-## Features
-
-
-- **Multi-Player Support** - Add or remove players dynamically (1-10+ players)
-- **Editable Player Names** - Click to customize player names anytime
-- **Category Selection** - Choose 6 categories from 18 available topics before each game
-- **450 Questions** - Massive question bank with 25 questions per category
-- **Daily Double** - Random hidden bonus questions for 2x points!
-- **Classic TV-Style Board** - Authentic Jeopardy look with retro CRT screen effects
-- **Sound Effects** - Authentic chime and Daily Double sounds
-- **Rotating Questions** - Different questions each game for endless replayability
-- **Score Tracking** - Earn points for correct answers, lose points for incorrect ones
-- **Responsive Design** - Works on desktop, tablet, and mobile devices
-
-## Game Categories (18 Topics)
-
-| Category | Topics Covered |
-|----------|---------------|
-| **Azure Fundamentals** | Resource Groups, Azure Functions, Hybrid Cloud, Azure SQL, SLAs |
-| **C# Programming** | Classes, async/await, LINQ, Generics, Records, Extension Methods |
-| **Web Development** | HTTP methods, Blazor, REST APIs, Middleware, SignalR |
-| **DevOps & CI/CD** | Git, Azure DevOps, Docker, Kubernetes, Terraform |
-| **Databases** | SQL, NoSQL, Entity Framework, Cosmos DB, ACID |
-| **Security** | Authentication, OAuth, JWT, XSS, Azure Key Vault, Zero Trust |
-| **Networking** | TCP/IP, DNS, VPN, Load Balancing, Azure VNets |
-| **Cloud Architecture** | Microservices, Serverless, CQRS, High Availability, CAP Theorem |
-| **Software Testing** | Unit Testing, TDD, Mocking, Integration Testing, Chaos Engineering |
-| **Data Structures** | Arrays, Trees, Graphs, Hash Tables, Big O Notation |
-| **Operating Systems** | Processes, Threads, Memory Management, Linux Commands |
-| **APIs & Integration** | REST, GraphQL, gRPC, Webhooks, Azure Service Bus |
-| **Machine Learning Basics** | Supervised/Unsupervised Learning, Neural Networks, Azure ML |
-| **PowerShell & CLI** | Cmdlets, Pipelines, Azure CLI, Automation Scripts |
-| **Agile & Scrum** | Sprints, User Stories, Kanban, Velocity, SAFe |
-| **AZ-900 Exam Prep** | Azure Fundamentals - Cloud concepts, Core services, Security, Pricing, SLAs |
-| **AZ-204 Exam Prep** | Developing Solutions - Functions, Cosmos DB, Storage, Security, Monitoring |
-| **AI-900 Exam Prep** | AI Fundamentals - ML concepts, Computer Vision, NLP, Responsible AI |
-| **Algorithms (C#)** | Sorting, Searching, Graph, Dynamic Programming, C# Patterns |
-| **DP-3001 (Azure Data)** | Azure SQL, Cosmos DB, Synapse, Data Lake, Data Factory |
-| **DP-080 (Data Fundamentals)** | Relational, NoSQL, Keys, Constraints, Data Types |
-| **DP-3020 (Advanced Data)** | Integration, Quality, Analytics, Azure Purview, Data Modeling |
-| **MS-4010 (Security)** | Access Control, Attacks, Principles, Azure Security, Frameworks |
-
-## Technologies Used
-
-- **Framework:** [.NET 10](https://dotnet.microsoft.com/)
-- **Frontend:** [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
-- **Language:** C# 14
-- **Styling:** Scoped CSS with custom Jeopardy theme
-- **Architecture:** Client-Server with Interactive WebAssembly rendering
-- **Hosting:** Azure App Service
-
-## Getting Started
-
-### Prerequisites
-
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) or later
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) (recommended) or VS Code
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition.git
-   cd MSSA_Jeopardy-CAD-Edition
-   ```
-
-2. **Restore dependencies**
-   ```bash
-   dotnet restore
-   ```
-
-3. **Build the solution**
-   ```bash
-   dotnet build
-   ```
-
-4. **Run the application**
-   ```bash
-   cd "MSSA Jeopardy"
-   dotnet run
-   ```
-
-5. **Open your browser** and navigate to `https://localhost:5001` or the URL shown in the terminal
-
-### Running in Visual Studio
-
-1. Open `MSSA Jeopardy.sln` in Visual Studio 2022
-2. Set `MSSA Jeopardy` as the startup project
-3. Press `F5` to run with debugging or `Ctrl+F5` to run without debugging
-
-## How to Play
-
-1. **Select Categories** - Choose 6 categories from 15 available topics
-2. **Set Up Players** - Add players and customize their names
-3. **Start the Game** - Click the green "Start Game" button
-4. **Select a Question** - Click any dollar amount on the game board
-5. **Read the Clue** - A modal appears with the question
-6. **Think of Your Answer** - Formulate your response (in "What is...?" format)
-7. **Reveal the Answer** - Click "Reveal Answer" to see the correct response
-8. **Award Points** - Click the player who answered correctly, or "No One Got It"
-9. **Watch for Daily Double** - Hidden bonus questions worth 2x points!
-10. **Continue Playing** - Select questions until the board is complete
-11. **Play Again** - Click "New Game" for fresh questions or "Change Categories" to pick new topics
-
-### Scoring
-
-| Result | Points |
-|--------|--------|
-| Correct Answer | +Point Value |
-| Incorrect Answer | -Point Value |
-| Daily Double Correct | +2x Point Value |
-| Daily Double Incorrect | -2x Point Value |
-
-## Project Structure
-
-```
-MSSA Jeopardy!/
-|-- MSSA Jeopardy!/                    # Server project
-|   |-- Components/
-|   |   |-- Layout/
-|   |   |   |-- MainLayout.razor        # Main layout template
-|   |   |   `-- NavMenu.razor           # Navigation menu
-|   |   `-- Pages/
-|   |       |-- Home.razor              # Welcome/landing page
-|   |       |-- Error.razor             # Error page
-|   |       `-- NotFound.razor          # 404 page
-|   |-- App.razor                       # Root component
-|   |-- Routes.razor                    # Routing configuration
-|   |-- wwwroot/                        # Static assets
-|   `-- Program.cs                      # Application entry point
-|
-|-- MSSA Jeopardy!.Client/             # WebAssembly client project
-|   |-- Models/
-|   |   `-- JeopardyQuestion.cs         # Data models
-|   |-- Pages/
-|   |   `-- Jeopardy.razor              # Main game board component
-|   |-- Services/
-|   |   `-- JeopardyGameService.cs      # Game logic & questions
-|   `-- Program.cs                      # Client entry point
-|
-`-- MSSA Jeopardy!.slnx                 # Solution file
-```
-
-## Contributing
-
-Contributions are welcome! If you'd like to add more questions, fix bugs, or improve the UI:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Adding New Questions
-
-To add new questions, edit `JeopardyGameService.cs` and add entries to the question pool:
-
-```csharp
-new() 
-{ 
-    Category = "Category Name", 
-    PointValue = 100, // 100, 200, 300, 400, or 500
-    Question = "This is the clue that players will see.", 
-    Answer = "What is the correct answer?" 
-}
-```
-
-### Adding New Categories
-
-To add a new category, add the category name to `AllCategoryNames` array and add 25 questions (5 per point value) to the question pool.
-
-## License
-
-This project is licensed under the Business Source License 1.1 (BSL 1.1) - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- **Microsoft Software & Systems Academy (MSSA)** - For providing world-class training to military veterans and transitioning service members
-- **Jeopardy!** - The classic game show that inspired this educational tool
-- **MSSA Instructors & Staff** - For their dedication to student success
-- **Fellow MSSA Students** - For the camaraderie and collaborative learning environment
-
-## Contact
-
-**James Gill** - [@JamesGillDev](https://github.com/JamesGillDev)
-
-Project Link: [https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition](https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition)
+A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Systems Academy (MSSA) Cloud Application Development Program**. Test your knowledge across a huge range of cloud, dev, and data topics!
 
 ---
 
-<p align="center">
-  <strong>Built with ?? by an MSSA Cloud Application Development Student</strong>
-</p>
+## What's New in v2.1
+- **Massive Category Pool:** 40+ categories including .NET Core, Git & Version Control, Cloud Security, Containers & Kubernetes, Microsoft Power Platform, Data Analytics, Azure Blob Storage, Key Vault, App Service, and many more.
+- **Deep Question Pool:** Each category has at least 5 unique questions per point value (100–500), for endless replayability.
+- **Randomized Board:** Each game, a random question is chosen for each point value in each selected category.
+- **User-Selectable Categories:** Choose up to 6 categories at the start of each game.
+- **Modern Blazor WebAssembly:** Built with .NET 8 and C# 12 for a fast, interactive, and modern web experience.
 
-<p align="center">
-  <em>"This is Jeopardy!" ??</em>
-</p>
+## Key Features
+- Multiplayer support (add/remove players, custom names)
+- Score tracking and winner calculation
+- Bonus questions (randomly assigned)
+- Reset and replay functionality
+- Clean, responsive UI
+
+## Categories (Sample)
+- Azure Fundamentals, AZ-900, AZ-204, AI-900
+- .NET Core, C# Programming
+- Git & Version Control
+- Cloud Security, Security
+- Containers & Kubernetes
+- Microsoft Power Platform
+- Data Analytics, Databases
+- Azure Blob Storage, Key Vault, App Service, App Configuration
+- Container Apps, Container Registry, Service Bus, Event Grid, Event Hub, Functions
+- Bicep, Application Insights, Azure Monitor, and many more!
+
+## How to Play
+1. Launch the app (Blazor WebAssembly, .NET 8 required)
+2. Select up to 6 categories
+3. Add players and set names
+4. Start the game and take turns selecting questions
+5. Answer questions, earn (or lose) points, and see who wins!
+
+## How to Build/Run
+1. Clone the repo
+2. Open in Visual Studio or VS Code
+3. Build and run the Blazor WebAssembly project
+
+## Contributing
+Pull requests are welcome! Please ensure new questions are unique and not duplicates of existing ones. For major changes, open an issue first to discuss what you would like to change.
+
+## License
+MIT
+
+---
+MSSA Jeopardy - CAD Edition v2.1 | Developed by JamesGillDev and contributors
