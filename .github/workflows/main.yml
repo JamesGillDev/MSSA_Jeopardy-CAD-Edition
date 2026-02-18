@@ -1,80 +1,58 @@
-name: Build and Deploy Jeopardy to Azure Web App
+name: Build and deploy ASP.Net Core app to Azure Web App - mssa-jeopardy-jamesgill
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   workflow_dispatch:
 
 env:
-  APP_NAME: mssa-jeopardy-jamesgill
+  DOTNET_VERSION: "8.0.418"
   PROJECT_PATH: "MSSA Jeopardy/MSSA Jeopardy.csproj"
-  PUBLISH_DIR: publish_output
-  ZIP_NAME: app.zip
-
-permissions:
-  contents: read
+  PUBLISH_DIR: "./publish"
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x"
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore
         run: dotnet restore "${{ env.PROJECT_PATH }}"
 
-      - name: Build (Release)
-        run: dotnet build "${{ env.PROJECT_PATH }}" --configuration Release --no-restore
+      - name: Build
+        run: dotnet build "${{ env.PROJECT_PATH }}" -c Release --no-restore
 
-      - name: Publish (Release)
-        run: dotnet publish "${{ env.PROJECT_PATH }}" --configuration Release --no-build --output "${{ env.PUBLISH_DIR }}"
+      - name: Publish
+        run: dotnet publish "${{ env.PROJECT_PATH }}" -c Release -o "${{ env.PUBLISH_DIR }}" --no-build
 
-      # Debug: prove to ourselves publish output is real
-      - name: Show publish output (debug)
-        run: |
-          echo "=== Listing ${{ env.PUBLISH_DIR }} ==="
-          ls -la "${{ env.PUBLISH_DIR }}"
-          echo "=== Top 50 files ==="
-          find "${{ env.PUBLISH_DIR }}" -maxdepth 2 -type f | head -n 50
-
-      # Make a ZIP that contains the *contents* of publish_output (not the folder nesting)
-      - name: Create deployment zip
-        run: |
-          cd "${{ env.PUBLISH_DIR }}"
-          zip -r "../${{ env.ZIP_NAME }}" .
-          cd ..
-          echo "=== Zip created ==="
-          ls -la "${{ env.ZIP_NAME }}"
-
-      - name: Upload artifact (zip)
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: deploy_zip
-          path: ${{ env.ZIP_NAME }}
+          name: app
+          path: ${{ env.PUBLISH_DIR }}
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      - name: Download artifact (zip)
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: deploy_zip
+          name: app
+          path: ${{ env.PUBLISH_DIR }}
 
-      - name: Show downloaded files (debug)
-        run: ls -la
-
-      - name: Deploy to Azure Web App (Publish Profile)
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ env.APP_NAME }}
+          app-name: mssa-jeopardy-jamesgill
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: ${{ env.ZIP_NAME }}
+          package: ${{ env.PUBLISH_DIR }}
