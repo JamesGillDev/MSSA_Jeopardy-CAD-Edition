@@ -1,5 +1,6 @@
 using MSSA_Jeopardy_.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MSSA_Jeopardy_.Services
 {
@@ -25,15 +26,76 @@ namespace MSSA_Jeopardy_.Services
 
         public List<int> GetPlayerIds() => new List<int>(PlayerNames.Keys);
 
-        public bool IsGameComplete() => false;
-        public int GetWinner() => 1;
-        public int GetHighestScore() => 0;
+        public void SetSelectedCategories(List<string> categories)
+        {
+            Categories = new List<Category>();
+            foreach (var catName in categories)
+            {
+                var category = new Category
+                {
+                    Name = catName,
+                    Questions = GenerateQuestionsForCategory(catName)
+                };
+                Categories.Add(category);
+            }
+        }
 
-        public void SetSelectedCategories(List<string> categories) { }
+        private List<JeopardyQuestion> GenerateQuestionsForCategory(string categoryName)
+        {
+            // For demo: generate 5 questions per category
+            var questions = new List<JeopardyQuestion>();
+            for (int i = 1; i <= 5; i++)
+            {
+                questions.Add(new JeopardyQuestion
+                {
+                    Category = categoryName,
+                    Question = $"Sample question {i} for {categoryName}?",
+                    Answer = $"Sample answer {i}",
+                    PointValue = i * 100,
+                    IsAnswered = false,
+                    IsBonus = (i == 3) // Make the 3rd question a bonus
+                });
+            }
+            return questions;
+        }
+
+        public bool IsGameComplete()
+        {
+            // Game is complete if all questions are answered
+            return Categories.Count > 0 && Categories.All(cat => cat.Questions.All(q => q.IsAnswered));
+        }
+
+        public int GetWinner()
+        {
+            // Return the player with the highest score
+            if (PlayerScores.Count == 0) return 1;
+            return PlayerScores.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+        }
+
+        public int GetHighestScore()
+        {
+            if (PlayerScores.Count == 0) return 0;
+            return PlayerScores.Values.Max();
+        }
+
         public void StartGame() { GameStarted = true; }
         public void ResetToMenu() { GameStarted = false; }
         public void SelectQuestion(JeopardyQuestion question) { CurrentQuestion = question; }
-        public void AnswerQuestion(bool isCorrect, int playerNumber) { }
+        public void AnswerQuestion(bool isCorrect, int playerNumber)
+        {
+            if (CurrentQuestion != null && !CurrentQuestion.IsAnswered)
+            {
+                if (isCorrect)
+                {
+                    PlayerScores[playerNumber] += CurrentQuestion.IsBonus ? CurrentQuestion.PointValue * 2 : CurrentQuestion.PointValue;
+                }
+                else
+                {
+                    PlayerScores[playerNumber] -= CurrentQuestion.PointValue;
+                }
+                CurrentQuestion.IsAnswered = true;
+            }
+        }
         public void CloseQuestion() { CurrentQuestion = null; }
         public void InitializeGameKeepPlayers() { }
         public void AddPlayer() { int next = PlayerNames.Count + 1; PlayerNames[next] = $"Player {next}"; PlayerScores[next] = 0; }
