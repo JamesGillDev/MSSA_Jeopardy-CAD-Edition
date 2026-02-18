@@ -2,19 +2,10 @@
 
 <PageTitle>MSSA Jeopardy - Home</PageTitle>
 
+@using MSSA_Jeopardy.Client.Services
+
 @code {
-    private static readonly List<string> Categories = new()
-    {
-        "Azure Fundamentals",
-        "C# Programming",
-        "Web Development",
-        "DevOps & CI/CD",
-        "Databases",
-        "Security",
-        "Networking",
-        "Cloud Architecture",
-        "Software Testing"
-    };
+    private static readonly List<string> Categories = JeopardyGameService.AllCategoryNames.ToList();
 
     private static readonly Dictionary<string, string> CategoryDescriptions = new()
     {
@@ -26,7 +17,21 @@
         ["Security"] = "Authentication, Authorization, Azure Key Vault",
         ["Networking"] = "TCP/IP, DNS, VPN, load balancing",
         ["Cloud Architecture"] = "Microservices, resilience, scalability patterns",
-        ["Software Testing"] = "Unit tests, integration tests, TDD"
+        ["Software Testing"] = "Unit tests, integration tests, TDD",
+        ["Data Structures"] = "Arrays, lists, trees, algorithms",
+        ["Operating Systems"] = "Processes, threads, memory management",
+        ["APIs & Integration"] = "REST, SOAP, API management",
+        ["Machine Learning Basics"] = "Supervised, unsupervised, Azure ML",
+        ["PowerShell & CLI"] = "Automation, scripting, Azure CLI",
+        ["Agile & Scrum"] = "Sprints, backlogs, ceremonies",
+        ["AZ-900 Exam Prep"] = "Azure Fundamentals certification",
+        ["AZ-204 Exam Prep"] = "Azure Developer certification",
+        ["AI-900 Exam Prep"] = "Azure AI Fundamentals certification",
+        ["Algorithms (C#)"] = "Sorting, searching, recursion",
+        ["DP-3001 (Azure Data)"] = "Azure data management, analytics",
+        ["DP-080 (Data Fundamentals)"] = "Data concepts, relational/non-relational",
+        ["DP-3020 (Advanced Data)"] = "Advanced data engineering topics",
+        ["MS-4010 (Security)"] = "Advanced security, compliance"
     };
 
     private static string GetCategoryDescription(string category) =>

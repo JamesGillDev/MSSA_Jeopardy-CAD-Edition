@@ -168,6 +168,19 @@ public class JeopardyGameService
                     question.IsAnswered = false;
                     selectedQuestions.Add(question);
                 }
+                else
+                {
+                    // Defensive: Add a placeholder question if missing
+                    selectedQuestions.Add(new JeopardyQuestion
+                    {
+                        Category = categoryName,
+                        PointValue = pointValue,
+                        Question = $"No question available for {categoryName} ({pointValue} points).",
+                        Answer = "N/A",
+                        IsAnswered = false,
+                        IsBonus = false
+                    });
+                }
             }
 
             categories.Add(new JeopardyCategory
@@ -634,7 +647,38 @@ public class JeopardyGameService
             new() { Category = "Machine Learning Basics", PointValue = 500, Question = "This technique uses pre-trained models on new tasks.", Answer = "What is Transfer Learning?" },
             new() { Category = "Machine Learning Basics", PointValue = 500, Question = "This validation technique trains on all data except one fold.", Answer = "What is Cross-Validation?" },
             new() { Category = "Machine Learning Basics", PointValue = 500, Question = "This Azure service provides AI-powered search capabilities.", Answer = "What is Azure AI Search (Cognitive Search)?" },
-            new() { Category = "Machine Learning Basics", PointValue = 500, Question = "This technique generates new data similar to training data.", Answer = "What is Data Augmentation or GANs?" }
+            new() { Category = "Machine Learning Basics", PointValue = 500, Question = "This technique generates new data similar to training data.", Answer = "What is Data Augmentation or GANs?" },
+
+            // ==================== MS-4010 (Security) ====================
+            new() { Category = "MS-4010 (Security)", PointValue = 100, Question = "This is a sample question for MS-4010 (Security) at 100 points.", Answer = "Sample answer 1" },
+            new() { Category = "MS-4010 (Security)", PointValue = 200, Question = "This is a sample question for MS-4010 (Security) at 200 points.", Answer = "Sample answer 2" },
+            new() { Category = "MS-4010 (Security)", PointValue = 300, Question = "This is a sample question for MS-4010 (Security) at 300 points.", Answer = "Sample answer 3" },
+            new() { Category = "MS-4010 (Security)", PointValue = 400, Question = "This is a sample question for MS-4010 (Security) at 400 points.", Answer = "Sample answer 4" },
+            new() { Category = "MS-4010 (Security)", PointValue = 500, Question = "This is a sample question for MS-4010 (Security) at 500 points.", Answer = "Sample answer 5" },
+            // ==================== DP-3020 (Advanced Data) ====================
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 100, Question = "This is a sample question for DP-3020 (Advanced Data) at 100 points.", Answer = "Sample answer 1" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 200, Question = "This is a sample question for DP-3020 (Advanced Data) at 200 points.", Answer = "Sample answer 2" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 300, Question = "This is a sample question for DP-3020 (Advanced Data) at 300 points.", Answer = "Sample answer 3" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 400, Question = "This is a sample question for DP-3020 (Advanced Data) at 400 points.", Answer = "Sample answer 4" },
+            new() { Category = "DP-3020 (Advanced Data)", PointValue = 500, Question = "This is a sample question for DP-3020 (Advanced Data) at 500 points.", Answer = "Sample answer 5" },
+            // ==================== DP-080 (Data Fundamentals) ====================
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 100, Question = "This is a sample question for DP-080 (Data Fundamentals) at 100 points.", Answer = "Sample answer 1" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 200, Question = "This is a sample question for DP-080 (Data Fundamentals) at 200 points.", Answer = "Sample answer 2" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 300, Question = "This is a sample question for DP-080 (Data Fundamentals) at 300 points.", Answer = "Sample answer 3" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 400, Question = "This is a sample question for DP-080 (Data Fundamentals) at 400 points.", Answer = "Sample answer 4" },
+            new() { Category = "DP-080 (Data Fundamentals)", PointValue = 500, Question = "This is a sample question for DP-080 (Data Fundamentals) at 500 points.", Answer = "Sample answer 5" },
+            // ==================== DP-3001 (Azure Data) ====================
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 100, Question = "This is a sample question for DP-3001 (Azure Data) at 100 points.", Answer = "Sample answer 1" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 200, Question = "This is a sample question for DP-3001 (Azure Data) at 200 points.", Answer = "Sample answer 2" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 300, Question = "This is a sample question for DP-3001 (Azure Data) at 300 points.", Answer = "Sample answer 3" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 400, Question = "This is a sample question for DP-3001 (Azure Data) at 400 points.", Answer = "Sample answer 4" },
+            new() { Category = "DP-3001 (Azure Data)", PointValue = 500, Question = "This is a sample question for DP-3001 (Azure Data) at 500 points.", Answer = "Sample answer 5" },
+            // ==================== Algorithms (C#) ====================
+            new() { Category = "Algorithms (C#)", PointValue = 100, Question = "This is a sample question for Algorithms (C#) at 100 points.", Answer = "Sample answer 1" },
+            new() { Category = "Algorithms (C#)", PointValue = 200, Question = "This is a sample question for Algorithms (C#) at 200 points.", Answer = "Sample answer 2" },
+            new() { Category = "Algorithms (C#)", PointValue = 300, Question = "This is a sample question for Algorithms (C#) at 300 points.", Answer = "Sample answer 3" },
+            new() { Category = "Algorithms (C#)", PointValue = 400, Question = "This is a sample question for Algorithms (C#) at 400 points.", Answer = "Sample answer 4" },
+            new() { Category = "Algorithms (C#)", PointValue = 500, Question = "This is a sample question for Algorithms (C#) at 500 points.", Answer = "Sample answer 5" },
         ];
     }
 }
