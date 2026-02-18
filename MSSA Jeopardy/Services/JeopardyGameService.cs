@@ -1792,4 +1792,8 @@ public class JeopardyGameService
             new() { Category = "App Configuration", PointValue = 500, Question = "A bad config change took prod down—best prevention pattern?", Answer = "What is validation + approvals + gradual rollout (and safe defaults)?" },
             new() { Category = "App Configuration", PointValue = 500, Question = "You must rotate secrets without redeploy; where should secrets live and how should apps reference them?", Answer = "What is Key Vault with Key Vault references from configuration?" },
             new() { Category = "App Configuration", PointValue = 500, Question = "Your system needs consistent settings across microservices; the architecture goal is this.", Answer = "What is centralized configuration with controlled refresh and governance?" },
-            new() { Category = "App Configuration", PointValue = 500, Question = "If a feature flag system causes outages, the top design mistake is this.", Answer = "What is not planning for flag failure (no fallback, hard dependency)?" },
+            new() { Category = "App Configuration", PointValue = 500, Question = "If a feature flag system causes outages, the top design mistake is this.", Answer = "What is not planning for flag failure (no fallback, hard dependency)?" }
+        ];
+    }
+}
+
