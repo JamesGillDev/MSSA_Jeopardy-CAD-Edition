@@ -53,4 +53,4 @@ jobs:
         with:
           app-name: mssa-jeopardy-jamesgill
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: .
+          package: ${{ env.PUBLISH_DIR }}
