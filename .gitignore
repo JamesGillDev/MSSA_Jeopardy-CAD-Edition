@@ -13,3 +13,4 @@ appsettings.*.json
 *.pfx
 *.snk
 node_modules/
+/MSSA Jeopardy.Client/Services/JeopardyGameService.cs
