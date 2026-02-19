@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace MSSA_Jeopardy.Client.Models;
 
 public class JeopardyQuestion
