@@ -1,12 +1,13 @@
 # MSSA Jeopardy - CAD Edition (v2.1)
 
+[Live Web App](https://mssa-jeopardy-jamesgill.azurewebsites.net/)
+
 [![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blue)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-BLS-blue.svg)](https://www.bls.gov/bls/bls-copyright-statement.htm)
 
 A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Systems Academy (MSSA) Cloud Application Development Program**. Test your knowledge across a huge range of cloud, dev, and data topics!
 
-https://mssa-jeopardy-jamesgill.azurewebsites.net/
 ---
 
 ## What's New in v2.1
@@ -51,7 +52,7 @@ https://mssa-jeopardy-jamesgill.azurewebsites.net/
 Pull requests are welcome! Please ensure new questions are unique and not duplicates of existing ones. For major changes, open an issue first to discuss what you would like to change.
 
 ## License
-MIT
+This project is licensed under the [BLS Copyright and Disclaimer](https://www.bls.gov/bls/bls-copyright-statement.htm).
 
 ---
 MSSA Jeopardy - CAD Edition v2.1 | Developed by JamesGillDev and contributors
