@@ -1,12 +1,13 @@
 using MSSA_Jeopardy.Components;
+using MSSA_Jeopardy.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Interactive Server + Interactive WebAssembly (Client project)
 builder.Services
     .AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<JeopardyGameService>();
 
 var app = builder.Build();
 
@@ -21,8 +22,6 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(MSSA_Jeopardy.Client._Imports).Assembly);
+    .AddInteractiveServerRenderMode();
 
 app.Run();

@@ -1,4 +1,4 @@
-namespace MSSA_Jeopardy_.Models
+namespace MSSA_Jeopardy.Client.Models
 {
     public class JeopardyQuestion
     {
