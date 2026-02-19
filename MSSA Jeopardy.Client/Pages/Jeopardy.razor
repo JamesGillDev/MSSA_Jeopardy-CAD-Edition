@@ -199,7 +199,6 @@
                 </div>
             }
         </div>
-
         <div class="game-controls">
             <button class="btn-restart" @onclick="RestartGame">New Game</button>
             <button class="btn-back-menu" @onclick="BackToMenu">Change Categories</button>
@@ -908,6 +907,18 @@
         "MS-4010 (Security)",
         "Azure Fundamentals"
     };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !gameService.GameStarted)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("playWelcomeJeopardyVoice");
+            }
+            catch { /* ignore if not available */ }
+        }
+    }
 
     private void ToggleCategory(string category)
     {
