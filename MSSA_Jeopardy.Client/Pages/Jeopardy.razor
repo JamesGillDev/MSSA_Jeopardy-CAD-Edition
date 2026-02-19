@@ -1,9 +1,119 @@
 @page "/jeopardy"
 @using MSSA_Jeopardy.Client.Models
 @using MSSA_Jeopardy.Client.Services
-@inject IJSRuntime JS
-@rendermode InteractiveServer
+@inject JeopardyGameService GameService
 
 <PageTitle>MSSA Jeopardy!</PageTitle>
 
-<!-- ...rest of the file unchanged... -->
+@if (!GameService.GameStarted)
+{
+    <h2>Select Categories</h2>
+    <p>Select up to 6 categories to play:</p>
+    <EditForm OnValidSubmit="StartGame">
+        <div>
+            @foreach (var cat in JeopardyGameService.AllCategoryNames)
+            {
+                <label style="display:block;">
+                    <input type="checkbox" value="@cat" @onchange="e => OnCategoryChanged(e, cat)" checked="@GameService.SelectedCategories.Contains(cat)" />
+                    @cat
+                </label>
+            }
+        </div>
+        <button type="submit" disabled="@(GameService.SelectedCategories.Count == 0)">Start Game</button>
+    </EditForm>
+}
+else
+{
+    <h2>Game Board</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                @foreach (var cat in GameService.Categories)
+                {
+                    <th>@cat.Name</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < 5; i++)
+            {
+                <tr>
+                    @foreach (var cat in GameService.Categories)
+                    {
+                        var q = cat.Questions[i];
+                        <td>
+                            @if (!q.IsAnswered)
+                            {
+                                <button @onclick="() => SelectQuestion(q)">@q.PointValue</button>
+                            }
+                            else
+                            {
+                                <span style="color:gray;">--</span>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (GameService.CurrentQuestion != null)
+    {
+        <div class="question-modal">
+            <h3>@GameService.CurrentQuestion.Category - @GameService.CurrentQuestion.PointValue</h3>
+            <p>@GameService.CurrentQuestion.Question</p>
+            <button @onclick="() => AnswerQuestion(true)">Correct</button>
+            <button @onclick="() => AnswerQuestion(false)">Incorrect</button>
+            <button @onclick="CloseQuestion">Close</button>
+        </div>
+    }
+    <div>
+        <h4>Scores</h4>
+        <ul>
+            @foreach (var player in GameService.PlayerNames)
+            {
+                <li>@player.Value: @GameService.PlayerScores[player.Key]</li>
+            }
+        </ul>
+        <p>Current Player: @GameService.PlayerNames[GameService.CurrentPlayer]</p>
+    </div>
+}
+
+@code {
+    private void OnCategoryChanged(ChangeEventArgs e, string cat)
+    {
+        if ((bool)e.Value!)
+        {
+            if (!GameService.SelectedCategories.Contains(cat) && GameService.SelectedCategories.Count < 6)
+                GameService.SelectedCategories.Add(cat);
+        }
+        else
+        {
+            GameService.SelectedCategories.Remove(cat);
+        }
+    }
+
+    private void StartGame()
+    {
+        GameService.SetSelectedCategories(GameService.SelectedCategories);
+        GameService.StartGame();
+        StateHasChanged();
+    }
+
+    private void SelectQuestion(JeopardyQuestion q)
+    {
+        GameService.SelectQuestion(q);
+        StateHasChanged();
+    }
+
+    private void AnswerQuestion(bool correct)
+    {
+        GameService.AnswerQuestion(correct, GameService.CurrentPlayer);
+        StateHasChanged();
+    }
+
+    private void CloseQuestion()
+    {
+        GameService.CloseQuestion();
+        StateHasChanged();
+    }
+}
