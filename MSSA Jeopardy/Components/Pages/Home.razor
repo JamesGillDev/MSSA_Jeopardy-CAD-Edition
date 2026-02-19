@@ -4,7 +4,17 @@
 
 @using MSSA_Jeopardy.Services
 
+@inject IJSRuntime JS
+
 @code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("playWelcomeVoice");
+        }
+    }
+
     private static readonly List<string> Categories = JeopardyGameService.AllCategoryNames.ToList();
 
     private static readonly Dictionary<string, string> CategoryDescriptions = new()
