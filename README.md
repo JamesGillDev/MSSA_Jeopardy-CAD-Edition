@@ -1,4 +1,4 @@
-# MSSA Jeopardy - CAD Edition (v2.1)
+# MSSA Jeopardy - CAD Edition (v2.2)
 
 [Live Web App](https://mssa-jeopardy-jamesgill.azurewebsites.net/)
 
@@ -10,7 +10,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 
 ---
 
-## What's New in v2.1
+## What's New in v2.2
 - **Massive Category Pool:** 40+ categories including .NET Core, Git & Version Control, Cloud Security, Containers & Kubernetes, Microsoft Power Platform, Data Analytics, Azure Blob Storage, Key Vault, App Service, and many more.
 - **Deep Question Pool:** Each category has at least 5 unique questions per point value (100–500), for endless replayability.
 - **Randomized Board:** Each game, a random question is chosen for each point value in each selected category.
@@ -59,4 +59,4 @@ This project is licensed under the **Business Source License 1.1 (BLS)**. See [L
 - **Change License:** Apache License 2.0 (effective on the Change Date, per license terms).
 
 ---
-MSSA Jeopardy - CAD Edition v2.1 | Developed by JamesGillDev and contributors
+MSSA Jeopardy - CAD Edition v2.2 | Developed by JamesGillDev and contributors
