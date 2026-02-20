@@ -875,57 +875,84 @@
 }
 
 .clue-tile {
-    border: 3px solid #262c42;
-    border-top-color: #4d5b84;
-    border-left-color: #44537c;
-    background:
-        linear-gradient(180deg, rgba(78, 118, 255, 0.16) 0%, rgba(34, 77, 200, 0.08) 48%, rgba(8, 19, 60, 0.32) 100%),
-        linear-gradient(180deg, #12359f 0%, #0b215f 100%);
-    color: #ffd45a;
-    font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+    border: 4px solid #2b2424;
+    border-top-color: #8f8278;
+    border-left-color: #7a6d65;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #1d1f2c 0%, #121521 100%);
+    color: #f3b23a;
+    font-family: "Arial Black", "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
     font-size: clamp(1.8rem, 2.6vw, 2.35rem);
-    letter-spacing: 0.03em;
-    text-shadow: 0 2px 0 #1b2f76;
+    letter-spacing: 0.015em;
     position: relative;
     overflow: hidden;
+    display: grid;
+    place-items: center;
     opacity: 0;
     transform: translateY(10px) scale(0.98);
     animation: clue-reveal 320ms ease forwards;
     animation-delay: calc(var(--column-index, 0) * 55ms + var(--tile-index, 0) * 44ms + 150ms);
-    box-shadow: 0 0 0 2px rgba(9, 18, 52, 0.92) inset, 0 0 0 1px rgba(139, 164, 255, 0.2), 0 8px 16px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 1px rgba(205, 190, 173, 0.3) inset, 0 0 0 2px rgba(10, 14, 30, 0.95), 0 8px 16px rgba(0, 0, 0, 0.45);
     transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
 }
 
 .clue-tile::before {
     content: "";
     position: absolute;
-    inset: 3px;
-    border: 1px solid rgba(127, 154, 255, 0.25);
-    background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0, rgba(255, 255, 255, 0.04) 1px, transparent 1px, transparent 3px);
+    inset: 6px 8px;
+    z-index: 1;
+    border: 1px solid rgba(183, 206, 255, 0.48);
+    border-radius: 24px;
+    background:
+        radial-gradient(ellipse at 24% 14%, rgba(255, 255, 255, 0.54) 0%, rgba(255, 255, 255, 0.2) 26%, rgba(255, 255, 255, 0) 58%),
+        radial-gradient(ellipse at 50% 56%, #2151c5 0%, #153c9b 58%, #0b2468 100%),
+        repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 3px);
+    box-shadow: inset 0 5px 14px rgba(255, 255, 255, 0.16), inset 0 -14px 20px rgba(2, 8, 31, 0.6), inset 0 0 20px rgba(118, 170, 255, 0.28);
     pointer-events: none;
 }
 
+.clue-value {
+    display: inline-block;
+    position: relative;
+    z-index: 3;
+    transform: translateY(1px);
+    color: #f8ba3d;
+    text-shadow: 0 1px 0 #4e3105, 0 0 7px rgba(255, 169, 46, 0.8), 0 0 15px rgba(255, 149, 20, 0.48);
+    filter: saturate(1.14);
+    animation: crt-flicker 3.8s steps(2, end) infinite;
+}
+
+.clue-value-placeholder {
+    opacity: 0;
+}
+
 .clue-tile:hover:not(:disabled) {
-    filter: brightness(1.12);
+    filter: brightness(1.1);
     transform: translateY(-1px) scale(1.01);
-    border-color: #5b6a96;
-    border-top-color: #8798cf;
-    border-left-color: #7c8ec9;
+    border-color: #8b7f75;
+    border-top-color: #b4a79b;
+    border-left-color: #a2958a;
+    box-shadow: 0 0 0 1px rgba(217, 201, 182, 0.35) inset, 0 0 0 2px rgba(11, 17, 38, 0.95), 0 10px 18px rgba(0, 0, 0, 0.5);
 }
 
 .clue-tile::after {
     content: "";
     position: absolute;
-    inset: -120% auto -120% -38%;
-    width: 45%;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
-    transform: translateX(-180%) rotate(16deg);
-    transition: transform 450ms ease;
+    top: 8px;
+    left: 12px;
+    right: 12px;
+    height: 37%;
+    z-index: 2;
+    border-radius: 26px 26px 20px 20px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.46) 0%, rgba(255, 255, 255, 0.13) 42%, rgba(255, 255, 255, 0) 100%);
+    opacity: 0.62;
+    transition: opacity 180ms ease, transform 180ms ease;
     pointer-events: none;
 }
 
 .clue-tile:hover:not(:disabled)::after {
-    transform: translateX(340%) rotate(16deg);
+    opacity: 0.8;
+    transform: translateY(-1px);
 }
 
 .clue-tile.answered {
@@ -934,6 +961,11 @@
     text-shadow: none;
     border-color: #23293d;
     box-shadow: 0 0 0 2px rgba(7, 12, 30, 0.95) inset;
+}
+
+.clue-tile.answered::before,
+.clue-tile.answered::after {
+    opacity: 0;
 }
 
 .clue-tile.answered.recent-answer {
@@ -1360,6 +1392,22 @@
     }
 }
 
+@keyframes crt-flicker {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    48% {
+        opacity: 0.96;
+    }
+    50% {
+        opacity: 0.9;
+    }
+    52% {
+        opacity: 0.97;
+    }
+}
+
 @media (max-width: 900px) {
     .broadcast-hud {
         position: static;
@@ -1529,6 +1577,7 @@
     .game-shell,
     .category-column,
     .clue-tile,
+    .clue-value,
     .score-card.scored,
     .score-card.scored .score-value,
     .question-modal,

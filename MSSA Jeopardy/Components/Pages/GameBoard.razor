@@ -155,7 +155,7 @@ else
                             @onclick="ToggleRoundProgress"
                             aria-expanded="@_showRoundProgress"
                             aria-controls="round-progress-panel">
-                        Progress
+                        @(_showRoundProgress ? "Hide Progress" : "Show Progress")
                     </button>
                     <button class="host-mode-btn" type="button" @onclick="RequestMidGameModeSwitch" disabled="@_isRematchPending">@GetMidGameModeButtonLabel()</button>
                     <button class="new-game-btn" type="button" @onclick="NewGame">New Game</button>
@@ -185,7 +185,7 @@ else
 
             @if (_showRoundProgress)
             {
-                <div id="round-progress-panel" class="round-progress-wrap" role="status" aria-live="polite">
+                <section id="round-progress-panel" class="round-progress-wrap" role="region" aria-label="Round progress and event feed">
                     <div class="round-progress-copy">
                         <span class="round-progress-label">Round Progress</span>
                         <strong>@GetAnsweredClueCount() / @GetTotalClueCount() clues answered</strong>
@@ -194,18 +194,17 @@ else
                         <span class="round-progress-fill"></span>
                     </div>
                     <span class="round-progress-remaining">@GetRemainingClueCount() remaining</span>
-                </div>
+                    <div class="event-ticker" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Live game event feed">
+                        @foreach (var evt in _broadcastEvents)
+                        {
+                            <article class="ticker-item @evt.ToneClass">
+                                <span class="ticker-time">@evt.TimeLabel</span>
+                                <span class="ticker-message">@evt.Message</span>
+                            </article>
+                        }
+                    </div>
+                </section>
             }
-
-            <div class="event-ticker" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Live game event feed">
-                @foreach (var evt in _broadcastEvents)
-                {
-                    <article class="ticker-item @evt.ToneClass">
-                        <span class="ticker-time">@evt.TimeLabel</span>
-                        <span class="ticker-message">@evt.Message</span>
-                    </article>
-                }
-            </div>
         </div>
 
         <div class="jeopardy-board" style="--column-count:@GameService.Categories.Count;" role="grid" aria-label="Clue board">
@@ -227,11 +226,11 @@ else
                                 aria-label="@GetClueAriaLabel(category.Name, clue)">
                             @if (!clue.IsAnswered)
                             {
-                                <span>$@clue.PointValue</span>
+                                <span class="clue-value">$@clue.PointValue</span>
                             }
                             else
                             {
-                                <span>&nbsp;</span>
+                                <span class="clue-value-placeholder">&nbsp;</span>
                             }
                         </button>
                     }

@@ -1,7 +1,11 @@
 window.playWelcomeVoice = function () {
     let hasPlayed = false;
     let customVoiceAudio = null;
-    const customVoicePath = "/audio/welcome-voice.mp3";
+    let customVoiceAudioSrc = "";
+    const customVoicePaths = [
+        "/audio/1771628511761807912ks9wbup-voicemaker.in-speech.mp3",
+        "/audio/welcome-voice.mp3?v=20260220a"
+    ];
 
     const deepNameHints = [
         "guy",
@@ -83,21 +87,27 @@ window.playWelcomeVoice = function () {
             return true;
         }
 
-        try {
-            if (!customVoiceAudio) {
-                customVoiceAudio = new Audio(customVoicePath);
-                customVoiceAudio.preload = "auto";
-                customVoiceAudio.volume = 1;
-            }
+        for (const source of customVoicePaths) {
+            try {
+                if (!customVoiceAudio || customVoiceAudioSrc !== source) {
+                    customVoiceAudio = new Audio(source);
+                    customVoiceAudio.preload = "auto";
+                    customVoiceAudio.volume = 1;
+                    customVoiceAudioSrc = source;
+                }
 
-            customVoiceAudio.currentTime = 0;
-            await customVoiceAudio.play();
-            hasPlayed = true;
-            removeGestureListeners();
-            return true;
-        } catch {
-            return false;
+                customVoiceAudio.currentTime = 0;
+                await customVoiceAudio.play();
+                hasPlayed = true;
+                removeGestureListeners();
+                return true;
+            } catch {
+                customVoiceAudio = null;
+                customVoiceAudioSrc = "";
+            }
         }
+
+        return false;
     };
 
     const speakFallback = () => {
