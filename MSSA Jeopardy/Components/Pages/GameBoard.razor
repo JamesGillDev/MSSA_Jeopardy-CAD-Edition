@@ -70,22 +70,36 @@ else
                 </section>
             }
         </div>
-    </section>
 
-    @if (GameService.CurrentQuestion != null)
-    {
-        <div class="question-modal" @onclick="CloseQuestion">
-            <div class="question-card" @onclick:stopPropagation="true">
-                <p class="question-meta">@GameService.CurrentQuestion.Category | $@GameService.CurrentQuestion.PointValue</p>
-                <p class="question-text">@GameService.CurrentQuestion.Question</p>
-                <div class="question-actions">
-                    <button class="action-btn correct" @onclick="() => AnswerQuestion(true)">Correct</button>
-                    <button class="action-btn incorrect" @onclick="() => AnswerQuestion(false)">Incorrect</button>
-                    <button class="action-btn close" @onclick="CloseQuestion">Close</button>
+        @if (GameService.CurrentQuestion != null)
+        {
+            <div class="question-modal">
+                <div class="question-tv">
+                    <div class="question-text">@GameService.CurrentQuestion.Question</div>
+                    @if (GameService.AnsweringPlayer == null)
+                    {
+                        <div class="answer-strip">
+                            <h4>Who wants to answer?</h4>
+                            @foreach (var player in GameService.PlayerNames)
+                            {
+                                <button class="answer-btn" @onclick="() => OnPlayerAttempt(player.Key)" disabled="@GameService.PlayerAttempts.Contains(player.Key)">@player.Value</button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="answer-input-strip">
+                            <h4>@GameService.PlayerNames[GameService.AnsweringPlayer.Value] is answering:</h4>
+                            <input class="answer-input" @bind="GameService.PlayerAnswerInput" placeholder="Type your answer..." />
+                            <button class="score-btn correct" @onclick="() => ScorePlayerAnswer(true)">Correct</button>
+                            <button class="score-btn incorrect" @onclick="() => ScorePlayerAnswer(false)">Incorrect</button>
+                        </div>
+                    }
                 </div>
+                <button class="close-btn" @onclick="CloseQuestion">Close</button>
             </div>
-        </div>
-    }
+        }
+    </section>
 }
 
 @code {
@@ -126,4 +140,17 @@ else
         GameService.CloseQuestion();
         StateHasChanged();
     }
+
+    void OnPlayerAttempt(int playerId)
+    {
+        GameService.StartPlayerAttempt(playerId);
+        StateHasChanged();
+    }
+
+    void ScorePlayerAnswer(bool isCorrect)
+    {
+        GameService.ScorePlayerAnswer(isCorrect);
+        StateHasChanged();
+    }
 }
+

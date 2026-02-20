@@ -1,9 +1,42 @@
 @using MSSA_Jeopardy.Services
 @inject JeopardyGameService GameService
 
-<ul>
-@foreach (var cat in JeopardyGameService.AllCategoryNames)
-{
-    <li>@cat</li>
+<div class="category-selection-panel">
+    <h2>Select Your Categories</h2>
+    <div class="category-grid">
+        @foreach (var cat in JeopardyGameService.AllCategoryNames)
+        {
+            <div class="category-card">
+                <span class="category-name">@cat</span>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+.category-selection-panel {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: linear-gradient(180deg, #0a1f68 0%, #081745 100%);
+    border-radius: 16px;
+    color: #fff;
+    box-shadow: 0 0 24px #173fae;
 }
-</ul>
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.category-card {
+    background: #173fae;
+    color: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-family: 'Oswald', 'Arial Black', sans-serif;
+    text-align: center;
+    box-shadow: 0 0 8px #173fae;
+}
+</style>
