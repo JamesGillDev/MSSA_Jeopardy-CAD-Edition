@@ -1,0 +1,253 @@
+.setup-panel {
+    max-width: 1100px;
+    margin: 1rem auto;
+    padding: 1.25rem;
+    border: 2px solid #173fae;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #0a1f68 0%, #081745 100%);
+    color: #f6f8ff;
+}
+
+.category-picker {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.category-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid #2f5acc;
+    border-radius: 8px;
+    background: rgba(11, 26, 84, 0.7);
+    font-size: 0.92rem;
+}
+
+.category-option.selected {
+    border-color: #f9b017;
+    background: rgba(19, 44, 129, 0.9);
+}
+
+.category-option input {
+    margin-top: 0.15rem;
+}
+
+.setup-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.start-game-btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 700;
+    background: #f9b017;
+    color: #0b1646;
+}
+
+.start-game-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.game-shell {
+    max-width: 1250px;
+    margin: 1rem auto;
+}
+
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.8rem;
+}
+
+.player-turn {
+    color: #f9b017;
+    font-weight: 700;
+}
+
+.score-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+}
+
+.score-card {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.55rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #1b40a6;
+    background: #0a1f68;
+}
+
+.score-card.active {
+    border-color: #f9b017;
+    box-shadow: 0 0 0 2px rgba(249, 176, 23, 0.25);
+}
+
+.player-name {
+    font-weight: 600;
+}
+
+.player-score {
+    font-weight: 800;
+    color: #f9b017;
+}
+
+.jeopardy-board {
+    display: grid;
+    grid-template-columns: repeat(var(--column-count), minmax(160px, 1fr));
+    gap: 0.45rem;
+    background: #06114a;
+    border: 3px solid #163ea8;
+    border-radius: 10px;
+    padding: 0.45rem;
+    overflow-x: auto;
+}
+
+.category-column {
+    display: grid;
+    grid-template-rows: 84px repeat(5, minmax(86px, 1fr));
+    gap: 0.45rem;
+    min-width: 160px;
+}
+
+.category-title {
+    background: linear-gradient(180deg, #0b2f92 0%, #0a236f 100%);
+    color: #ffffff;
+    border: 2px solid #1f4bc0;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.92rem;
+    line-height: 1.2;
+    padding: 0.4rem;
+}
+
+.clue-tile {
+    border: 2px solid #1f4bc0;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #0a2d8a 0%, #08246f 100%);
+    color: #ffcc40;
+    font-weight: 900;
+    font-size: clamp(1.3rem, 2vw, 2rem);
+    text-shadow: 0 1px 0 #6d4c00;
+    width: 100%;
+    min-height: 86px;
+}
+
+.clue-tile:hover:not(:disabled) {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+}
+
+.clue-tile.answered {
+    color: transparent;
+    background: #061850;
+    border-color: #19357f;
+}
+
+.clue-tile:disabled {
+    cursor: default;
+}
+
+.question-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(1, 7, 31, 0.8);
+    z-index: 999;
+    padding: 1rem;
+}
+
+.question-card {
+    width: min(900px, 100%);
+    border-radius: 12px;
+    border: 3px solid #1f4bc0;
+    background: linear-gradient(180deg, #0b2f92 0%, #081f63 100%);
+    color: #ffffff;
+    text-align: center;
+    padding: 1.25rem;
+}
+
+.question-meta {
+    color: #ffcc40;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin: 0 0 0.9rem;
+}
+
+.question-text {
+    font-size: clamp(1.2rem, 2.6vw, 2rem);
+    line-height: 1.32;
+    margin: 0;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.question-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.action-btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-weight: 700;
+}
+
+.action-btn.correct {
+    background: #20b95d;
+    color: #03240f;
+}
+
+.action-btn.incorrect {
+    background: #e55050;
+    color: #300000;
+}
+
+.action-btn.close {
+    background: #d4dae9;
+    color: #09154a;
+}
+
+@media (max-width: 768px) {
+    .board-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .category-column {
+        grid-template-rows: 72px repeat(5, minmax(72px, 1fr));
+    }
+
+    .clue-tile {
+        min-height: 72px;
+    }
+
+    .question-text {
+        min-height: 120px;
+    }
+}

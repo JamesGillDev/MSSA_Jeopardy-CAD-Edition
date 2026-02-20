@@ -6,73 +6,86 @@
 
 @if (!GameService.GameStarted)
 {
-    <h2>Select Categories</h2>
-    <p>Select up to 6 categories to play:</p>
-    <div>
-        @foreach (var cat in JeopardyGameService.AllCategoryNames)
-        {
-            <label style="display:block;">
-                <input type="checkbox" value="@cat" @onchange="e => OnCategoryChanged(e, cat)" checked="@GameService.SelectedCategories.Contains(cat)" />
-                @cat
-            </label>
-        }
-    </div>
-    <button @onclick="StartGame" disabled="@(GameService.SelectedCategories.Count == 0)">Start Game</button>
+    <section class="setup-panel">
+        <h2>Select Categories</h2>
+        <p>Select up to 6 categories to play:</p>
+        <div class="category-picker">
+            @foreach (var cat in JeopardyGameService.AllCategoryNames)
+            {
+                var isSelected = GameService.SelectedCategories.Contains(cat);
+                <label class="category-option @(isSelected ? "selected" : string.Empty)">
+                    <input type="checkbox"
+                           value="@cat"
+                           @onchange="e => OnCategoryChanged(e, cat)"
+                           checked="@isSelected"
+                           disabled="@(!isSelected && GameService.SelectedCategories.Count >= 6)" />
+                    <span>@cat</span>
+                </label>
+            }
+        </div>
+        <div class="setup-actions">
+            <span>@GameService.SelectedCategories.Count / 6 selected</span>
+            <button class="start-game-btn" @onclick="StartGame" disabled="@(GameService.SelectedCategories.Count == 0)">Start Game</button>
+        </div>
+    </section>
 }
 else
 {
-    <h2>Game Board</h2>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                @foreach (var cat in GameService.Categories)
-                {
-                    <th>@cat.Name</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < 5; i++)
+    <section class="game-shell">
+        <div class="board-header">
+            <h2>Game Board</h2>
+            <div class="player-turn">Current Player: <strong>@GameService.PlayerNames[GameService.CurrentPlayer]</strong></div>
+        </div>
+
+        <div class="score-strip">
+            @foreach (var player in GameService.PlayerNames)
             {
-                <tr>
-                    @foreach (var cat in GameService.Categories)
+                <div class="score-card @(player.Key == GameService.CurrentPlayer ? "active" : string.Empty)">
+                    <span class="player-name">@player.Value</span>
+                    <span class="player-score">@GameService.PlayerScores[player.Key]</span>
+                </div>
+            }
+        </div>
+
+        <div class="jeopardy-board" style="--column-count:@GameService.Categories.Count;">
+            @foreach (var cat in GameService.Categories)
+            {
+                <section class="category-column">
+                    <div class="category-title">@cat.Name</div>
+                    @foreach (var q in cat.Questions.OrderBy(x => x.PointValue))
                     {
-                        var q = cat.Questions[i];
-                        <td>
+                        <button class="clue-tile @(q.IsAnswered ? "answered" : string.Empty)"
+                                @onclick="() => SelectQuestion(q)"
+                                disabled="@q.IsAnswered">
                             @if (!q.IsAnswered)
                             {
-                                <button @onclick="() => SelectQuestion(q)">@q.PointValue</button>
+                                <span>$@q.PointValue</span>
                             }
                             else
                             {
-                                <span style="color:gray;">--</span>
+                                <span>&nbsp;</span>
                             }
-                        </td>
+                        </button>
                     }
-                </tr>
+                </section>
             }
-        </tbody>
-    </table>
+        </div>
+    </section>
+
     @if (GameService.CurrentQuestion != null)
     {
-        <div class="question-modal">
-            <h3>@GameService.CurrentQuestion.Category - @GameService.CurrentQuestion.PointValue</h3>
-            <p>@GameService.CurrentQuestion.Question</p>
-            <button @onclick="() => AnswerQuestion(true)">Correct</button>
-            <button @onclick="() => AnswerQuestion(false)">Incorrect</button>
-            <button @onclick="CloseQuestion">Close</button>
+        <div class="question-modal" @onclick="CloseQuestion">
+            <div class="question-card" @onclick:stopPropagation="true">
+                <p class="question-meta">@GameService.CurrentQuestion.Category | $@GameService.CurrentQuestion.PointValue</p>
+                <p class="question-text">@GameService.CurrentQuestion.Question</p>
+                <div class="question-actions">
+                    <button class="action-btn correct" @onclick="() => AnswerQuestion(true)">Correct</button>
+                    <button class="action-btn incorrect" @onclick="() => AnswerQuestion(false)">Incorrect</button>
+                    <button class="action-btn close" @onclick="CloseQuestion">Close</button>
+                </div>
+            </div>
         </div>
     }
-    <div>
-        <h4>Scores</h4>
-        <ul>
-            @foreach (var player in GameService.PlayerNames)
-            {
-                <li>@player.Value: @GameService.PlayerScores[player.Key]</li>
-            }
-        </ul>
-        <p>Current Player: @GameService.PlayerNames[GameService.CurrentPlayer]</p>
-    </div>
 }
 
 @code {
