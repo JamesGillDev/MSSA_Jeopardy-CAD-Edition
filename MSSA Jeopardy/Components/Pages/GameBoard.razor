@@ -8,18 +8,16 @@
 {
     <h2>Select Categories</h2>
     <p>Select up to 6 categories to play:</p>
-    <EditForm OnValidSubmit="StartGame">
-        <div>
-            @foreach (var cat in JeopardyGameService.AllCategoryNames)
-            {
-                <label style="display:block;">
-                    <input type="checkbox" value="@cat" @onchange="e => OnCategoryChanged(e, cat)" checked="@GameService.SelectedCategories.Contains(cat)" />
-                    @cat
-                </label>
-            }
-        </div>
-        <button type="submit" disabled="@(GameService.SelectedCategories.Count == 0)">Start Game</button>
-    </EditForm>
+    <div>
+        @foreach (var cat in JeopardyGameService.AllCategoryNames)
+        {
+            <label style="display:block;">
+                <input type="checkbox" value="@cat" @onchange="e => OnCategoryChanged(e, cat)" checked="@GameService.SelectedCategories.Contains(cat)" />
+                @cat
+            </label>
+        }
+    </div>
+    <button @onclick="StartGame" disabled="@(GameService.SelectedCategories.Count == 0)">Start Game</button>
 }
 else
 {
@@ -80,7 +78,7 @@ else
 @code {
     private void OnCategoryChanged(ChangeEventArgs e, string cat)
     {
-        if ((bool)e.Value!)
+        if (e.Value is bool isChecked && isChecked)
         {
             if (!GameService.SelectedCategories.Contains(cat) && GameService.SelectedCategories.Count < 6)
                 GameService.SelectedCategories.Add(cat);
