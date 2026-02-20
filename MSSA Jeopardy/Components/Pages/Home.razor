@@ -5,77 +5,186 @@
 @using MSSA_Jeopardy.Services
 @inject IJSRuntime JS
 
-<div class="home-container">
-    <div class="home-header">
-        <h1>MSSA Jeopardy</h1>
-        <p class="subtitle">Test your knowledge. Play like the TV show!</p>
-    </div>
-    <div class="home-actions">
-        <a class="play-btn" href="/jeopardy">Play Jeopardy</a>
-    </div>
-    <div class="category-preview">
-        <h3>Sample Categories</h3>
-        <div class="category-preview-grid">
-            @foreach (var cat in JeopardyGameService.AllCategoryNames.Take(6))
-            {
-                <div class="category-preview-card">@cat</div>
-            }
+<section class="hero-shell">
+    <div class="hero-panel">
+        <p class="hero-kicker">MSSA Cohort Knowledge Challenge</p>
+        <h1>MSSA Jeopardy!</h1>
+        <p class="hero-text">
+            A training-focused Jeopardy-style board for Azure, .NET, DevOps, and cloud fundamentals.
+            Play with your cohort, practice recall under pressure, and reinforce exam-ready concepts.
+        </p>
+        <div class="hero-actions">
+            <a class="play-btn" href="/jeopardy">Play Jeopardy</a>
+            <a class="secondary-btn" href="/jeopardy">Choose Categories</a>
         </div>
     </div>
-</div>
+
+    <aside class="howto-panel">
+        <h2>How To Play</h2>
+        <ol>
+            <li>Select exactly 6 categories and start the board.</li>
+            <li>Pick a clue value tile from the board.</li>
+            <li>Any player can buzz in to answer that clue.</li>
+            <li>The host marks the answer correct or incorrect.</li>
+            <li>Highest score at the end wins the round.</li>
+        </ol>
+    </aside>
+</section>
+
+<section class="categories-shell">
+    <div class="categories-header">
+        <h2>All Available Categories</h2>
+        <p>@JeopardyGameService.AllCategoryNames.Length categories available</p>
+    </div>
+
+    <div class="categories-grid" role="list" aria-label="All categories">
+        @foreach (var category in JeopardyGameService.AllCategoryNames)
+        {
+            <div class="category-card" role="listitem">@category</div>
+        }
+    </div>
+</section>
 
 <style>
-.home-container {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: linear-gradient(180deg, #0a1f68 0%, #081745 100%);
-    border-radius: 16px;
-    color: #fff;
-    box-shadow: 0 0 24px #173fae;
-}
-.home-header h1 {
-    font-family: 'Oswald', 'Arial Black', sans-serif;
-    font-size: 2.5rem;
-    color: #f9b017;
-    text-shadow: 2px 2px 8px #173fae;
-}
-.subtitle {
-    font-size: 1.2rem;
-    color: #fff;
-    margin-bottom: 1.5rem;
-}
-.home-actions {
-    margin: 2rem 0;
-    text-align: center;
-}
-.play-btn {
-    background: #f9b017;
-    color: #173fae;
-    font-size: 1.3rem;
-    font-weight: bold;
-    padding: 1rem 2.5rem;
-    border-radius: 12px;
-    text-decoration: none;
-    box-shadow: 0 0 12px #f9b017;
-}
-.category-preview {
-    margin-top: 2rem;
-}
-.category-preview-grid {
+.hero-shell {
+    max-width: 1320px;
+    margin: 1rem auto;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: 1.45fr 1fr;
     gap: 1rem;
 }
-.category-preview-card {
-    background: #173fae;
-    color: #fff;
-    border-radius: 8px;
+
+.hero-panel,
+.howto-panel,
+.categories-shell {
+    border: 4px solid #203883;
+    background: radial-gradient(circle at top, #10287d 0%, #07174d 60%, #050a25 100%);
+    color: #ecf2ff;
+    box-shadow: 0 0 0 3px #3759c4 inset, 0 14px 34px rgba(0, 0, 0, 0.42);
+}
+
+.hero-panel,
+.howto-panel {
+    padding: 1.25rem;
+}
+
+.hero-kicker {
+    margin: 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9ab0ff;
+}
+
+.hero-panel h1 {
+    margin: 0.35rem 0 0;
+    font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: clamp(2rem, 4vw, 3.1rem);
+    color: #ffd462;
+}
+
+.hero-text {
+    margin: 0.85rem 0 0;
+    max-width: 62ch;
+    font-size: 1.03rem;
+    line-height: 1.45;
+    color: #d8e4ff;
+}
+
+.hero-actions {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.play-btn,
+.secondary-btn {
+    border: 2px solid #c59018;
+    background: linear-gradient(180deg, #f7cd50 0%, #d39b25 100%);
+    color: #1f2f6c;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0.6rem 1.15rem;
+}
+
+.secondary-btn {
+    border-color: #2e4cae;
+    background: linear-gradient(180deg, #173ca8 0%, #0f2d82 100%);
+    color: #edf3ff;
+}
+
+.howto-panel h2 {
+    margin: 0;
+    font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #ffd462;
+}
+
+.howto-panel ol {
+    margin: 0.8rem 0 0;
+    padding-left: 1.1rem;
+    line-height: 1.55;
+}
+
+.categories-shell {
+    max-width: 1320px;
+    margin: 0 auto 1rem;
     padding: 1rem;
-    font-size: 1.1rem;
-    font-family: 'Oswald', 'Arial Black', sans-serif;
+}
+
+.categories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.7rem;
+}
+
+.categories-header h2 {
+    margin: 0;
+    font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #ffd462;
+}
+
+.categories-header p {
+    margin: 0;
+    color: #b9c8ff;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+    max-height: 48vh;
+    overflow: auto;
+    padding-right: 0.35rem;
+}
+
+.category-card {
+    border: 2px solid #29469f;
+    background: linear-gradient(180deg, #123490 0%, #0b226d 100%);
+    color: #edf2ff;
+    padding: 0.6rem 0.55rem;
     text-align: center;
-    box-shadow: 0 0 8px #173fae;
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+@@media (max-width: 980px) {
+    .hero-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .categories-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 </style>
 
@@ -95,3 +204,4 @@
         }
     }
 }
+

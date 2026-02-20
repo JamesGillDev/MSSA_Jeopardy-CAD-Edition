@@ -1,6 +1,7 @@
 using MSSA_Jeopardy.Client.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MSSA_Jeopardy.Services;
@@ -18,129 +19,9 @@ public class JeopardyGameService
 
     private static readonly Random _random = new();
     private int _nextPlayerId = 1;
-
-    // All available category names
-    public static readonly string[] AllCategoryNames =
-    [
-        "Azure Fundamentals",
-        "C# Programming",
-        "Web Development",
-        "DevOps & CI/CD",
-        "Databases",
-        "Security",
-        "Networking",
-        "Cloud Architecture",
-        "Software Testing",
-        "Data Structures",
-        "Operating Systems",
-        "APIs & Integration",
-        "Machine Learning Basics",
-        "PowerShell & CLI",
-        "Agile & Scrum",
-        "AZ-900 (Azure Fundamentals)",
-        "AZ-204 (Azure Developer)",
-        "AI-900 (Azure AI Fundamentals)",
-        // New categories
-        "Algorithms (C#)", // C# Algorithms
-        "DP-3001 (Azure Data)", // Azure Data
-        "DP-080 (Data Fundamentals)", // Data Fundamentals
-        "DP-3020 (Advanced Data)", // Advanced Data
-        "MS-4010 (Security)", // Security
-        ".NET Core",
-        "Git & Version Control",
-        "Cloud Security",
-        "Containers & Kubernetes",
-        "Microsoft Power Platform",
-        "Data Analytics",
-        "Azure Blob Storage",
-        "Key Vault",
-        "App Service",
-        "App Configuration",
-        "Container Apps",
-        "Container Registry",
-        "Service Bus",
-        "Event Grid",
-        "Event Hub",
-        "Functions",
-        "Bicep",
-        "Application Insights",
-        "Azure Resource Manager",
-        "Azure DevOps",
-        "Terraform",
-        "Ansible",
-        "Kubernetes",
-        "Docker",
-        "API Management",
-        "Logic Apps",
-        "Data Factory",
-        "Synapse Analytics",
-        "Cosmos DB",
-        "SQL Database",
-        "MySQL",
-        "PostgreSQL",
-        "MariaDB",
-        "Blob Storage",
-        "Queue Storage",
-        "Table Storage",
-        "File Storage",
-        "Redis Cache",
-        "Windows Virtual Desktop",
-        "Azure Monitor",
-        "Azure Sentinel",
-        "Azure Security Center",
-        "Microsoft Sentinel",
-        "Key Vault",
-        "Azure Firewall",
-        "Azure Bastion",
-        "Azure Front Door",
-        "Azure Content Delivery Network",
-        "ExpressRoute",
-        "Virtual Network",
-        "Network Security Group",
-        "Application Gateway",
-        "Azure Load Balancer",
-        "Azure Traffic Manager",
-        "Azure Site Recovery",
-        "Azure Backup",
-        "Microsoft 365 Compliance",
-        "Azure Blueprints",
-        "Azure Policy",
-        "Role-Based Access Control",
-        "Azure Active Directory",
-        "Multi-Factor Authentication",
-        "Conditional Access",
-        "Identity Protection",
-        "Azure Information Protection",
-        "Azure Key Vault",
-        "Azure Secrets Manager",
-        "Azure Logs",
-        "Azure Metrics",
-        "Application Insights",
-        "Azure Network Watcher",
-        "Azure Service Health",
-        "Azure Dashboard",
-        "Log Analytics",
-        "Azure Policy",
-        "Azure Blueprints",
-        "Azure DevOps",
-        "GitHub",
-        "Visual Studio",
-        "Azure Data Studio",
-        "Postman",
-        "Swagger",
-        "Azure Management Portal",
-        "Azure CLI",
-        "Azure PowerShell",
-        "Azure SDKs",
-        "Azure Resource Manager",
-        "Azure Distributed Data Implementation",
-        "Azure Application Gateway",
-        "Azure Web Application Firewall",
-        "Azure DDoS Protection",
-        "Azure Security Center",
-        "Microsoft Defender for Cloud"
-
-    ];
+    public static readonly string[] AllCategoryNames = BuildCategoryNames();
+    public static readonly string[] CompleteCategoryNames = BuildCompleteCategoryNames();
+    private static string Canon(string s) => (s ?? "").Trim();
 
     public JeopardyGameService()
     {
@@ -162,7 +43,28 @@ public class JeopardyGameService
 
     public void SetSelectedCategories(List<string> categories)
     {
-        SelectedCategories = categories.Take(6).ToList(); // Max 6 categories
+        var canonicalCompleteMap = CompleteCategoryNames
+            .ToDictionary(c => Canon(c), c => c, StringComparer.OrdinalIgnoreCase);
+
+        var selected = categories
+            .Select(c => Canon(c ?? ""))
+            .Where(c => canonicalCompleteMap.ContainsKey(c))
+            .Select(c => canonicalCompleteMap[c])
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Take(6)
+            .ToList();
+
+        if (selected.Count < 6)
+        {
+            var needed = 6 - selected.Count;
+            var fillers = CompleteCategoryNames
+                .Where(c => !selected.Contains(c, StringComparer.OrdinalIgnoreCase))
+                .OrderBy(_ => _random.Next())
+                .Take(needed);
+            selected.AddRange(fillers);
+        }
+
+        SelectedCategories = selected.Take(6).ToList();
     }
 
     public void StartGame()
@@ -170,7 +72,10 @@ public class JeopardyGameService
         if (SelectedCategories.Count == 0)
         {
             // Default categories if none selected
-            SelectedCategories = AllCategoryNames.Take(6).ToList();
+            SelectedCategories = CompleteCategoryNames
+                .OrderBy(_ => _random.Next())
+                .Take(6)
+                .ToList();
         }
 
         // Defensive: Ensure at least one player exists
@@ -239,14 +144,17 @@ public class JeopardyGameService
 
     private List<JeopardyCategory> BuildGameBoard()
     {
-        var allQuestions = GetAllQuestionPool();
+        var pool = GetAllQuestionPool();
+        DebugValidateQuestionPool(pool);
+
+        var allQuestions = pool;
         var categories = new List<JeopardyCategory>();
         var pointValues = new[] { 100, 200, 300, 400, 500 };
 
         foreach (var categoryName in SelectedCategories)
         {
             var categoryQuestions = allQuestions
-                .Where(q => q.Category == categoryName)
+                .Where(q => string.Equals(Canon(q.Category ?? ""), Canon(categoryName), StringComparison.OrdinalIgnoreCase))
                 .GroupBy(q => q.PointValue)
                 .ToDictionary(g => g.Key, g => g.ToList());
 
@@ -377,6 +285,121 @@ public void CloseQuestion()
     public int GetWinner() => PlayerScores.OrderByDescending(p => p.Value).First().Key;
 
     public int GetHighestScore() => PlayerScores.Values.Max();
+
+    public static void ValidateQuestionPool()
+    {
+        ValidateQuestionPool(GetAllQuestionPool());
+    }
+
+    private static string[] BuildCategoryNames()
+    {
+        var pool = GetAllQuestionPool();
+        DebugValidateQuestionPool(pool);
+
+        return pool
+            .Select(q => Canon(q.Category ?? ""))
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(category => category, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static string[] BuildCompleteCategoryNames()
+    {
+        var pool = GetAllQuestionPool();
+        DebugValidateQuestionPool(pool);
+
+        return pool
+            .GroupBy(q => Canon(q.Category ?? ""), StringComparer.OrdinalIgnoreCase)
+            .Where(g =>
+                !string.IsNullOrWhiteSpace(g.Key) &&
+                g.Count() == 25 &&
+                ExpectedPointValues.All(v => g.Count(q => q.PointValue == v) == 5))
+            .Select(g => Canon(g.Key))
+            .OrderBy(category => category, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    public static bool IsCategoryComplete(string? categoryName)
+    {
+        if (string.IsNullOrWhiteSpace(categoryName))
+        {
+            return false;
+        }
+
+        var canonicalCategory = Canon(categoryName);
+        return CompleteCategoryNames.Contains(canonicalCategory, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static void ValidateQuestionPool(List<JeopardyQuestion> pool)
+    {
+        var issues = GetQuestionPoolIssues(pool);
+        if (issues.Count == 0) return;
+
+        var message = "Question pool validation failed:\n" + string.Join("\n", issues);
+        throw new InvalidOperationException(message);
+    }
+
+    [Conditional("DEBUG")]
+    private static void DebugValidateQuestionPool(List<JeopardyQuestion> pool)
+    {
+        foreach (var issue in GetQuestionPoolIssues(pool))
+        {
+            Console.WriteLine("[DEBUG] {0}", issue);
+        }
+    }
+
+    private static readonly int[] ExpectedPointValues = [100, 200, 300, 400, 500];
+
+    private static List<string> GetQuestionPoolIssues(List<JeopardyQuestion> pool)
+    {
+        return pool
+            .GroupBy(q => Canon(q.Category ?? ""), StringComparer.OrdinalIgnoreCase)
+            .OrderBy(g => g.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(g =>
+            {
+                var counts = g.GroupBy(x => x.PointValue).ToDictionary(x => x.Key, x => x.Count());
+                var duplicateQuestionCount = g
+                    .GroupBy(x => Canon(x.Question ?? ""), StringComparer.OrdinalIgnoreCase)
+                    .Count(x => x.Count() > 1);
+
+                var parts = new List<string>();
+
+                if (g.Count() < 25) parts.Add($"too few questions (found {g.Count()}, expected 25)");
+                if (g.Count() > 25) parts.Add($"too many questions (found {g.Count()}, expected 25)");
+
+                foreach (int tier in ExpectedPointValues)
+                {
+                    if (!counts.TryGetValue(tier, out int count))
+                    {
+                        parts.Add($"missing tier {tier}");
+                    }
+                    else if (count < 5)
+                    {
+                        parts.Add($"tier {tier} has too few (found {count}, expected 5)");
+                    }
+                    else if (count > 5)
+                    {
+                        parts.Add($"tier {tier} has too many (found {count}, expected 5)");
+                    }
+                }
+
+                if (duplicateQuestionCount > 0)
+                {
+                    parts.Add($"duplicate question text count={duplicateQuestionCount}");
+                }
+
+                if (parts.Count == 0)
+                {
+                    return null;
+                }
+
+                return $"{g.Key}: {string.Join("; ", parts)}";
+            })
+            .Where(issue => issue is not null)
+            .Cast<string>()
+            .ToList();
+    }
 
     private static List<JeopardyQuestion> GetAllQuestionPool()
     {
@@ -3544,3 +3567,4 @@ public void CloseQuestion()
         ];
     }
 }
+

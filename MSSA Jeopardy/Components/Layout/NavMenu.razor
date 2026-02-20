@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+@inject IJSRuntime JS
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">MSSA Jeopardy!</a>
     </div>
@@ -9,7 +11,7 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="nav flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="PlayWelcomeVoice">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
@@ -22,3 +24,16 @@
     </nav>
 </div>
 
+@code {
+    private async Task PlayWelcomeVoice()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("playWelcomeVoice");
+        }
+        catch (JSException)
+        {
+            // No-op: speech support can vary by browser.
+        }
+    }
+}

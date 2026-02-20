@@ -6,60 +6,74 @@
 
 @if (!GameService.GameStarted)
 {
-    <section class="setup-panel">
-        <h2>Select Categories</h2>
-        <p>Select up to 6 categories to play:</p>
-        <div class="category-picker">
-            @foreach (var cat in JeopardyGameService.AllCategoryNames)
+    <section class="setup-shell">
+        <header class="setup-header">
+            <h2>Build Your Board</h2>
+            <p>Select exactly 6 categories to start.</p>
+        </header>
+
+        <div class="category-picker-grid">
+            @foreach (var category in JeopardyGameService.AllCategoryNames)
             {
-                var isSelected = GameService.SelectedCategories.Contains(cat);
-                <label class="category-option @(isSelected ? "selected" : string.Empty)">
-                    <input type="checkbox"
-                           value="@cat"
-                           @onchange="e => OnCategoryChanged(e, cat)"
-                           checked="@isSelected"
-                           disabled="@(!isSelected && GameService.SelectedCategories.Count >= 6)" />
-                    <span>@cat</span>
-                </label>
+                var isComplete = JeopardyGameService.IsCategoryComplete(category);
+                var isSelected = GameService.SelectedCategories.Contains(category);
+                <button class="category-chip @(isSelected ? "selected" : string.Empty) @(!isComplete ? "incomplete" : string.Empty)"
+                        @onclick="() => ToggleCategory(category)"
+                        disabled="@(!isComplete || (!isSelected && GameService.SelectedCategories.Count >= 6))">
+                    @category
+                </button>
             }
         </div>
-        <div class="setup-actions">
-            <span>@GameService.SelectedCategories.Count / 6 selected</span>
-            <button class="start-game-btn" @onclick="StartGame" disabled="@(GameService.SelectedCategories.Count == 0)">Start Game</button>
+
+        <div class="setup-toolbar">
+            <div class="selection-count @(GameService.SelectedCategories.Count == 6 ? "ready" : string.Empty)">
+                @GameService.SelectedCategories.Count / 6 selected
+                <span class="complete-count">(@JeopardyGameService.CompleteCategoryNames.Length complete categories available)</span>
+            </div>
+            <div class="setup-actions">
+                <button class="clear-btn" @onclick="ClearCategories" disabled="@(GameService.SelectedCategories.Count == 0)">Clear</button>
+                <button class="start-game-btn" @onclick="StartGame" disabled="@(GameService.SelectedCategories.Count != 6)">Start Game</button>
+            </div>
         </div>
     </section>
 }
 else
 {
     <section class="game-shell">
-        <div class="board-header">
-            <h2>Game Board</h2>
-            <div class="player-turn">Current Player: <strong>@GameService.PlayerNames[GameService.CurrentPlayer]</strong></div>
+        <div class="board-topbar">
+            <div>
+                <h2 class="board-title">MSSA Jeopardy!</h2>
+                <p class="board-subtitle">Classic board mode</p>
+            </div>
+            <div class="topbar-actions">
+                <div class="player-turn">Control: <strong>@GameService.PlayerNames[GameService.CurrentPlayer]</strong></div>
+                <button class="new-game-btn" @onclick="NewGame">New Game</button>
+            </div>
         </div>
 
         <div class="score-strip">
-            @foreach (var player in GameService.PlayerNames)
+            @foreach (var player in GameService.PlayerNames.OrderBy(p => p.Key))
             {
-                <div class="score-card @(player.Key == GameService.CurrentPlayer ? "active" : string.Empty)">
-                    <span class="player-name">@player.Value</span>
-                    <span class="player-score">@GameService.PlayerScores[player.Key]</span>
-                </div>
+                <article class="score-card @(player.Key == GameService.CurrentPlayer ? "active" : string.Empty)">
+                    <span class="score-player">@player.Value</span>
+                    <span class="score-value">$@GameService.PlayerScores[player.Key]</span>
+                </article>
             }
         </div>
 
         <div class="jeopardy-board" style="--column-count:@GameService.Categories.Count;">
-            @foreach (var cat in GameService.Categories)
+            @foreach (var category in GameService.Categories)
             {
                 <section class="category-column">
-                    <div class="category-title">@cat.Name</div>
-                    @foreach (var q in cat.Questions.OrderBy(x => x.PointValue))
+                    <header class="category-title">@category.Name</header>
+                    @foreach (var clue in category.Questions.OrderBy(q => q.PointValue))
                     {
-                        <button class="clue-tile @(q.IsAnswered ? "answered" : string.Empty)"
-                                @onclick="() => SelectQuestion(q)"
-                                disabled="@q.IsAnswered">
-                            @if (!q.IsAnswered)
+                        <button class="clue-tile @(clue.IsAnswered ? "answered" : string.Empty)"
+                                @onclick="() => SelectQuestion(clue)"
+                                disabled="@clue.IsAnswered">
+                            @if (!clue.IsAnswered)
                             {
-                                <span>$@q.PointValue</span>
+                                <span>$@clue.PointValue</span>
                             }
                             else
                             {
@@ -74,32 +88,69 @@ else
         @if (GameService.CurrentQuestion != null)
         {
             <div class="question-modal">
-                <div class="question-tv">
-                    <div class="question-text">@GameService.CurrentQuestion.Question</div>
-                    <div class="answer-input-strip">
-                        <h4>@GameService.PlayerNames[GameService.CurrentPlayer] is answering:</h4>
-                        <button class="score-btn correct" @onclick="() => AnswerQuestion(true)">Correct</button>
-                        <button class="score-btn incorrect" @onclick="() => AnswerQuestion(false)">Incorrect</button>
+                <div class="question-card">
+                    <div class="question-header">
+                        <span class="question-points">$@GameService.CurrentQuestion.PointValue</span>
+                        <button class="close-btn" @onclick="CloseQuestion">Close</button>
                     </div>
+
+                    <p class="question-text">@GameService.CurrentQuestion.Question</p>
+
+                    @if (GameService.AnsweringPlayer == null)
+                    {
+                        <div class="buzz-panel">
+                            <h4>Who is answering?</h4>
+                            <div class="buzz-grid">
+                                @foreach (var player in GameService.PlayerNames.OrderBy(p => p.Key))
+                                {
+                                    <button class="buzz-btn"
+                                            @onclick="() => OnPlayerAttempt(player.Key)"
+                                            disabled="@GameService.PlayerAttempts.Contains(player.Key)">
+                                        @player.Value
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="judge-panel">
+                            <h4>@GameService.PlayerNames[GameService.AnsweringPlayer.Value] answered:</h4>
+                            <div class="judge-actions">
+                                <button class="score-btn correct" @onclick="() => ScorePlayerAnswer(true)">Correct</button>
+                                <button class="score-btn incorrect" @onclick="() => ScorePlayerAnswer(false)">Incorrect</button>
+                            </div>
+                        </div>
+                    }
                 </div>
-                <button class="close-btn" @onclick="CloseQuestion">Close</button>
             </div>
         }
     </section>
 }
 
 @code {
-    private void OnCategoryChanged(ChangeEventArgs e, string cat)
+    private void ToggleCategory(string category)
     {
-        if (e.Value is bool isChecked && isChecked)
+        if (!JeopardyGameService.IsCategoryComplete(category))
         {
-            if (!GameService.SelectedCategories.Contains(cat) && GameService.SelectedCategories.Count < 6)
-                GameService.SelectedCategories.Add(cat);
+            return;
         }
-        else
+
+        if (GameService.SelectedCategories.Contains(category))
         {
-            GameService.SelectedCategories.Remove(cat);
+            GameService.SelectedCategories.Remove(category);
+            return;
         }
+
+        if (GameService.SelectedCategories.Count < 6)
+        {
+            GameService.SelectedCategories.Add(category);
+        }
+    }
+
+    private void ClearCategories()
+    {
+        GameService.SelectedCategories.Clear();
     }
 
     private void StartGame()
@@ -109,15 +160,27 @@ else
         StateHasChanged();
     }
 
-    private void SelectQuestion(JeopardyQuestion q)
+    private void NewGame()
     {
-        GameService.SelectQuestion(q);
+        GameService.ResetToMenu();
         StateHasChanged();
     }
 
-    private void AnswerQuestion(bool correct)
+    private void SelectQuestion(JeopardyQuestion question)
     {
-        GameService.AnswerQuestion(correct, GameService.CurrentPlayer);
+        GameService.SelectQuestion(question);
+        StateHasChanged();
+    }
+
+    private void OnPlayerAttempt(int playerId)
+    {
+        GameService.StartPlayerAttempt(playerId);
+        StateHasChanged();
+    }
+
+    private void ScorePlayerAnswer(bool isCorrect)
+    {
+        GameService.ScorePlayerAnswer(isCorrect);
         StateHasChanged();
     }
 
@@ -126,6 +189,4 @@ else
         GameService.CloseQuestion();
         StateHasChanged();
     }
-
 }
-
