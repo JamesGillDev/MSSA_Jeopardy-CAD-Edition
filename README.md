@@ -4,7 +4,7 @@
 
 [![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blue)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
-[![License](https://img.shields.io/badge/License-BLS-blue.svg)](https://www.bls.gov/bls/bls-copyright-statement.htm)
+[![License](https://img.shields.io/badge/License-BLS-blue.svg)](./LICENSE.md)
 
 A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Systems Academy (MSSA) Cloud Application Development Program**. Test your knowledge across a huge range of cloud, dev, and data topics!
 
@@ -52,7 +52,11 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 Pull requests are welcome! Please ensure new questions are unique and not duplicates of existing ones. For major changes, open an issue first to discuss what you would like to change.
 
 ## License
-This project is licensed under the [BLS Copyright and Disclaimer](https://www.bls.gov/bls/bls-copyright-statement.htm).
+This project is licensed under the **Business Source License 1.1 (BLS)**. See [LICENSE.md](./LICENSE.md) for full terms.
+- **Current use grant:** Copy, modify, and redistribute for non-production use.
+- **Additional Use Grant:** None.
+- **Change Date:** 2029-01-01.
+- **Change License:** Apache License 2.0 (effective on the Change Date, per license terms).
 
 ---
 MSSA Jeopardy - CAD Edition v2.1 | Developed by JamesGillDev and contributors

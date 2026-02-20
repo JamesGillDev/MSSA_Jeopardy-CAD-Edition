@@ -15,4 +15,8 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Compile Include="..\Shared\JeopardyGameService.Shared.cs" Link="Services\JeopardyGameService.Shared.cs" />
+	</ItemGroup>
+
 </Project>
