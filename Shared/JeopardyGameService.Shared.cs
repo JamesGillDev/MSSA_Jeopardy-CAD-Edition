@@ -23,6 +23,7 @@ public partial class JeopardyGameService
     public bool TimedModeEnabled { get; private set; } = true;
 
     private static readonly Random _random = new();
+    private static readonly int[] ExpectedPointValues = [100, 200, 300, 400, 500];
     private int _nextPlayerId = 1;
     public static readonly string[] AllCategoryNames = BuildCategoryNames();
     public static readonly string[] CompleteCategoryNames = BuildCompleteCategoryNames();
@@ -357,8 +358,6 @@ public void CloseQuestion()
             Console.WriteLine("[DEBUG] {0}", issue);
         }
     }
-
-    private static readonly int[] ExpectedPointValues = [100, 200, 300, 400, 500];
 
     private static List<string> GetQuestionPoolIssues(List<JeopardyQuestion> pool)
     {
