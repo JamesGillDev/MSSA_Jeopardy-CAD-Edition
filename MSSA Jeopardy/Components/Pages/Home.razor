@@ -11,7 +11,14 @@
     {
         if (firstRender)
         {
-            await JS.InvokeVoidAsync("playWelcomeVoice");
+            try
+            {
+                await JS.InvokeVoidAsync("playWelcomeVoice");
+            }
+            catch (JSException)
+            {
+                // No-op: app should still render even if speech is unavailable.
+            }
         }
     }
 
