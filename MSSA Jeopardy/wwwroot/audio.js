@@ -1,36 +1,40 @@
 window.playWelcomeVoice = function () {
-    if (!("speechSynthesis" in window)) {
-        return;
-    }
-
     let hasPlayed = false;
+    let customVoiceAudio = null;
+    const customVoicePath = "/audio/welcome-voice.mp3";
+
+    const deepNameHints = [
+        "guy",
+        "davis",
+        "david",
+        "roger",
+        "brian",
+        "james",
+        "george",
+        "male"
+    ];
+
+    const feminineNameHints = [
+        "zira",
+        "aria",
+        "jenny",
+        "sara",
+        "hazel",
+        "libby",
+        "emma",
+        "female"
+    ];
+
+    const removeGestureListeners = () => {
+        window.removeEventListener("click", onUserGesture);
+        window.removeEventListener("keydown", onUserGesture);
+        window.removeEventListener("touchstart", onUserGesture);
+    };
 
     const pickPreferredVoice = (voices) => {
         if (!voices || voices.length === 0) {
             return null;
         }
-
-        const deepNameHints = [
-            "guy",
-            "davis",
-            "david",
-            "roger",
-            "brian",
-            "james",
-            "george",
-            "male"
-        ];
-
-        const feminineNameHints = [
-            "zira",
-            "aria",
-            "jenny",
-            "sara",
-            "hazel",
-            "libby",
-            "emma",
-            "female"
-        ];
 
         const englishVoices = voices.filter(v => (v.lang || "").toLowerCase().startsWith("en"));
         const candidates = englishVoices.length > 0 ? englishVoices : voices;
@@ -74,46 +78,77 @@ window.playWelcomeVoice = function () {
             .sort((a, b) => b.score - a.score)[0]?.voice ?? null;
     };
 
-    const speak = () => {
+    const tryPlayCustomVoice = async () => {
         if (hasPlayed) {
+            return true;
+        }
+
+        try {
+            if (!customVoiceAudio) {
+                customVoiceAudio = new Audio(customVoicePath);
+                customVoiceAudio.preload = "auto";
+                customVoiceAudio.volume = 1;
+            }
+
+            customVoiceAudio.currentTime = 0;
+            await customVoiceAudio.play();
+            hasPlayed = true;
+            removeGestureListeners();
+            return true;
+        } catch {
+            return false;
+        }
+    };
+
+    const speakFallback = () => {
+        if (hasPlayed || !("speechSynthesis" in window)) {
+            return false;
+        }
+
+        try {
+            const msg = new SpeechSynthesisUtterance(
+                "Welcome to MSSA Jeopardy... Test your knowledge, and play like a champion."
+            );
+            msg.rate = 0.82;
+            msg.pitch = 0.72;
+            msg.volume = 1;
+            msg.lang = "en-US";
+
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = pickPreferredVoice(voices);
+            if (preferredVoice) {
+                msg.voice = preferredVoice;
+                msg.lang = preferredVoice.lang || "en-US";
+            }
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(msg);
+            hasPlayed = true;
+            removeGestureListeners();
+            return true;
+        } catch {
+            return false;
+        }
+    };
+
+    const speakFallbackWhenVoicesReady = () => {
+        if (hasPlayed || !("speechSynthesis" in window)) {
             return;
         }
 
-        hasPlayed = true;
-
-        const msg = new SpeechSynthesisUtterance(
-            "Welcome to MSSA Jeopardy... Test your knowledge, and play like a champion."
-        );
-        msg.rate = 0.82;
-        msg.pitch = 0.72;
-        msg.volume = 1;
-        msg.lang = "en-US";
-
-        const voices = window.speechSynthesis.getVoices();
-        const preferredVoice = pickPreferredVoice(voices);
-        if (preferredVoice) {
-            msg.voice = preferredVoice;
-            msg.lang = preferredVoice.lang || "en-US";
-        }
-
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(msg);
-    };
-
-    const speakWhenVoicesReady = () => {
         const voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
-            speak();
+            speakFallback();
             return;
         }
 
         let completed = false;
         const finish = () => {
-            if (completed) {
+            if (completed || hasPlayed) {
                 return;
             }
             completed = true;
-            speak();
+            speakFallback();
         };
 
         const onVoicesChanged = () => {
@@ -136,21 +171,22 @@ window.playWelcomeVoice = function () {
         setTimeout(finish, 1000);
     };
 
-    const onUserGesture = () => {
-        speakWhenVoicesReady();
-        window.removeEventListener("click", onUserGesture);
-        window.removeEventListener("keydown", onUserGesture);
-        window.removeEventListener("touchstart", onUserGesture);
+    const attemptVoicePlayback = async () => {
+        const customPlayed = await tryPlayCustomVoice();
+        if (!customPlayed) {
+            speakFallbackWhenVoicesReady();
+        }
     };
 
-    // Try immediately first for browsers that allow non-gesture speech.
-    try {
-        speakWhenVoicesReady();
-    } catch {}
+    const onUserGesture = () => {
+        void attemptVoicePlayback();
+    };
 
     window.addEventListener("click", onUserGesture);
     window.addEventListener("keydown", onUserGesture);
     window.addEventListener("touchstart", onUserGesture);
+
+    void attemptVoicePlayback();
 };
 
 window.jeopardyFocusElement = function (element) {

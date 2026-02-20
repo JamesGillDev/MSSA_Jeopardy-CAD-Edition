@@ -42,7 +42,7 @@
                 {
                     var playerName = GameService.PlayerNames.TryGetValue(playerId, out var existingName) ? existingName : $"Player {playerId}";
                     <div class="player-row" role="listitem">
-                        <span class="player-chip">P@playerId</span>
+                        <span class="player-chip">Player @playerId</span>
                         <input class="player-name-input"
                                type="text"
                                maxlength="30"
@@ -150,6 +150,13 @@ else
                             disabled="@_audioMuted" />
                         </label>
                     </div>
+                    <button class="progress-toggle-btn"
+                            type="button"
+                            @onclick="ToggleRoundProgress"
+                            aria-expanded="@_showRoundProgress"
+                            aria-controls="round-progress-panel">
+                        Progress
+                    </button>
                     <button class="host-mode-btn" type="button" @onclick="RequestMidGameModeSwitch" disabled="@_isRematchPending">@GetMidGameModeButtonLabel()</button>
                     <button class="new-game-btn" type="button" @onclick="NewGame">New Game</button>
                 </div>
@@ -176,16 +183,19 @@ else
                 }
             </div>
 
-            <div class="round-progress-wrap" role="status" aria-live="polite">
-                <div class="round-progress-copy">
-                    <span class="round-progress-label">Round Progress</span>
-                    <strong>@GetAnsweredClueCount() / @GetTotalClueCount() clues answered</strong>
+            @if (_showRoundProgress)
+            {
+                <div id="round-progress-panel" class="round-progress-wrap" role="status" aria-live="polite">
+                    <div class="round-progress-copy">
+                        <span class="round-progress-label">Round Progress</span>
+                        <strong>@GetAnsweredClueCount() / @GetTotalClueCount() clues answered</strong>
+                    </div>
+                    <div class="round-progress-track" style="@GetRoundProgressStyle()">
+                        <span class="round-progress-fill"></span>
+                    </div>
+                    <span class="round-progress-remaining">@GetRemainingClueCount() remaining</span>
                 </div>
-                <div class="round-progress-track" style="@GetRoundProgressStyle()">
-                    <span class="round-progress-fill"></span>
-                </div>
-                <span class="round-progress-remaining">@GetRemainingClueCount() remaining</span>
-            </div>
+            }
 
             <div class="event-ticker" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Live game event feed">
                 @foreach (var evt in _broadcastEvents)
@@ -386,6 +396,7 @@ else
     private int? _lastAnnouncedTimerSecond;
     private bool _showMidGameModeConfirm;
     private bool _pendingTimedModeValue;
+    private bool _showRoundProgress;
 
     private void ToggleCategory(string category)
     {
@@ -478,6 +489,7 @@ else
         _lastAnsweredQuestionKey = null;
         _scorePulseVersion.Clear();
         _showMidGameModeConfirm = false;
+        _showRoundProgress = false;
         _broadcastEvents.Clear();
         AddBroadcastEvent($"Game started with {GameService.Categories.Count} categories.", "neutral");
         AddBroadcastEvent(GameService.TimedModeEnabled ? "Timed mode is active." : "Practice mode is active (no clue timer).", "neutral");
@@ -496,6 +508,7 @@ else
         _lastAnsweredQuestionKey = null;
         _scorePulseVersion.Clear();
         _showMidGameModeConfirm = false;
+        _showRoundProgress = false;
         _broadcastEvents.Clear();
         SetAnnouncement("Returned to category selection.");
         PlaySfx("scene-open");
@@ -599,10 +612,18 @@ else
         _scorePulseVersion.Clear();
         _broadcastEvents.Clear();
         _showMidGameModeConfirm = false;
+        _showRoundProgress = false;
         AddBroadcastEvent("Rematch queued with the same categories.", "neutral");
         AddBroadcastEvent(GameService.TimedModeEnabled ? "Timed mode is active." : "Practice mode is active (no clue timer).", "neutral");
         _isRematchPending = false;
         BeginRoundIntro();
+        StateHasChanged();
+    }
+
+    private void ToggleRoundProgress()
+    {
+        _showRoundProgress = !_showRoundProgress;
+        SetAnnouncement(_showRoundProgress ? "Round progress shown." : "Round progress hidden.");
         StateHasChanged();
     }
 
