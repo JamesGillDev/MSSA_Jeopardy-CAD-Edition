@@ -2,7 +2,7 @@
 @inject JeopardyGameService GameService
 
 <ul>
-@foreach (var cat in GameService.CategoryNames)
+@foreach (var cat in JeopardyGameService.AllCategoryNames)
 {
     <li>@cat</li>
 }
