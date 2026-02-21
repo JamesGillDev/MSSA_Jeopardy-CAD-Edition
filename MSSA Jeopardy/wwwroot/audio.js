@@ -1,212 +1,198 @@
-window.playWelcomeVoice = function () {
-    let hasPlayed = false;
-    let customVoiceAudio = null;
-    let customVoiceAudioSrc = "";
-    const customVoicePaths = [
-        "/audio/1771628511761807912ks9wbup-voicemaker.in-speech.mp3",
-        "/audio/welcome-voice.mp3?v=20260220a"
-    ];
+(() => {
+    const clipCatalog = Object.freeze({
+        "welcome-voice": ["/audio/welcome-voice.mp3"],
+        "board-setup": ["/audio/board-setup.mp3"],
+        "add-player": ["/audio/add-player.mp3"],
+        "daily-double": ["/audio/jeopardy-daily-double.mp3"],
+        "jeopardy-daily-double": ["/audio/jeopardy-daily-double.mp3"],
+        "start-game-1": ["/audio/start-game-1.mp3"],
+        "start-game-2": ["/audio/start-game-2.mp3"],
+        "start-game-3": ["/audio/start-game-3.mp3"],
+        "start-game-4": ["/audio/start-game-4.mp3"],
+        "stary-game-4": ["/audio/start-game-4.mp3"],
+        "start-game-random": [
+            "/audio/start-game-1.mp3",
+            "/audio/start-game-2.mp3",
+            "/audio/start-game-3.mp3",
+            "/audio/start-game-4.mp3"
+        ],
+        "winner-1": ["/audio/winner-1.mp3"],
+        "winner-2": ["/audio/winner-2.mp3"],
+        "winner-3": ["/audio/winner-3.mp3"],
+        "winnder-3": ["/audio/winner-3.mp3"],
+        "winner-random": [
+            "/audio/winner-1.mp3",
+            "/audio/winner-2.mp3",
+            "/audio/winner-3.mp3"
+        ]
+    });
 
-    const deepNameHints = [
-        "guy",
-        "davis",
-        "david",
-        "roger",
-        "brian",
-        "james",
-        "george",
-        "male"
-    ];
+    const clipCache = new Map();
+    const sessionKeyPrefix = "mssa-jeopardy:clip:";
+    const welcomeCooldownMs = 1200;
+    let lastWelcomePlayMs = 0;
+    let welcomeGestureHandler = null;
 
-    const feminineNameHints = [
-        "zira",
-        "aria",
-        "jenny",
-        "sara",
-        "hazel",
-        "libby",
-        "emma",
-        "female"
-    ];
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
-    const removeGestureListeners = () => {
-        window.removeEventListener("click", onUserGesture);
-        window.removeEventListener("keydown", onUserGesture);
-        window.removeEventListener("touchstart", onUserGesture);
-    };
-
-    const pickPreferredVoice = (voices) => {
-        if (!voices || voices.length === 0) {
+    const randomItem = (items) => {
+        if (!Array.isArray(items) || items.length === 0) {
             return null;
         }
 
-        const englishVoices = voices.filter(v => (v.lang || "").toLowerCase().startsWith("en"));
-        const candidates = englishVoices.length > 0 ? englishVoices : voices;
-
-        const scoreVoice = (voice) => {
-            const name = (voice.name || "").toLowerCase();
-            const lang = (voice.lang || "").toLowerCase();
-            let score = 0;
-
-            if (lang.startsWith("en-us")) {
-                score += 25;
-            } else if (lang.startsWith("en-gb") || lang.startsWith("en-ca") || lang.startsWith("en-au")) {
-                score += 15;
-            }
-
-            if (name.includes("natural") || name.includes("neural") || name.includes("online")) {
-                score += 40;
-            }
-
-            if (name.includes("desktop")) {
-                score -= 20;
-            }
-
-            if (deepNameHints.some(hint => name.includes(hint))) {
-                score += 35;
-            }
-
-            if (feminineNameHints.some(hint => name.includes(hint))) {
-                score -= 30;
-            }
-
-            if (voice.localService === false) {
-                score += 8;
-            }
-
-            return score;
-        };
-
-        return candidates
-            .map(v => ({ voice: v, score: scoreVoice(v) }))
-            .sort((a, b) => b.score - a.score)[0]?.voice ?? null;
-    };
-
-    const tryPlayCustomVoice = async () => {
-        if (hasPlayed) {
-            return true;
+        if (items.length === 1) {
+            return items[0];
         }
 
-        for (const source of customVoicePaths) {
-            try {
-                if (!customVoiceAudio || customVoiceAudioSrc !== source) {
-                    customVoiceAudio = new Audio(source);
-                    customVoiceAudio.preload = "auto";
-                    customVoiceAudio.volume = 1;
-                    customVoiceAudioSrc = source;
-                }
-
-                customVoiceAudio.currentTime = 0;
-                await customVoiceAudio.play();
-                hasPlayed = true;
-                removeGestureListeners();
-                return true;
-            } catch {
-                customVoiceAudio = null;
-                customVoiceAudioSrc = "";
-            }
-        }
-
-        return false;
+        return items[Math.floor(Math.random() * items.length)];
     };
 
-    const speakFallback = () => {
-        if (hasPlayed || !("speechSynthesis" in window)) {
+    const resolveClipSource = (name) => {
+        const key = String(name || "").trim().toLowerCase();
+        if (!key) {
+            return null;
+        }
+
+        const candidates = clipCatalog[key];
+        return randomItem(candidates);
+    };
+
+    const getClip = (source) => {
+        let clip = clipCache.get(source);
+        if (clip) {
+            return clip;
+        }
+
+        clip = new Audio(source);
+        clip.preload = "auto";
+        clipCache.set(source, clip);
+        return clip;
+    };
+
+    const sessionStorageSafe = () => {
+        try {
+            return window.sessionStorage;
+        } catch {
+            return null;
+        }
+    };
+
+    const playSource = async (source, options = {}) => {
+        if (!source) {
             return false;
         }
 
-        try {
-            const msg = new SpeechSynthesisUtterance(
-                "Welcome to MSSA Jeopardy... Test your knowledge, and play like a champion."
-            );
-            msg.rate = 0.82;
-            msg.pitch = 0.72;
-            msg.volume = 1;
-            msg.lang = "en-US";
+        const clip = getClip(source);
+        const restart = options.restart !== false;
+        const volume = clamp(Number(options.volume ?? 1), 0, 1);
 
-            const voices = window.speechSynthesis.getVoices();
-            const preferredVoice = pickPreferredVoice(voices);
-            if (preferredVoice) {
-                msg.voice = preferredVoice;
-                msg.lang = preferredVoice.lang || "en-US";
+        clip.volume = volume;
+
+        if (restart) {
+            try {
+                clip.pause();
+                clip.currentTime = 0;
+            } catch {
+                // Ignore reset failures and still attempt playback.
             }
+        }
 
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.speak(msg);
-            hasPlayed = true;
-            removeGestureListeners();
+        try {
+            await clip.play();
             return true;
         } catch {
             return false;
         }
     };
 
-    const speakFallbackWhenVoicesReady = () => {
-        if (hasPlayed || !("speechSynthesis" in window)) {
+    const unbindWelcomeGestureFallback = () => {
+        if (!welcomeGestureHandler) {
             return;
         }
 
-        const voices = window.speechSynthesis.getVoices();
-        if (voices.length > 0) {
-            speakFallback();
+        window.removeEventListener("pointerdown", welcomeGestureHandler);
+        window.removeEventListener("keydown", welcomeGestureHandler);
+        window.removeEventListener("touchstart", welcomeGestureHandler);
+        welcomeGestureHandler = null;
+    };
+
+    const bindWelcomeGestureFallback = () => {
+        if (welcomeGestureHandler) {
             return;
         }
 
-        let completed = false;
-        const finish = () => {
-            if (completed || hasPlayed) {
+        welcomeGestureHandler = async () => {
+            const now = Date.now();
+            if (now - lastWelcomePlayMs < welcomeCooldownMs) {
+                unbindWelcomeGestureFallback();
                 return;
             }
-            completed = true;
-            speakFallback();
-        };
 
-        const onVoicesChanged = () => {
-            if (window.speechSynthesis.getVoices().length > 0) {
-                finish();
-                if (typeof window.speechSynthesis.removeEventListener === "function") {
-                    window.speechSynthesis.removeEventListener("voiceschanged", onVoicesChanged);
-                } else {
-                    window.speechSynthesis.onvoiceschanged = null;
-                }
+            const played = await playSource("/audio/welcome-voice.mp3", { restart: true, volume: 1 });
+            if (played) {
+                lastWelcomePlayMs = Date.now();
+                unbindWelcomeGestureFallback();
             }
         };
 
-        if (typeof window.speechSynthesis.addEventListener === "function") {
-            window.speechSynthesis.addEventListener("voiceschanged", onVoicesChanged);
-        } else {
-            window.speechSynthesis.onvoiceschanged = onVoicesChanged;
+        window.addEventListener("pointerdown", welcomeGestureHandler);
+        window.addEventListener("keydown", welcomeGestureHandler);
+        window.addEventListener("touchstart", welcomeGestureHandler);
+    };
+
+    const playClipByName = async (name, options = {}) => {
+        const source = resolveClipSource(name);
+        if (!source) {
+            return false;
         }
 
-        setTimeout(finish, 1000);
-    };
+        const oncePerSession = options.oncePerSession === true;
+        const storage = oncePerSession ? sessionStorageSafe() : null;
+        const rawSessionKey = String(options.sessionKey || name || "").trim().toLowerCase();
+        const sessionKey = rawSessionKey ? `${sessionKeyPrefix}${rawSessionKey}` : null;
 
-    const attemptVoicePlayback = async () => {
-        const customPlayed = await tryPlayCustomVoice();
-        if (!customPlayed) {
-            speakFallbackWhenVoicesReady();
+        if (oncePerSession && storage && sessionKey && storage.getItem(sessionKey) === "1") {
+            return false;
         }
+
+        const played = await playSource(source, options);
+        if (played && oncePerSession && storage && sessionKey) {
+            storage.setItem(sessionKey, "1");
+        }
+
+        return played;
     };
 
-    const onUserGesture = () => {
-        void attemptVoicePlayback();
+    window.playWelcomeVoice = async function () {
+        const now = Date.now();
+        if (now - lastWelcomePlayMs < welcomeCooldownMs) {
+            return false;
+        }
+
+        const played = await playSource("/audio/welcome-voice.mp3", { restart: true, volume: 1 });
+        if (played) {
+            lastWelcomePlayMs = Date.now();
+            unbindWelcomeGestureFallback();
+            return true;
+        }
+
+        bindWelcomeGestureFallback();
+        return false;
     };
 
-    window.addEventListener("click", onUserGesture);
-    window.addEventListener("keydown", onUserGesture);
-    window.addEventListener("touchstart", onUserGesture);
+    window.jeopardyPlayClip = async function (name, options) {
+        return playClipByName(name, options || {});
+    };
 
-    void attemptVoicePlayback();
-};
+    window.jeopardyFocusElement = function (element) {
+        if (!element || typeof element.focus !== "function") {
+            return;
+        }
 
-window.jeopardyFocusElement = function (element) {
-    if (!element || typeof element.focus !== "function") {
-        return;
-    }
-
-    // Delay one frame to ensure the modal is painted before focus.
-    requestAnimationFrame(() => element.focus({ preventScroll: true }));
-};
+        // Delay one frame to ensure the modal is painted before focus.
+        requestAnimationFrame(() => element.focus({ preventScroll: true }));
+    };
+})();
 
 (() => {
     const sfx = {
@@ -311,47 +297,50 @@ window.jeopardyFocusElement = function (element) {
 
         switch ((name || "").toLowerCase()) {
             case "ui":
-                tone({ frequency: 880, duration: 0.05, type: "triangle", gain: 0.05 });
+                tone({ frequency: 1180, duration: 0.045, type: "triangle", gain: 0.044 });
+                tone({ at: 0.03, frequency: 1520, toFrequency: 1420, duration: 0.09, type: "sine", gain: 0.036 });
                 break;
             case "scene-open":
-                tone({ frequency: 294, toFrequency: 392, duration: 0.14, type: "triangle", gain: 0.06 });
-                tone({ at: 0.12, frequency: 523, duration: 0.1, type: "triangle", gain: 0.06 });
+                tone({ frequency: 523, duration: 0.09, type: "triangle", gain: 0.05 });
+                tone({ at: 0.08, frequency: 659, duration: 0.1, type: "triangle", gain: 0.055 });
+                tone({ at: 0.16, frequency: 784, duration: 0.13, type: "triangle", gain: 0.06 });
                 break;
             case "close":
-                tone({ frequency: 420, toFrequency: 260, duration: 0.09, type: "triangle", gain: 0.06 });
+                tone({ frequency: 740, toFrequency: 520, duration: 0.1, type: "triangle", gain: 0.045 });
                 break;
             case "clue-open":
-                tone({ frequency: 520, duration: 0.08, type: "triangle", gain: 0.06 });
-                tone({ at: 0.06, frequency: 690, duration: 0.08, type: "triangle", gain: 0.06 });
+                tone({ frequency: 1046, duration: 0.06, type: "sine", gain: 0.05 });
+                tone({ at: 0.05, frequency: 1318, duration: 0.1, type: "triangle", gain: 0.054 });
                 break;
             case "buzz":
-                tone({ frequency: 240, duration: 0.08, type: "square", gain: 0.055 });
-                tone({ at: 0.08, frequency: 280, duration: 0.08, type: "square", gain: 0.05 });
+                tone({ frequency: 290, duration: 0.08, type: "square", gain: 0.055 });
+                tone({ at: 0.075, frequency: 330, duration: 0.08, type: "square", gain: 0.05 });
                 break;
             case "answer-correct":
-                tone({ frequency: 392, duration: 0.12, type: "triangle", gain: 0.07 });
-                tone({ at: 0.1, frequency: 494, duration: 0.12, type: "triangle", gain: 0.07 });
-                tone({ at: 0.2, frequency: 587, duration: 0.16, type: "triangle", gain: 0.08 });
+                tone({ frequency: 523, duration: 0.1, type: "triangle", gain: 0.06 });
+                tone({ at: 0.09, frequency: 659, duration: 0.1, type: "triangle", gain: 0.065 });
+                tone({ at: 0.18, frequency: 784, duration: 0.13, type: "triangle", gain: 0.07 });
                 break;
             case "answer-wrong":
-                tone({ frequency: 330, toFrequency: 250, duration: 0.14, type: "sawtooth", gain: 0.065 });
-                tone({ at: 0.12, frequency: 230, toFrequency: 170, duration: 0.16, type: "sawtooth", gain: 0.06 });
+                tone({ frequency: 370, toFrequency: 290, duration: 0.11, type: "sawtooth", gain: 0.06 });
+                tone({ at: 0.1, frequency: 280, toFrequency: 210, duration: 0.13, type: "sawtooth", gain: 0.058 });
                 break;
             case "countdown-tick":
-                tone({ frequency: 1220, duration: 0.04, type: "square", gain: 0.035 });
+                tone({ frequency: 1280, duration: 0.04, type: "square", gain: 0.035 });
                 break;
             case "time-up":
-                tone({ frequency: 180, toFrequency: 120, duration: 0.22, type: "sawtooth", gain: 0.08 });
-                tone({ at: 0.14, frequency: 150, toFrequency: 105, duration: 0.22, type: "sawtooth", gain: 0.08 });
+                tone({ frequency: 210, toFrequency: 135, duration: 0.2, type: "sawtooth", gain: 0.08 });
+                tone({ at: 0.13, frequency: 180, toFrequency: 120, duration: 0.2, type: "sawtooth", gain: 0.078 });
                 break;
             case "winner-fanfare":
-                tone({ frequency: 392, duration: 0.14, type: "triangle", gain: 0.07 });
-                tone({ at: 0.1, frequency: 523, duration: 0.14, type: "triangle", gain: 0.075 });
-                tone({ at: 0.2, frequency: 659, duration: 0.18, type: "triangle", gain: 0.085 });
-                tone({ at: 0.33, frequency: 784, duration: 0.24, type: "triangle", gain: 0.09 });
+                tone({ frequency: 523, duration: 0.12, type: "triangle", gain: 0.065 });
+                tone({ at: 0.1, frequency: 659, duration: 0.13, type: "triangle", gain: 0.07 });
+                tone({ at: 0.2, frequency: 784, duration: 0.15, type: "triangle", gain: 0.075 });
+                tone({ at: 0.32, frequency: 988, duration: 0.2, type: "triangle", gain: 0.078 });
                 break;
             default:
-                tone({ frequency: 880, duration: 0.05, type: "triangle", gain: 0.05 });
+                tone({ frequency: 1180, duration: 0.045, type: "triangle", gain: 0.044 });
+                tone({ at: 0.03, frequency: 1520, toFrequency: 1420, duration: 0.09, type: "sine", gain: 0.036 });
                 break;
         }
     };

@@ -11,7 +11,7 @@
 {
     <section class="setup-shell" aria-labelledby="setup-heading">
         <header class="setup-header">
-            <h2 id="setup-heading">Build Your Board</h2>
+            <h2 id="setup-heading">Build Your Gameboard</h2>
             <p>Select exactly 6 categories to start.</p>
         </header>
 
@@ -158,6 +158,7 @@ else
                         @(_showRoundProgress ? "Hide Progress" : "Show Progress")
                     </button>
                     <button class="host-mode-btn" type="button" @onclick="RequestMidGameModeSwitch" disabled="@_isRematchPending">@GetMidGameModeButtonLabel()</button>
+                    <button class="clear-btn" type="button" @onclick="ResetBoard" disabled="@_isRematchPending">Reset</button>
                     <button class="new-game-btn" type="button" @onclick="NewGame">New Game</button>
                 </div>
             </div>
@@ -407,12 +408,14 @@ else
         if (GameService.SelectedCategories.Contains(category))
         {
             GameService.SelectedCategories.Remove(category);
+            PlaySfx("ui");
             return;
         }
 
         if (GameService.SelectedCategories.Count < 6)
         {
             GameService.SelectedCategories.Add(category);
+            PlaySfx("ui");
         }
     }
 
@@ -420,9 +423,10 @@ else
     {
         GameService.SelectedCategories.Clear();
         SetAnnouncement("Category selection cleared.");
+        PlaySfx("ui");
     }
 
-    private void AddPlayerFromSetup()
+    private async Task AddPlayerFromSetup()
     {
         if (GameService.TotalPlayers >= MaxSupportedPlayers)
         {
@@ -432,6 +436,7 @@ else
 
         int playerId = GameService.AddPlayer();
         SetAnnouncement($"Added Player {playerId}.");
+        await PlayClipAsync("add-player", oncePerSession: true, sessionKey: "add-player-once");
         StateHasChanged();
     }
 
@@ -439,6 +444,7 @@ else
     {
         bool removed = GameService.RemovePlayer(playerId);
         SetAnnouncement(removed ? $"Removed Player {playerId}." : "At least one player is required.");
+        PlaySfx("ui");
         StateHasChanged();
     }
 
@@ -473,10 +479,11 @@ else
 
         ApplyTimedModeSetting(enabled);
         SetAnnouncement(enabled ? "Timed mode enabled." : "Practice mode enabled. Clue timer disabled.");
+        PlaySfx("ui");
         StateHasChanged();
     }
 
-    private void StartGame()
+    private async Task StartGame()
     {
         GameService.SetSelectedCategories(GameService.SelectedCategories);
         GameService.StartGame();
@@ -492,7 +499,8 @@ else
         _broadcastEvents.Clear();
         AddBroadcastEvent($"Game started with {GameService.Categories.Count} categories.", "neutral");
         AddBroadcastEvent(GameService.TimedModeEnabled ? "Timed mode is active." : "Practice mode is active (no clue timer).", "neutral");
-        BeginRoundIntro();
+        await PlayClipAsync("start-game-random");
+        BeginRoundIntro(playIntroSfx: false);
         StateHasChanged();
     }
 
@@ -511,6 +519,34 @@ else
         _broadcastEvents.Clear();
         SetAnnouncement("Returned to category selection.");
         PlaySfx("scene-open");
+        StateHasChanged();
+    }
+
+    private void ResetBoard()
+    {
+        if (!GameService.GameStarted || _isRematchPending)
+        {
+            return;
+        }
+
+        StopRoundIntro(hideOverlay: true);
+        StopQuestionTimer(resetCountdown: true);
+        GameService.CloseQuestion();
+        GameService.InitializeGameKeepPlayers();
+
+        _winnerSfxPlayed = false;
+        _isRematchPending = false;
+        _lastScoredPlayerId = null;
+        _lastAnsweredQuestionKey = null;
+        _scorePulseVersion.Clear();
+        _showMidGameModeConfirm = false;
+        _showRoundProgress = false;
+        _broadcastEvents.Clear();
+
+        AddBroadcastEvent("Board reset with the same categories.", "neutral");
+        AddBroadcastEvent(GameService.TimedModeEnabled ? "Timed mode is active." : "Practice mode is active (no clue timer).", "neutral");
+        SetAnnouncement("Board reset.");
+        BeginRoundIntro();
         StateHasChanged();
     }
 
@@ -535,7 +571,14 @@ else
             }
             SetAnnouncement($"Question selected: {GameService.CurrentQuestion.Category} for {GameService.CurrentQuestion.PointValue} points.");
             AddBroadcastEvent($"Clue selected: {GameService.CurrentQuestion.Category} for ${GameService.CurrentQuestion.PointValue}.", "neutral");
-            PlaySfx("clue-open");
+            if (GameService.CurrentQuestion.IsBonus)
+            {
+                PlayClip("daily-double");
+            }
+            else
+            {
+                PlaySfx("clue-open");
+            }
         }
         StateHasChanged();
     }
@@ -623,6 +666,7 @@ else
     {
         _showRoundProgress = !_showRoundProgress;
         SetAnnouncement(_showRoundProgress ? "Round progress shown." : "Round progress hidden.");
+        PlaySfx("ui");
         StateHasChanged();
     }
 
@@ -630,6 +674,7 @@ else
     {
         _answerRevealed = true;
         SetAnnouncement("Answer revealed.");
+        PlaySfx("ui");
         StateHasChanged();
     }
 
@@ -724,6 +769,7 @@ else
         SetAnnouncement(_pendingTimedModeValue
             ? "Confirm switching to timed mode."
             : "Confirm switching to practice mode.");
+        PlaySfx("ui");
         StateHasChanged();
     }
 
@@ -731,6 +777,7 @@ else
     {
         _showMidGameModeConfirm = false;
         SetAnnouncement("Mode switch canceled.");
+        PlaySfx("ui");
         StateHasChanged();
     }
 
@@ -758,6 +805,7 @@ else
         }
 
         SetAnnouncement(GameService.TimedModeEnabled ? "Timed mode enabled." : "Practice mode enabled. Clue timer disabled.");
+        PlaySfx("ui");
         StateHasChanged();
     }
 
@@ -801,13 +849,16 @@ else
         }
     }
 
-    private void BeginRoundIntro()
+    private void BeginRoundIntro(bool playIntroSfx = true)
     {
         StopRoundIntro(hideOverlay: true);
         _showRoundIntro = true;
         _roundIntroSecondsRemaining = RoundIntroSeconds;
         SetAnnouncement($"Game started with {GameService.Categories.Count} categories. Round starts in {_roundIntroSecondsRemaining}.");
-        PlaySfx("scene-open");
+        if (playIntroSfx)
+        {
+            PlaySfx("scene-open");
+        }
 
         _roundIntroTimer = new System.Timers.Timer(1000);
         _roundIntroTimer.AutoReset = true;
@@ -980,7 +1031,7 @@ else
             {
                 AddBroadcastEvent($"{winner.Name} wins with ${winner.Score}.", "positive");
             }
-            await PlaySfxAsync("winner-fanfare");
+            await PlayClipAsync("winner-random");
         }
         else if (!GameService.IsGameComplete())
         {
@@ -1104,6 +1155,23 @@ else
     private void PlaySfx(string soundName)
     {
         _ = PlaySfxAsync(soundName);
+    }
+
+    private void PlayClip(string clipName, bool oncePerSession = false, string? sessionKey = null)
+    {
+        _ = PlayClipAsync(clipName, oncePerSession, sessionKey);
+    }
+
+    private async Task PlayClipAsync(string clipName, bool oncePerSession = false, string? sessionKey = null)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("jeopardyPlayClip", clipName, new { oncePerSession, sessionKey });
+        }
+        catch (JSException)
+        {
+            // Non-blocking: UI should continue even if audio is unavailable.
+        }
     }
 
     private async Task PlaySfxAsync(string soundName)

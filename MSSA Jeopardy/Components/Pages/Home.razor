@@ -14,8 +14,8 @@
             Play with your cohort, practice recall under pressure, and reinforce exam-ready concepts.
         </p>
         <div class="hero-actions">
-            <a class="play-btn" href="/jeopardy">Play Jeopardy</a>
-            <a class="secondary-btn" href="/jeopardy">Choose Categories</a>
+            <a class="play-btn" href="/jeopardy" @onclick="PlayBoardSetupVoice">Play Jeopardy</a>
+            <a class="secondary-btn" href="/jeopardy" @onclick="PlayBoardSetupVoice">Choose Categories</a>
         </div>
     </div>
 
@@ -189,6 +189,18 @@
 </style>
 
 @code {
+    private async Task PlayBoardSetupVoice()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("jeopardyPlayClip", "board-setup");
+        }
+        catch (JSException)
+        {
+            // No-op: app should still navigate even if audio fails.
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
