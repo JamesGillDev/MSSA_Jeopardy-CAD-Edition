@@ -1,29 +1,32 @@
 (() => {
+    const audioVersion = "20260221b";
+    const versioned = (path) => `${path}?v=${audioVersion}`;
+
     const clipCatalog = Object.freeze({
-        "welcome-voice": ["/audio/welcome-voice.mp3"],
-        "board-setup": ["/audio/board-setup.mp3"],
-        "add-player": ["/audio/add-player.mp3"],
-        "daily-double": ["/audio/jeopardy-daily-double.mp3"],
-        "jeopardy-daily-double": ["/audio/jeopardy-daily-double.mp3"],
-        "start-game-1": ["/audio/start-game-1.mp3"],
-        "start-game-2": ["/audio/start-game-2.mp3"],
-        "start-game-3": ["/audio/start-game-3.mp3"],
-        "start-game-4": ["/audio/start-game-4.mp3"],
-        "stary-game-4": ["/audio/start-game-4.mp3"],
+        "welcome-voice": [versioned("/audio/welcome-voice.mp3")],
+        "board-setup": [versioned("/audio/board-setup.mp3")],
+        "add-player": [versioned("/audio/add-player.mp3")],
+        "daily-double": [versioned("/audio/jeopardy-daily-double.mp3")],
+        "jeopardy-daily-double": [versioned("/audio/jeopardy-daily-double.mp3")],
+        "start-game-1": [versioned("/audio/start-game-1.mp3")],
+        "start-game-2": [versioned("/audio/start-game-2.mp3")],
+        "start-game-3": [versioned("/audio/start-game-3.mp3")],
+        "start-game-4": [versioned("/audio/start-game-4.mp3")],
+        "stary-game-4": [versioned("/audio/start-game-4.mp3")],
         "start-game-random": [
-            "/audio/start-game-1.mp3",
-            "/audio/start-game-2.mp3",
-            "/audio/start-game-3.mp3",
-            "/audio/start-game-4.mp3"
+            versioned("/audio/start-game-1.mp3"),
+            versioned("/audio/start-game-2.mp3"),
+            versioned("/audio/start-game-3.mp3"),
+            versioned("/audio/start-game-4.mp3")
         ],
-        "winner-1": ["/audio/winner-1.mp3"],
-        "winner-2": ["/audio/winner-2.mp3"],
-        "winner-3": ["/audio/winner-3.mp3"],
-        "winnder-3": ["/audio/winner-3.mp3"],
+        "winner-1": [versioned("/audio/winner-1.mp3")],
+        "winner-2": [versioned("/audio/winner-2.mp3")],
+        "winner-3": [versioned("/audio/winner-3.mp3")],
+        "winnder-3": [versioned("/audio/winner-3.mp3")],
         "winner-random": [
-            "/audio/winner-1.mp3",
-            "/audio/winner-2.mp3",
-            "/audio/winner-3.mp3"
+            versioned("/audio/winner-1.mp3"),
+            versioned("/audio/winner-2.mp3"),
+            versioned("/audio/winner-3.mp3")
         ]
     });
 
@@ -128,7 +131,7 @@
                 return;
             }
 
-            const played = await playSource("/audio/welcome-voice.mp3", { restart: true, volume: 1 });
+            const played = await playSource(versioned("/audio/welcome-voice.mp3"), { restart: true, volume: 1 });
             if (played) {
                 lastWelcomePlayMs = Date.now();
                 unbindWelcomeGestureFallback();
@@ -169,7 +172,7 @@
             return false;
         }
 
-        const played = await playSource("/audio/welcome-voice.mp3", { restart: true, volume: 1 });
+        const played = await playSource(versioned("/audio/welcome-voice.mp3"), { restart: true, volume: 1 });
         if (played) {
             lastWelcomePlayMs = Date.now();
             unbindWelcomeGestureFallback();
@@ -182,6 +185,10 @@
 
     window.jeopardyPlayClip = async function (name, options) {
         return playClipByName(name, options || {});
+    };
+
+    window.playBoardSetupVoice = async function () {
+        return playSource(versioned("/audio/board-setup.mp3"), { restart: true, volume: 1 });
     };
 
     window.jeopardyFocusElement = function (element) {
