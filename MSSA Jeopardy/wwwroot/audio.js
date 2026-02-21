@@ -1,11 +1,12 @@
 (() => {
-    const audioVersion = "20260221b";
+    const audioVersion = "20260221c";
     const versioned = (path) => `${path}?v=${audioVersion}`;
 
     const clipCatalog = Object.freeze({
         "welcome-voice": [versioned("/audio/welcome-voice.mp3")],
-        "board-setup": [versioned("/audio/board-setup.mp3")],
-        "add-player": [versioned("/audio/add-player.mp3")],
+        // The uploaded recordings are currently named opposite of the button intent.
+        "board-setup": [versioned("/audio/add-player.mp3")],
+        "add-player": [versioned("/audio/board-setup.mp3")],
         "daily-double": [versioned("/audio/jeopardy-daily-double.mp3")],
         "jeopardy-daily-double": [versioned("/audio/jeopardy-daily-double.mp3")],
         "start-game-1": [versioned("/audio/start-game-1.mp3")],
@@ -33,6 +34,7 @@
     const clipCache = new Map();
     const sessionKeyPrefix = "mssa-jeopardy:clip:";
     const welcomeCooldownMs = 1200;
+    const welcomeSpeechFallbackText = "Welcome to MSSA Jeopardy. Test your knowledge, and play like a champion.";
     let lastWelcomePlayMs = 0;
     let welcomeGestureHandler = null;
 
@@ -143,6 +145,26 @@
         window.addEventListener("touchstart", welcomeGestureHandler);
     };
 
+    const speakWelcomeFallback = () => {
+        if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+            return false;
+        }
+
+        try {
+            const utterance = new SpeechSynthesisUtterance(welcomeSpeechFallbackText);
+            utterance.lang = "en-US";
+            utterance.rate = 0.9;
+            utterance.pitch = 0.95;
+            utterance.volume = 1;
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+            return true;
+        } catch {
+            return false;
+        }
+    };
+
     const playClipByName = async (name, options = {}) => {
         const source = resolveClipSource(name);
         if (!source) {
@@ -179,6 +201,12 @@
             return true;
         }
 
+        if (speakWelcomeFallback()) {
+            lastWelcomePlayMs = Date.now();
+            unbindWelcomeGestureFallback();
+            return true;
+        }
+
         bindWelcomeGestureFallback();
         return false;
     };
@@ -188,7 +216,7 @@
     };
 
     window.playBoardSetupVoice = async function () {
-        return playSource(versioned("/audio/board-setup.mp3"), { restart: true, volume: 1 });
+        return playSource(versioned("/audio/add-player.mp3"), { restart: true, volume: 1 });
     };
 
     window.jeopardyFocusElement = function (element) {
