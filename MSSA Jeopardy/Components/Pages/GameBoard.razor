@@ -377,6 +377,7 @@ else
     private const int MaxSupportedPlayers = 9;
     private const int RoundIntroSeconds = 3;
     private const int QuestionTimerSeconds = 20;
+    private const double DailyDoubleClipVolume = 0.35;
     private System.Timers.Timer? _roundIntroTimer;
     private int _roundIntroSecondsRemaining = RoundIntroSeconds;
     private bool _showRoundIntro;
@@ -573,7 +574,7 @@ else
             AddBroadcastEvent($"Clue selected: {GameService.CurrentQuestion.Category} for ${GameService.CurrentQuestion.PointValue}.", "neutral");
             if (GameService.CurrentQuestion.IsBonus)
             {
-                PlayClip("daily-double");
+                PlayClip("daily-double", volume: DailyDoubleClipVolume);
             }
             else
             {
@@ -1157,16 +1158,19 @@ else
         _ = PlaySfxAsync(soundName);
     }
 
-    private void PlayClip(string clipName, bool oncePerSession = false, string? sessionKey = null)
+    private void PlayClip(string clipName, bool oncePerSession = false, string? sessionKey = null, double? volume = null)
     {
-        _ = PlayClipAsync(clipName, oncePerSession, sessionKey);
+        _ = PlayClipAsync(clipName, oncePerSession, sessionKey, volume);
     }
 
-    private async Task PlayClipAsync(string clipName, bool oncePerSession = false, string? sessionKey = null)
+    private async Task PlayClipAsync(string clipName, bool oncePerSession = false, string? sessionKey = null, double? volume = null)
     {
         try
         {
-            await JS.InvokeVoidAsync("jeopardyPlayClip", clipName, new { oncePerSession, sessionKey });
+            double? normalizedVolume = volume.HasValue
+                ? Math.Clamp(volume.Value, 0.0, 1.0)
+                : null;
+            await JS.InvokeVoidAsync("jeopardyPlayClip", clipName, new { oncePerSession, sessionKey, volume = normalizedVolume });
         }
         catch (JSException)
         {

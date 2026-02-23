@@ -24,6 +24,8 @@ public partial class JeopardyGameService
 
     private static readonly Random _random = new();
     private static readonly int[] ExpectedPointValues = [100, 200, 300, 400, 500];
+    private const int MinDailyDoubleCountPerGame = 3;
+    private const int MaxDailyDoubleCountPerGame = 6;
     private int _nextPlayerId = 1;
     public static readonly string[] AllCategoryNames = BuildCategoryNames();
     public static readonly string[] CompleteCategoryNames = BuildCompleteCategoryNames();
@@ -176,10 +178,16 @@ public partial class JeopardyGameService
                 if (categoryQuestions.TryGetValue(pointValue, out var questionsForValue) && questionsForValue.Count > 0)
                 {
                     var randomIndex = _random.Next(questionsForValue.Count);
-                    var question = questionsForValue[randomIndex];
-                    question.IsBonus = _random.Next(10) == 0;
-                    question.IsAnswered = false;
-                    selectedQuestions.Add(question);
+                    var templateQuestion = questionsForValue[randomIndex];
+                    selectedQuestions.Add(new JeopardyQuestion
+                    {
+                        Category = templateQuestion.Category,
+                        PointValue = templateQuestion.PointValue,
+                        Question = templateQuestion.Question,
+                        Answer = templateQuestion.Answer,
+                        IsAnswered = false,
+                        IsBonus = false
+                    });
                 }
                 else
                 {
@@ -203,7 +211,30 @@ public partial class JeopardyGameService
             });
         }
 
+        AssignDailyDoubles(categories);
         return categories;
+    }
+
+    private void AssignDailyDoubles(List<JeopardyCategory> categories)
+    {
+        var boardQuestions = categories.SelectMany(c => c.Questions).ToList();
+        if (boardQuestions.Count == 0)
+        {
+            return;
+        }
+
+        int minDailyDoubleCount = Math.Min(MinDailyDoubleCountPerGame, boardQuestions.Count);
+        int maxDailyDoubleCount = Math.Min(MaxDailyDoubleCountPerGame, boardQuestions.Count);
+        int dailyDoubleCount = _random.Next(minDailyDoubleCount, maxDailyDoubleCount + 1);
+
+        var randomizedQuestions = boardQuestions
+            .OrderBy(_ => _random.Next())
+            .ToList();
+
+        for (int i = 0; i < dailyDoubleCount; i++)
+        {
+            randomizedQuestions[i].IsBonus = true;
+        }
     }
 
     public void SetPlayerName(int playerNumber, string name)
