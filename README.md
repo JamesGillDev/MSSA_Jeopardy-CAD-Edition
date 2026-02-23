@@ -60,4 +60,4 @@ This project is licensed under the **Business Source License 1.1 (BLS)**. See [L
 - **Change License:** Apache License 2.0 (effective on the Change Date, per license terms).
 
 ---
-MSSA Jeopardy - CAD Edition v2.2 | Developed by JamesGillDev and contributors
+MSSA Jeopardy - CAD Edition v2.3 | Developed by JamesGillDev and contributors
