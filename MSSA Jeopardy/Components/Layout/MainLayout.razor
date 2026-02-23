@@ -1,15 +1,14 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
+    <header class="top-ribbon">
+        <div class="top-ribbon-inner px-4">
+            <NavMenu />
             <a href="https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition#readme" target="_blank">About</a>
         </div>
+    </header>
 
+    <main>
         <article class="content px-4">
             @Body
         </article>

@@ -1,28 +1,20 @@
 @inject IJSRuntime JS
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">MSSA Jeopardy!</a>
+<nav class="ribbon-nav" aria-label="Primary">
+    <a class="ribbon-brand" href="">MSSA Jeopardy!</a>
+
+    <div class="ribbon-links">
+        <NavLink class="ribbon-link" href="" Match="NavLinkMatch.All" @onclick="PlayWelcomeVoice">
+            <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
+            <span>Home</span>
+        </NavLink>
+
+        <NavLink class="ribbon-link ribbon-link-play" href="jeopardy" @onclick="PlayBoardSetupVoice">
+            <span class="bi bi-grid-fill-nav-menu" aria-hidden="true"></span>
+            <span>Play Jeopardy!</span>
+        </NavLink>
     </div>
-</div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="PlayWelcomeVoice">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="jeopardy" @onclick="PlayBoardSetupVoice">
-                <span class="bi bi-grid-fill-nav-menu" aria-hidden="true"></span> Play Jeopardy!
-            </NavLink>
-        </div>
-    </nav>
-</div>
+</nav>
 
 @code {
     private async Task PlayWelcomeVoice()
