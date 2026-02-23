@@ -1,5 +1,5 @@
 (() => {
-    const audioVersion = "20260221c";
+    const audioVersion = "20260223a";
     const versioned = (path) => `${path}?v=${audioVersion}`;
 
     const clipCatalog = Object.freeze({
@@ -34,7 +34,6 @@
     const clipCache = new Map();
     const sessionKeyPrefix = "mssa-jeopardy:clip:";
     const welcomeCooldownMs = 1200;
-    const welcomeSpeechFallbackText = "Welcome to MSSA Jeopardy. Test your knowledge, and play like a champion.";
     let lastWelcomePlayMs = 0;
     let welcomeGestureHandler = null;
 
@@ -145,26 +144,6 @@
         window.addEventListener("touchstart", welcomeGestureHandler);
     };
 
-    const speakWelcomeFallback = () => {
-        if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
-            return false;
-        }
-
-        try {
-            const utterance = new SpeechSynthesisUtterance(welcomeSpeechFallbackText);
-            utterance.lang = "en-US";
-            utterance.rate = 0.9;
-            utterance.pitch = 0.95;
-            utterance.volume = 1;
-
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.speak(utterance);
-            return true;
-        } catch {
-            return false;
-        }
-    };
-
     const playClipByName = async (name, options = {}) => {
         const source = resolveClipSource(name);
         if (!source) {
@@ -196,12 +175,6 @@
 
         const played = await playSource(versioned("/audio/welcome-voice.mp3"), { restart: true, volume: 1 });
         if (played) {
-            lastWelcomePlayMs = Date.now();
-            unbindWelcomeGestureFallback();
-            return true;
-        }
-
-        if (speakWelcomeFallback()) {
             lastWelcomePlayMs = Date.now();
             unbindWelcomeGestureFallback();
             return true;
