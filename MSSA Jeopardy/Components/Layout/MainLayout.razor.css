@@ -7,17 +7,19 @@
 .top-ribbon {
     position: sticky;
     top: 0;
-    z-index: 30;
-    border-bottom: 2px solid #1f3d98;
-    background: linear-gradient(180deg, #0d2f95 0%, #091e64 100%);
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.3);
+    z-index: 80;
+    border-bottom: 1px solid rgba(122, 176, 255, 0.34);
+    background:
+        linear-gradient(180deg, rgba(15, 41, 121, 0.86) 0%, rgba(10, 29, 84, 0.88) 100%);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32);
 }
 
 .top-ribbon-inner {
-    min-height: 3.8rem;
+    min-height: 4rem;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.9rem;
 }
 
 .top-ribbon-inner ::deep .ribbon-nav {
@@ -25,16 +27,29 @@
     min-width: 0;
 }
 
-.top-ribbon-inner a {
-    white-space: nowrap;
-    color: #c6daff;
+.about-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.35rem;
+    border-radius: 999px;
+    border: 1px solid rgba(151, 191, 255, 0.46);
+    background: rgba(14, 37, 103, 0.75);
+    color: #d9e9ff;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 700;
+    padding: 0.42rem 0.95rem;
+    white-space: nowrap;
 }
 
-.top-ribbon-inner a:hover {
-    color: #f0f5ff;
-    text-decoration: underline;
+.about-link:hover {
+    color: #f2f8ff;
+    filter: brightness(1.08);
+}
+
+.about-link:focus-visible {
+    outline: 2px solid #ffe198;
+    outline-offset: 2px;
 }
 
 main {
@@ -43,15 +58,19 @@ main {
 
 .content {
     padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-bottom: 1.2rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 880px) {
     .top-ribbon-inner {
         flex-wrap: wrap;
-        gap: 0.65rem;
+        gap: 0.6rem;
         padding-top: 0.55rem;
         padding-bottom: 0.55rem;
+    }
+
+    .about-link {
+        margin-left: auto;
     }
 }
 

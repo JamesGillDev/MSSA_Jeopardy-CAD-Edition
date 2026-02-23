@@ -1,17 +1,19 @@
 .ribbon-nav {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.95rem;
     width: 100%;
     min-width: 0;
 }
 
 .ribbon-brand {
-    color: #f3f7ff;
+    color: #f3f8ff;
     text-decoration: none;
+    font-family: "Bahnschrift SemiCondensed", "Trebuchet MS", "Segoe UI Variable Display", sans-serif;
+    font-size: clamp(1.2rem, 2.1vw, 1.45rem);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
     font-weight: 700;
-    letter-spacing: 0.01em;
-    font-size: 1.26rem;
     white-space: nowrap;
 }
 
@@ -23,29 +25,30 @@
     margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.58rem;
 }
 
 .ribbon-link {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.45rem;
     min-height: 2.4rem;
-    padding: 0.45rem 0.95rem;
-    border: 1px solid rgba(185, 211, 255, 0.28);
+    padding: 0.44rem 0.95rem;
     border-radius: 999px;
-    color: #e9f1ff;
+    border: 1px solid rgba(161, 201, 255, 0.42);
+    background: rgba(16, 45, 125, 0.72);
+    color: #e8f2ff;
     text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 700;
-    background: linear-gradient(180deg, rgba(35, 83, 196, 0.76) 0%, rgba(21, 57, 154, 0.86) 100%);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+    font-size: 0.9rem;
+    font-weight: 750;
+    letter-spacing: 0.015em;
     transition: filter 120ms ease, transform 120ms ease, border-color 120ms ease;
 }
 
 .ribbon-link:hover {
-    filter: brightness(1.07);
-    border-color: rgba(214, 231, 255, 0.45);
+    filter: brightness(1.08);
+    border-color: rgba(211, 232, 255, 0.55);
 }
 
 .ribbon-link:active {
@@ -53,19 +56,19 @@
 }
 
 .ribbon-link.active {
-    border-color: rgba(255, 233, 168, 0.9);
-    background: linear-gradient(180deg, #f6cb5d 0%, #d89f28 100%);
-    color: #19306d;
+    border-color: rgba(255, 227, 138, 0.95);
+    background: linear-gradient(180deg, #f6d26e 0%, #d6a138 100%);
+    color: #16356f;
 }
 
 .ribbon-link-play {
-    border-color: rgba(255, 226, 139, 0.62);
-    background: linear-gradient(180deg, #f6cb5d 0%, #d89f28 100%);
-    color: #19306d;
+    border-color: rgba(255, 225, 133, 0.78);
+    background: linear-gradient(180deg, #f6d26e 0%, #d6a138 100%);
+    color: #16356f;
 }
 
 .ribbon-link-play:hover {
-    border-color: rgba(255, 243, 203, 0.85);
+    border-color: rgba(255, 241, 196, 0.92);
 }
 
 .bi {
@@ -77,24 +80,24 @@
 }
 
 .bi-house-door-fill-nav-menu {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' class='bi bi-house-door-fill' viewBox='0 0 16 16'%3E%3Cpath d='M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5Z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23e8f2ff' class='bi bi-house-door-fill' viewBox='0 0 16 16'%3E%3Cpath d='M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5Z'/%3E%3C/svg%3E");
 }
 
 .bi-grid-fill-nav-menu {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2319306d' class='bi bi-grid-fill' viewBox='0 0 16 16'%3E%3Cpath d='M1 1h6v6H1V1zm8 0h6v6H9V1zM1 9h6v6H1V9zm8 0h6v6H9V9z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2316356f' class='bi bi-grid-fill' viewBox='0 0 16 16'%3E%3Cpath d='M1 1h6v6H1V1zm8 0h6v6H9V1zM1 9h6v6H1V9zm8 0h6v6H9V9z'/%3E%3C/svg%3E");
 }
 
 .ribbon-link.active .bi-house-door-fill-nav-menu {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2319306d' class='bi bi-house-door-fill' viewBox='0 0 16 16'%3E%3Cpath d='M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5Z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2316356f' class='bi bi-house-door-fill' viewBox='0 0 16 16'%3E%3Cpath d='M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5Z'/%3E%3C/svg%3E");
 }
 
 .ribbon-link:focus-visible,
 .ribbon-brand:focus-visible {
-    outline: 2px solid #ffe08b;
+    outline: 2px solid #ffe08c;
     outline-offset: 2px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 880px) {
     .ribbon-nav {
         flex-wrap: wrap;
         row-gap: 0.55rem;
@@ -109,6 +112,6 @@
 
     .ribbon-link {
         flex: 1 1 auto;
-        justify-content: center;
+        min-width: 140px;
     }
 }

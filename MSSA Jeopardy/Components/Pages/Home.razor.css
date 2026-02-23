@@ -1,0 +1,412 @@
+.welcome-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 2200;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background:
+        radial-gradient(circle at 14% 12%, rgba(94, 175, 255, 0.28) 0%, rgba(94, 175, 255, 0) 45%),
+        radial-gradient(circle at 83% 84%, rgba(255, 209, 99, 0.2) 0%, rgba(255, 209, 99, 0) 46%),
+        rgba(2, 8, 25, 0.72);
+    backdrop-filter: blur(7px);
+    animation: gate-fade 240ms ease-out both;
+}
+
+.welcome-bubble {
+    position: relative;
+    width: min(640px, 96vw);
+    border-radius: 28px;
+    border: 1px solid rgba(112, 164, 255, 0.5);
+    padding: 1.55rem 1.5rem 1.35rem;
+    background:
+        radial-gradient(circle at 18% 14%, rgba(175, 211, 255, 0.22) 0%, rgba(175, 211, 255, 0) 42%),
+        linear-gradient(158deg, rgba(18, 53, 145, 0.96) 0%, rgba(10, 32, 99, 0.96) 57%, rgba(8, 23, 76, 0.98) 100%);
+    box-shadow:
+        0 16px 50px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(156, 195, 255, 0.18) inset,
+        0 0 30px rgba(88, 141, 255, 0.26);
+    overflow: hidden;
+    animation: bubble-enter 320ms cubic-bezier(0.2, 0.82, 0.2, 1) both;
+}
+
+.welcome-bubble::before {
+    content: "";
+    position: absolute;
+    top: -78%;
+    left: -36%;
+    width: 172%;
+    height: 124%;
+    background: linear-gradient(110deg, rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0.58) 47%, rgba(255, 255, 255, 0.12) 55%, rgba(255, 255, 255, 0) 66%);
+    transform: rotate(7deg);
+    animation: bubble-shine 2800ms ease-in-out infinite;
+    pointer-events: none;
+}
+
+.welcome-kicker {
+    margin: 0;
+    color: #adc8ff;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    font-size: 0.79rem;
+}
+
+.welcome-title-wrap {
+    position: relative;
+    margin-top: 0.4rem;
+    padding: 0.2rem 0;
+    isolation: isolate;
+}
+
+.welcome-title-ribbon {
+    position: absolute;
+    left: -9%;
+    right: -9%;
+    top: 47%;
+    height: clamp(1.75rem, 3.3vw, 2.4rem);
+    transform: translateY(-50%) rotate(-6.2deg);
+    background: linear-gradient(90deg, rgba(48, 126, 242, 0.2) 0%, rgba(115, 188, 255, 0.48) 22%, rgba(244, 213, 112, 0.64) 50%, rgba(115, 188, 255, 0.48) 78%, rgba(48, 126, 242, 0.2) 100%);
+    border-top: 1px solid rgba(242, 223, 173, 0.66);
+    border-bottom: 1px solid rgba(91, 166, 255, 0.45);
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.26));
+    opacity: 0.9;
+}
+
+.welcome-bubble h2 {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    color: #ffdf79;
+    text-transform: uppercase;
+    letter-spacing: 0.035em;
+    font-family: "Bahnschrift SemiCondensed", "Trebuchet MS", "Segoe UI Variable Text", sans-serif;
+    font-size: clamp(2rem, 4.2vw, 3.1rem);
+    line-height: 1.02;
+    text-shadow: 0 6px 16px rgba(0, 0, 0, 0.36);
+}
+
+.welcome-copy {
+    margin: 0.95rem 0 0;
+    color: #deebff;
+    font-size: 1rem;
+    line-height: 1.46;
+    max-width: 56ch;
+}
+
+.welcome-continue-btn {
+    margin-top: 1.2rem;
+    border: 1px solid rgba(255, 214, 105, 0.9);
+    border-radius: 999px;
+    background: linear-gradient(180deg, #f8d46c 0%, #d8a035 100%);
+    color: #163266;
+    font-size: 0.99rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    min-width: 146px;
+    padding: 0.62rem 1.3rem;
+    box-shadow: 0 9px 20px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(255, 255, 255, 0.28) inset;
+    transition: transform 120ms ease, filter 120ms ease;
+}
+
+.welcome-continue-btn:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+}
+
+.welcome-continue-btn:active {
+    transform: translateY(1px) scale(0.992);
+}
+
+.welcome-continue-btn:focus-visible {
+    outline: 3px solid #ffe9b4;
+    outline-offset: 3px;
+}
+
+.hero-shell {
+    max-width: 1300px;
+    margin: 1rem auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
+    gap: 1rem;
+}
+
+.hero-panel,
+.howto-panel,
+.categories-shell {
+    position: relative;
+    border-radius: 22px;
+    border: 1px solid rgba(102, 158, 255, 0.34);
+    background:
+        linear-gradient(168deg, rgba(17, 45, 123, 0.88) 0%, rgba(11, 33, 92, 0.92) 54%, rgba(8, 24, 73, 0.94) 100%);
+    color: #ecf3ff;
+    box-shadow:
+        0 16px 36px rgba(1, 8, 30, 0.42),
+        0 0 0 1px rgba(145, 191, 255, 0.16) inset;
+    overflow: hidden;
+}
+
+.hero-panel::after,
+.howto-panel::after,
+.categories-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 38%);
+    pointer-events: none;
+}
+
+.hero-panel,
+.howto-panel {
+    padding: 1.35rem;
+}
+
+.hero-kicker {
+    margin: 0;
+    color: #9ec1ff;
+    font-size: 0.83rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.hero-panel h1 {
+    margin: 0.35rem 0 0;
+    color: #ffd76d;
+    letter-spacing: 0.03em;
+    line-height: 1.02;
+    text-transform: uppercase;
+    font-family: "Bahnschrift SemiCondensed", "Trebuchet MS", "Segoe UI Variable Display", sans-serif;
+    font-size: clamp(2rem, 4.1vw, 3.2rem);
+}
+
+.hero-text {
+    margin: 0.86rem 0 0;
+    color: #dce9ff;
+    max-width: 64ch;
+    font-size: 1.03rem;
+    line-height: 1.48;
+}
+
+.hero-badges {
+    margin-top: 0.95rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.hero-badges span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(151, 194, 255, 0.34);
+    background: rgba(12, 39, 112, 0.72);
+    color: #e4efff;
+    padding: 0.32rem 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+}
+
+.hero-actions {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.play-btn,
+.secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.65rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 800;
+    padding: 0.56rem 1.15rem;
+    transition: transform 120ms ease, filter 120ms ease;
+}
+
+.play-btn {
+    border: 1px solid rgba(244, 211, 126, 0.92);
+    background: linear-gradient(180deg, #f5d36f 0%, #d79e32 100%);
+    color: #19356e;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.27);
+}
+
+.secondary-btn {
+    border: 1px solid rgba(163, 196, 255, 0.65);
+    background: linear-gradient(180deg, rgba(38, 92, 215, 0.9) 0%, rgba(26, 66, 162, 0.94) 100%);
+    color: #edf4ff;
+}
+
+.play-btn:hover,
+.secondary-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+}
+
+.howto-panel h2 {
+    margin: 0;
+    color: #ffd76d;
+    font-size: 2rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-family: "Bahnschrift SemiCondensed", "Trebuchet MS", "Segoe UI Variable Display", sans-serif;
+}
+
+.howto-panel ol {
+    margin: 0.85rem 0 0;
+    padding-left: 1.15rem;
+    color: #e1eeff;
+    line-height: 1.53;
+    font-size: 1.02rem;
+}
+
+.categories-shell {
+    max-width: 1300px;
+    margin: 0 auto 1rem;
+    padding: 1.05rem;
+}
+
+.categories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.72rem;
+}
+
+.categories-header h2 {
+    margin: 0;
+    color: #ffd76d;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-family: "Bahnschrift SemiCondensed", "Trebuchet MS", "Segoe UI Variable Display", sans-serif;
+    font-size: clamp(1.7rem, 2.8vw, 2.6rem);
+}
+
+.categories-header p {
+    margin: 0;
+    color: #b8ccff;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 0.56rem;
+    max-height: 48vh;
+    overflow: auto;
+    padding-right: 0.25rem;
+}
+
+.category-card {
+    border-radius: 12px;
+    border: 1px solid rgba(115, 165, 255, 0.42);
+    background: linear-gradient(180deg, rgba(22, 64, 170, 0.88) 0%, rgba(13, 39, 109, 0.92) 100%);
+    color: #f2f7ff;
+    padding: 0.66rem 0.58rem;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    box-shadow: 0 0 0 1px rgba(142, 188, 255, 0.14) inset;
+}
+
+.category-card:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 1020px) {
+    .hero-shell {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .welcome-bubble {
+        border-radius: 20px;
+        padding: 1.2rem 1.05rem 1rem;
+    }
+
+    .welcome-copy {
+        font-size: 0.94rem;
+    }
+
+    .welcome-continue-btn {
+        width: 100%;
+    }
+
+    .categories-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .play-btn,
+    .secondary-btn {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .welcome-gate,
+    .welcome-bubble,
+    .welcome-bubble::before {
+        animation: none !important;
+    }
+
+    .play-btn,
+    .secondary-btn,
+    .welcome-continue-btn {
+        transition: none !important;
+    }
+}
+
+@keyframes gate-fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bubble-enter {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes bubble-shine {
+    0% {
+        transform: translateX(-35%) rotate(7deg);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    52% {
+        transform: translateX(34%) rotate(7deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(34%) rotate(7deg);
+        opacity: 0;
+    }
+}

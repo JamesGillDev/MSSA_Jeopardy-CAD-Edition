@@ -4,7 +4,7 @@
     <a class="ribbon-brand" href="">MSSA Jeopardy!</a>
 
     <div class="ribbon-links">
-        <NavLink class="ribbon-link" href="" Match="NavLinkMatch.All" @onclick="PlayWelcomeVoice">
+        <NavLink class="ribbon-link" href="" Match="NavLinkMatch.All">
             <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
             <span>Home</span>
         </NavLink>
@@ -17,18 +17,6 @@
 </nav>
 
 @code {
-    private async Task PlayWelcomeVoice()
-    {
-        try
-        {
-            await JS.InvokeVoidAsync("playWelcomeVoice");
-        }
-        catch (JSException)
-        {
-            // No-op: speech support can vary by browser.
-        }
-    }
-
     private async Task PlayBoardSetupVoice()
     {
         try

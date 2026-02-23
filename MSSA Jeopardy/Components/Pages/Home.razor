@@ -9,15 +9,17 @@
 {
     <div class="welcome-gate" role="dialog" aria-modal="true" aria-labelledby="welcome-title" aria-describedby="welcome-copy">
         <section class="welcome-bubble">
-            <span class="welcome-orb orb-a" aria-hidden="true"></span>
-            <span class="welcome-orb orb-b" aria-hidden="true"></span>
-            <span class="welcome-orb orb-c" aria-hidden="true"></span>
-
             <p class="welcome-kicker">MSSA Cohort Experience</p>
-            <h2 id="welcome-title">Welcome To MSSA Jeopardy!</h2>
+
+            <div class="welcome-title-wrap">
+                <span class="welcome-title-ribbon" aria-hidden="true"></span>
+                <h2 id="welcome-title">Welcome To MSSA Jeopardy!</h2>
+            </div>
+
             <p class="welcome-copy" id="welcome-copy">
-                Click continue to begin. This user gesture unlocks the welcome voice and game audio.
+                Click continue to begin. Audio is intentionally unlocked only after this user action.
             </p>
+
             <button class="welcome-continue-btn"
                     type="button"
                     @onclick="DismissWelcomeGateAsync"
@@ -33,9 +35,16 @@
         <p class="hero-kicker">MSSA Cohort Knowledge Challenge</p>
         <h1>MSSA Jeopardy!</h1>
         <p class="hero-text">
-            A training-focused Jeopardy-style board for Azure, .NET, DevOps, and cloud fundamentals.
-            Play with your cohort, practice recall under pressure, and reinforce exam-ready concepts.
+            A training-focused board for Azure, .NET, DevOps, and cloud fundamentals.
+            Run competitive review sessions, reinforce key concepts, and track outcomes live.
         </p>
+
+        <div class="hero-badges" aria-label="Highlights">
+            <span>@JeopardyGameService.AllCategoryNames.Length Categories</span>
+            <span>Realtime Multiplayer</span>
+            <span>.NET 8 + Blazor</span>
+        </div>
+
         <div class="hero-actions">
             <a class="play-btn" href="/jeopardy" @onclick="PlayBoardSetupVoice">Play Jeopardy</a>
             <a class="secondary-btn" href="/jeopardy" @onclick="PlayBoardSetupVoice">Choose Categories</a>
@@ -67,362 +76,6 @@
         }
     </div>
 </section>
-
-<style>
-.welcome-gate {
-    position: fixed;
-    inset: 0;
-    z-index: 2200;
-    display: grid;
-    place-items: center;
-    padding: 1rem;
-    background:
-        radial-gradient(circle at 18% 12%, rgba(122, 181, 255, 0.26) 0%, rgba(122, 181, 255, 0) 42%),
-        radial-gradient(circle at 84% 84%, rgba(245, 203, 84, 0.22) 0%, rgba(245, 203, 84, 0) 48%),
-        rgba(2, 7, 24, 0.76);
-    backdrop-filter: blur(6px);
-    animation: welcome-fade-in 240ms ease-out both;
-}
-
-.welcome-bubble {
-    position: relative;
-    width: min(560px, 96vw);
-    border: 3px solid #2c4db0;
-    border-radius: 32px;
-    padding: 1.9rem 1.6rem 1.35rem;
-    background:
-        radial-gradient(circle at 20% 16%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 40%),
-        linear-gradient(165deg, #193ea8 0%, #0f2f8f 52%, #0a1f63 100%);
-    box-shadow:
-        0 0 0 2px rgba(124, 158, 255, 0.35) inset,
-        0 24px 60px rgba(0, 0, 0, 0.48),
-        0 0 56px rgba(74, 124, 255, 0.22);
-    overflow: hidden;
-    animation: welcome-bubble-in 380ms cubic-bezier(0.2, 0.82, 0.2, 1) both;
-}
-
-.welcome-bubble::before {
-    content: "";
-    position: absolute;
-    top: -42%;
-    left: -78%;
-    width: 190%;
-    height: 60%;
-    background: linear-gradient(108deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.75) 48%, rgba(255, 255, 255, 0.12) 58%, rgba(255, 255, 255, 0) 70%);
-    transform: rotate(8deg);
-    animation: welcome-shine 3000ms ease-in-out infinite;
-    pointer-events: none;
-}
-
-.welcome-bubble::after {
-    content: "";
-    position: absolute;
-    inset: auto 10% -65px;
-    height: 130px;
-    background: radial-gradient(ellipse at center, rgba(252, 204, 74, 0.36) 0%, rgba(252, 204, 74, 0) 72%);
-    pointer-events: none;
-}
-
-.welcome-orb {
-    position: absolute;
-    border-radius: 999px;
-    pointer-events: none;
-    filter: blur(0.2px);
-}
-
-.orb-a {
-    top: 18px;
-    right: 30px;
-    width: 62px;
-    height: 62px;
-    background: radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.25) 34%, rgba(255, 255, 255, 0) 72%);
-    opacity: 0.82;
-}
-
-.orb-b {
-    top: 88px;
-    right: 94px;
-    width: 22px;
-    height: 22px;
-    background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 68%);
-    opacity: 0.72;
-}
-
-.orb-c {
-    bottom: 26px;
-    left: 30px;
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle at 30% 28%, rgba(159, 212, 255, 0.75) 0%, rgba(98, 173, 255, 0.05) 70%);
-    opacity: 0.7;
-}
-
-.welcome-kicker {
-    margin: 0;
-    font-size: 0.82rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #adc5ff;
-}
-
-.welcome-bubble h2 {
-    margin: 0.35rem 0 0;
-    color: #ffd86b;
-    font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
-    letter-spacing: 0.035em;
-    text-transform: uppercase;
-    font-size: clamp(1.9rem, 4.2vw, 2.85rem);
-    line-height: 1.05;
-    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.35);
-}
-
-.welcome-copy {
-    margin: 0.85rem 0 0;
-    color: #e5efff;
-    font-size: 1.01rem;
-    line-height: 1.45;
-    max-width: 52ch;
-}
-
-.welcome-continue-btn {
-    margin-top: 1.15rem;
-    border: 2px solid #c8941f;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #f8d05a 0%, #dc9f2e 100%);
-    color: #193274;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    padding: 0.62rem 1.35rem;
-    min-width: 138px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.28), 0 0 0 2px rgba(255, 255, 255, 0.18) inset;
-    transition: transform 120ms ease, filter 120ms ease;
-}
-
-.welcome-continue-btn:hover {
-    filter: brightness(1.05);
-    transform: translateY(-1px);
-}
-
-.welcome-continue-btn:active {
-    transform: translateY(1px) scale(0.99);
-}
-
-.welcome-continue-btn:focus-visible {
-    outline: 3px solid #ffd86b;
-    outline-offset: 3px;
-}
-
-.hero-shell {
-    max-width: 1320px;
-    margin: 1rem auto;
-    display: grid;
-    grid-template-columns: 1.45fr 1fr;
-    gap: 1rem;
-}
-
-.hero-panel,
-.howto-panel,
-.categories-shell {
-    border: 4px solid #203883;
-    background: radial-gradient(circle at top, #10287d 0%, #07174d 60%, #050a25 100%);
-    color: #ecf2ff;
-    box-shadow: 0 0 0 3px #3759c4 inset, 0 14px 34px rgba(0, 0, 0, 0.42);
-}
-
-.hero-panel,
-.howto-panel {
-    padding: 1.25rem;
-}
-
-.hero-kicker {
-    margin: 0;
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #9ab0ff;
-}
-
-.hero-panel h1 {
-    margin: 0.35rem 0 0;
-    font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    font-size: clamp(2rem, 4vw, 3.1rem);
-    color: #ffd462;
-}
-
-.hero-text {
-    margin: 0.85rem 0 0;
-    max-width: 62ch;
-    font-size: 1.03rem;
-    line-height: 1.45;
-    color: #d8e4ff;
-}
-
-.hero-actions {
-    margin-top: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-}
-
-.play-btn,
-.secondary-btn {
-    border: 2px solid #c59018;
-    background: linear-gradient(180deg, #f7cd50 0%, #d39b25 100%);
-    color: #1f2f6c;
-    text-decoration: none;
-    font-weight: 700;
-    padding: 0.6rem 1.15rem;
-}
-
-.secondary-btn {
-    border-color: #2e4cae;
-    background: linear-gradient(180deg, #173ca8 0%, #0f2d82 100%);
-    color: #edf3ff;
-}
-
-.howto-panel h2 {
-    margin: 0;
-    font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: #ffd462;
-}
-
-.howto-panel ol {
-    margin: 0.8rem 0 0;
-    padding-left: 1.1rem;
-    line-height: 1.55;
-}
-
-.categories-shell {
-    max-width: 1320px;
-    margin: 0 auto 1rem;
-    padding: 1rem;
-}
-
-.categories-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 0.7rem;
-}
-
-.categories-header h2 {
-    margin: 0;
-    font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: #ffd462;
-}
-
-.categories-header p {
-    margin: 0;
-    color: #b9c8ff;
-}
-
-.categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.5rem;
-    max-height: 48vh;
-    overflow: auto;
-    padding-right: 0.35rem;
-}
-
-.category-card {
-    border: 2px solid #29469f;
-    background: linear-gradient(180deg, #123490 0%, #0b226d 100%);
-    color: #edf2ff;
-    padding: 0.6rem 0.55rem;
-    text-align: center;
-    font-weight: 700;
-    font-size: 0.92rem;
-}
-
-@@keyframes welcome-fade-in {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-@@keyframes welcome-bubble-in {
-    from {
-        opacity: 0;
-        transform: translateY(10px) scale(0.965);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@@keyframes welcome-shine {
-    0% {
-        transform: translateX(-54%) rotate(8deg);
-        opacity: 0;
-    }
-
-    16% {
-        opacity: 1;
-    }
-
-    48% {
-        transform: translateX(38%) rotate(8deg);
-        opacity: 0;
-    }
-
-    100% {
-        transform: translateX(38%) rotate(8deg);
-        opacity: 0;
-    }
-}
-
-@@media (max-width: 700px) {
-    .welcome-bubble {
-        border-radius: 24px;
-        padding: 1.45rem 1.1rem 1.1rem;
-    }
-
-    .welcome-copy {
-        font-size: 0.95rem;
-    }
-
-    .welcome-continue-btn {
-        width: 100%;
-    }
-}
-
-@@media (max-width: 980px) {
-    .hero-shell {
-        grid-template-columns: 1fr;
-    }
-
-    .categories-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
-
-@@media (prefers-reduced-motion: reduce) {
-    .welcome-gate,
-    .welcome-bubble,
-    .welcome-bubble::before {
-        animation: none !important;
-    }
-
-    .welcome-continue-btn {
-        transition: none !important;
-    }
-}
-</style>
 
 @code {
     private bool _showWelcomeGate = true;
@@ -472,4 +125,3 @@
         }
     }
 }
-

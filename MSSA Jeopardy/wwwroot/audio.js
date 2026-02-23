@@ -1,5 +1,5 @@
 (() => {
-    const audioVersion = "20260223a";
+    const audioVersion = "20260223b";
     const versioned = (path) => `${path}?v=${audioVersion}`;
 
     const clipCatalog = Object.freeze({
@@ -35,7 +35,9 @@
     const sessionKeyPrefix = "mssa-jeopardy:clip:";
     const welcomeCooldownMs = 1200;
     let lastWelcomePlayMs = 0;
-    let welcomeGestureHandler = null;
+    let activeClip = null;
+    let exclusivePlayNonce = 0;
+    let latestExclusiveClip = null;
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
@@ -69,6 +71,11 @@
 
         clip = new Audio(source);
         clip.preload = "auto";
+        clip.addEventListener("ended", () => {
+            if (activeClip === clip) {
+                activeClip = null;
+            }
+        });
         clipCache.set(source, clip);
         return clip;
     };
@@ -81,6 +88,31 @@
         }
     };
 
+    const stopClip = (clip, options = {}) => {
+        if (!clip) {
+            return;
+        }
+
+        const reset = options.reset !== false;
+        try {
+            clip.pause();
+            if (reset) {
+                clip.currentTime = 0;
+            }
+        } catch {
+            // Ignore stop/reset failures.
+        }
+    };
+
+    const stopActiveClip = (nextClip = null) => {
+        if (!activeClip || activeClip === nextClip) {
+            return;
+        }
+
+        stopClip(activeClip);
+        activeClip = null;
+    };
+
     const playSource = async (source, options = {}) => {
         if (!source) {
             return false;
@@ -88,60 +120,44 @@
 
         const clip = getClip(source);
         const restart = options.restart !== false;
+        const exclusive = options.exclusive !== false;
         const volume = clamp(Number(options.volume ?? 1), 0, 1);
+        const playNonce = exclusive ? ++exclusivePlayNonce : exclusivePlayNonce;
+
+        if (exclusive) {
+            latestExclusiveClip = clip;
+        }
+
+        if (exclusive && activeClip === clip && !restart && !clip.paused) {
+            return true;
+        }
+
+        if (exclusive) {
+            stopActiveClip(clip);
+        }
 
         clip.volume = volume;
 
         if (restart) {
-            try {
-                clip.pause();
-                clip.currentTime = 0;
-            } catch {
-                // Ignore reset failures and still attempt playback.
-            }
+            stopClip(clip);
         }
 
         try {
             await clip.play();
+            if (exclusive && playNonce !== exclusivePlayNonce) {
+                if (clip !== latestExclusiveClip) {
+                    stopClip(clip);
+                }
+                return false;
+            }
+            activeClip = clip;
             return true;
         } catch {
+            if (activeClip === clip) {
+                activeClip = null;
+            }
             return false;
         }
-    };
-
-    const unbindWelcomeGestureFallback = () => {
-        if (!welcomeGestureHandler) {
-            return;
-        }
-
-        window.removeEventListener("pointerdown", welcomeGestureHandler);
-        window.removeEventListener("keydown", welcomeGestureHandler);
-        window.removeEventListener("touchstart", welcomeGestureHandler);
-        welcomeGestureHandler = null;
-    };
-
-    const bindWelcomeGestureFallback = () => {
-        if (welcomeGestureHandler) {
-            return;
-        }
-
-        welcomeGestureHandler = async () => {
-            const now = Date.now();
-            if (now - lastWelcomePlayMs < welcomeCooldownMs) {
-                unbindWelcomeGestureFallback();
-                return;
-            }
-
-            const played = await playSource(versioned("/audio/welcome-voice.mp3"), { restart: true, volume: 1 });
-            if (played) {
-                lastWelcomePlayMs = Date.now();
-                unbindWelcomeGestureFallback();
-            }
-        };
-
-        window.addEventListener("pointerdown", welcomeGestureHandler);
-        window.addEventListener("keydown", welcomeGestureHandler);
-        window.addEventListener("touchstart", welcomeGestureHandler);
     };
 
     const playClipByName = async (name, options = {}) => {
@@ -176,11 +192,9 @@
         const played = await playSource(versioned("/audio/welcome-voice.mp3"), { restart: true, volume: 1 });
         if (played) {
             lastWelcomePlayMs = Date.now();
-            unbindWelcomeGestureFallback();
             return true;
         }
 
-        bindWelcomeGestureFallback();
         return false;
     };
 
