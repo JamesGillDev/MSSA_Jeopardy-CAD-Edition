@@ -280,6 +280,7 @@
     border-radius: 16px;
     background: linear-gradient(180deg, rgba(10, 30, 97, 0.82) 0%, rgba(7, 22, 74, 0.86) 100%);
     box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(159, 202, 255, 0.12) inset;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
 }
 
