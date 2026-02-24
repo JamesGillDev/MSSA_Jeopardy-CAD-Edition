@@ -1,5 +1,3 @@
-@inject IJSRuntime JS
-
 <nav class="ribbon-nav" aria-label="Primary">
     <a class="ribbon-brand" href="">MSSA Jeopardy!</a>
 
@@ -9,23 +7,12 @@
             <span>Home</span>
         </NavLink>
 
-        <NavLink class="ribbon-link ribbon-link-play" href="jeopardy" @onclick="PlayBoardSetupVoice">
+        <NavLink class="ribbon-link ribbon-link-play"
+                 href="jeopardy"
+                 onpointerdown="jeopardyHandleBoardSetupGesture(event)"
+                 onkeydown="jeopardyHandleBoardSetupKey(event)">
             <span class="bi bi-grid-fill-nav-menu" aria-hidden="true"></span>
             <span>Play Jeopardy!</span>
         </NavLink>
     </div>
 </nav>
-
-@code {
-    private async Task PlayBoardSetupVoice()
-    {
-        try
-        {
-            await JS.InvokeVoidAsync("playBoardSetupVoice");
-        }
-        catch (JSException)
-        {
-            // No-op: navigation should still continue if audio fails.
-        }
-    }
-}

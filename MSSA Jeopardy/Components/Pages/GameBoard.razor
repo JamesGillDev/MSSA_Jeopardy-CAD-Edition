@@ -1016,7 +1016,14 @@ else
             if (_focusedQuestionKey != questionKey)
             {
                 _focusedQuestionKey = questionKey;
-                await JS.InvokeVoidAsync("jeopardyFocusElement", _questionModalRef);
+                try
+                {
+                    await JS.InvokeVoidAsync("jeopardyFocusElement", _questionModalRef);
+                }
+                catch (Exception)
+                {
+                    // Non-blocking: question modal can remain usable without focus helper.
+                }
             }
         }
         else
@@ -1128,11 +1135,18 @@ else
     private async Task ToggleMute()
     {
         _audioMuted = !_audioMuted;
-        await EnsureAudioInitializedAsync();
-        await JS.InvokeVoidAsync("jeopardySetMute", _audioMuted);
-        if (!_audioMuted)
+        try
         {
-            await PlaySfxAsync("ui");
+            await EnsureAudioInitializedAsync();
+            await JS.InvokeVoidAsync("jeopardySetMute", _audioMuted);
+            if (!_audioMuted)
+            {
+                await PlaySfxAsync("ui");
+            }
+        }
+        catch (Exception)
+        {
+            // Non-blocking: UI should continue even if audio interop fails.
         }
     }
 
@@ -1149,8 +1163,15 @@ else
         }
 
         _audioVolume = Math.Clamp(parsed, 0.0, 1.0);
-        await EnsureAudioInitializedAsync();
-        await JS.InvokeVoidAsync("jeopardySetVolume", _audioVolume);
+        try
+        {
+            await EnsureAudioInitializedAsync();
+            await JS.InvokeVoidAsync("jeopardySetVolume", _audioVolume);
+        }
+        catch (Exception)
+        {
+            // Non-blocking: UI should continue even if audio interop fails.
+        }
     }
 
     private void PlaySfx(string soundName)
@@ -1172,7 +1193,7 @@ else
                 : null;
             await JS.InvokeVoidAsync("jeopardyPlayClip", clipName, new { oncePerSession, sessionKey, volume = normalizedVolume });
         }
-        catch (JSException)
+        catch (Exception)
         {
             // Non-blocking: UI should continue even if audio is unavailable.
         }
@@ -1185,7 +1206,7 @@ else
             await EnsureAudioInitializedAsync();
             await JS.InvokeVoidAsync("jeopardyPlaySfx", soundName);
         }
-        catch (JSException)
+        catch (Exception)
         {
             // Non-blocking: UI should continue even if audio is unavailable.
         }

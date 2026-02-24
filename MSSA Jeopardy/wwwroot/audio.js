@@ -1,5 +1,5 @@
 (() => {
-    const audioVersion = "20260224d";
+    const audioVersion = "20260224e";
     const versioned = (path) => `${path}?v=${audioVersion}`;
 
     const clipCatalog = Object.freeze({
@@ -240,6 +240,29 @@
         }
 
         window.jeopardyDismissWelcomeGate(event);
+    };
+
+    window.jeopardyHandleBoardSetupGesture = function () {
+        try {
+            if (typeof window.playBoardSetupVoice === "function") {
+                void window.playBoardSetupVoice();
+            }
+        } catch {
+            // Ignore helper failures; navigation should continue.
+        }
+    };
+
+    window.jeopardyHandleBoardSetupKey = function (event) {
+        if (event && event.repeat) {
+            return;
+        }
+
+        const key = String(event?.key || "").toLowerCase();
+        if (key !== "enter" && key !== " " && key !== "spacebar") {
+            return;
+        }
+
+        window.jeopardyHandleBoardSetupGesture(event);
     };
 
     window.jeopardyPlayClip = async function (name, options) {

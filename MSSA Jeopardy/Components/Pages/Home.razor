@@ -49,8 +49,14 @@
         </div>
 
         <div class="hero-actions">
-            <a class="play-btn" href="/jeopardy" @onclick="PlayBoardSetupVoice">Play Jeopardy</a>
-            <a class="secondary-btn" href="/jeopardy" @onclick="PlayBoardSetupVoice">Choose Categories</a>
+            <a class="play-btn"
+               href="/jeopardy"
+               onpointerdown="jeopardyHandleBoardSetupGesture(event)"
+               onkeydown="jeopardyHandleBoardSetupKey(event)">Play Jeopardy</a>
+            <a class="secondary-btn"
+               href="/jeopardy"
+               onpointerdown="jeopardyHandleBoardSetupGesture(event)"
+               onkeydown="jeopardyHandleBoardSetupKey(event)">Choose Categories</a>
         </div>
     </div>
 
@@ -85,18 +91,6 @@
     private bool _welcomeFocusPending = true;
     private ElementReference _welcomeContinueButton;
 
-    private async Task PlayBoardSetupVoice()
-    {
-        try
-        {
-            await JS.InvokeVoidAsync("playBoardSetupVoice");
-        }
-        catch (JSException)
-        {
-            // No-op: app should still navigate even if audio fails.
-        }
-    }
-
     private void DismissWelcomeGate()
     {
         _showWelcomeGate = false;
@@ -111,7 +105,7 @@
             {
                 await JS.InvokeVoidAsync("jeopardyFocusElement", _welcomeContinueButton);
             }
-            catch (JSException)
+            catch (Exception)
             {
                 // No-op: app should still render even if focus helper is unavailable.
             }
