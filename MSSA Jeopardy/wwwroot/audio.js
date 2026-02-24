@@ -1,5 +1,5 @@
 (() => {
-    const audioVersion = "20260224a";
+    const audioVersion = "20260224b";
     const versioned = (path) => `${path}?v=${audioVersion}`;
 
     const clipCatalog = Object.freeze({
@@ -33,6 +33,7 @@
 
     const clipCache = new Map();
     const sessionKeyPrefix = "mssa-jeopardy:clip:";
+    const welcomeDismissedKey = "mssa-jeopardy:welcome-dismissed";
     const welcomeCooldownMs = 1200;
     let lastWelcomePlayMs = 0;
     let activeClip = null;
@@ -85,6 +86,21 @@
             return window.sessionStorage;
         } catch {
             return null;
+        }
+    };
+
+    const markWelcomeDismissed = () => {
+        document.documentElement.setAttribute("data-welcome-dismissed", "1");
+        const storage = sessionStorageSafe();
+        if (storage) {
+            storage.setItem(welcomeDismissedKey, "1");
+        }
+    };
+
+    const applyWelcomeDismissedState = () => {
+        const storage = sessionStorageSafe();
+        if (storage && storage.getItem(welcomeDismissedKey) === "1") {
+            document.documentElement.setAttribute("data-welcome-dismissed", "1");
         }
     };
 
@@ -198,6 +214,24 @@
         return false;
     };
 
+    window.jeopardyDismissWelcomeGate = function (event) {
+        try {
+            const target = event && event.target ? event.target : null;
+            const gate = target && typeof target.closest === "function"
+                ? target.closest(".welcome-gate")
+                : document.querySelector(".welcome-gate");
+
+            if (gate && typeof gate.remove === "function") {
+                gate.remove();
+            }
+
+            markWelcomeDismissed();
+            window.jeopardyHandleWelcomeContinue(event);
+        } catch {
+            // Ignore dismiss failures; fallback Blazor handler should still run.
+        }
+    };
+
     window.jeopardyHandleWelcomeContinue = function () {
         try {
             if (typeof window.jeopardyAudioInit === "function") {
@@ -222,7 +256,7 @@
             return;
         }
 
-        window.jeopardyHandleWelcomeContinue(event);
+        window.jeopardyDismissWelcomeGate(event);
     };
 
     window.jeopardyPlayClip = async function (name, options) {
@@ -241,6 +275,8 @@
         // Delay one frame to ensure the modal is painted before focus.
         requestAnimationFrame(() => element.focus({ preventScroll: true }));
     };
+
+    applyWelcomeDismissedState();
 })();
 
 (() => {
