@@ -1,5 +1,5 @@
 (() => {
-    const audioVersion = "20260223b";
+    const audioVersion = "20260224a";
     const versioned = (path) => `${path}?v=${audioVersion}`;
 
     const clipCatalog = Object.freeze({
@@ -196,6 +196,33 @@
         }
 
         return false;
+    };
+
+    window.jeopardyHandleWelcomeContinue = function () {
+        try {
+            if (typeof window.jeopardyAudioInit === "function") {
+                window.jeopardyAudioInit();
+            }
+
+            if (typeof window.playWelcomeVoice === "function") {
+                void window.playWelcomeVoice();
+            }
+        } catch {
+            // Ignore helper failures; continue flow should remain functional.
+        }
+    };
+
+    window.jeopardyHandleWelcomeContinueKey = function (event) {
+        if (event && event.repeat) {
+            return;
+        }
+
+        const key = String(event?.key || "").toLowerCase();
+        if (key !== "enter" && key !== " " && key !== "spacebar") {
+            return;
+        }
+
+        window.jeopardyHandleWelcomeContinue(event);
     };
 
     window.jeopardyPlayClip = async function (name, options) {

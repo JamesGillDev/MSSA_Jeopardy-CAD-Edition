@@ -9,8 +9,8 @@
         radial-gradient(circle at 14% 12%, rgba(94, 175, 255, 0.28) 0%, rgba(94, 175, 255, 0) 45%),
         radial-gradient(circle at 83% 84%, rgba(255, 209, 99, 0.2) 0%, rgba(255, 209, 99, 0) 46%),
         rgba(2, 8, 25, 0.72);
+    -webkit-backdrop-filter: blur(7px);
     backdrop-filter: blur(7px);
-    animation: gate-fade 240ms ease-out both;
 }
 
 .welcome-bubble {
@@ -27,7 +27,6 @@
         0 0 0 1px rgba(156, 195, 255, 0.18) inset,
         0 0 30px rgba(88, 141, 255, 0.26);
     overflow: hidden;
-    animation: bubble-enter 320ms cubic-bezier(0.2, 0.82, 0.2, 1) both;
 }
 
 .welcome-bubble::before {
@@ -37,9 +36,9 @@
     left: -36%;
     width: 172%;
     height: 124%;
-    background: linear-gradient(110deg, rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0.58) 47%, rgba(255, 255, 255, 0.12) 55%, rgba(255, 255, 255, 0) 66%);
+    background: linear-gradient(110deg, rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0.32) 47%, rgba(255, 255, 255, 0.08) 55%, rgba(255, 255, 255, 0) 66%);
     transform: rotate(7deg);
-    animation: bubble-shine 2800ms ease-in-out infinite;
+    opacity: 0.8;
     pointer-events: none;
 }
 
@@ -365,48 +364,5 @@
     .secondary-btn,
     .welcome-continue-btn {
         transition: none !important;
-    }
-}
-
-@keyframes gate-fade {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes bubble-enter {
-    from {
-        opacity: 0;
-        transform: translateY(10px) scale(0.97);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes bubble-shine {
-    0% {
-        transform: translateX(-35%) rotate(7deg);
-        opacity: 0;
-    }
-
-    20% {
-        opacity: 1;
-    }
-
-    52% {
-        transform: translateX(34%) rotate(7deg);
-        opacity: 0;
-    }
-
-    100% {
-        transform: translateX(34%) rotate(7deg);
-        opacity: 0;
     }
 }
