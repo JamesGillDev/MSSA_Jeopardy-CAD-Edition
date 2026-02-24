@@ -24,6 +24,68 @@
             const errorUiReloadGuardKey = "mssa-jeopardy:error-ui-auto-reload";
             const appStartMs = Date.now();
             const retrySchedule = [0, 1000, 2000, 5000, 10000, 15000, 30000];
+            const isFirefox = /firefox/i.test(navigator.userAgent || "");
+            const guardMemory = {
+                startup: false,
+                errorUi: false
+            };
+
+            const getStorage = () => {
+                try {
+                    return window.sessionStorage;
+                } catch {
+                    return null;
+                }
+            };
+
+            const readGuard = (key) => {
+                const storage = getStorage();
+                if (!storage) {
+                    return null;
+                }
+
+                try {
+                    return storage.getItem(key);
+                } catch {
+                    return null;
+                }
+            };
+
+            const writeGuard = (key, value) => {
+                const storage = getStorage();
+                if (!storage) {
+                    return;
+                }
+
+                try {
+                    storage.setItem(key, value);
+                } catch {
+                    // Ignore storage write errors (Firefox privacy mode, blocked storage, etc.).
+                }
+            };
+
+            const removeGuard = (key) => {
+                const storage = getStorage();
+                if (!storage) {
+                    return;
+                }
+
+                try {
+                    storage.removeItem(key);
+                } catch {
+                    // Ignore storage remove errors.
+                }
+            };
+
+            const hasGuard = (kind, key) => guardMemory[kind] || readGuard(key) === "1";
+            const markGuard = (kind, key) => {
+                guardMemory[kind] = true;
+                writeGuard(key, "1");
+            };
+            const clearGuard = (kind, key) => {
+                guardMemory[kind] = false;
+                removeGuard(key);
+            };
 
             const maybeAutoReloadFromErrorUi = () => {
                 const errorUi = document.getElementById("blazor-error-ui");
@@ -42,11 +104,11 @@
                     return;
                 }
 
-                if (sessionStorage.getItem(errorUiReloadGuardKey) === "1") {
+                if (hasGuard("errorUi", errorUiReloadGuardKey)) {
                     return;
                 }
 
-                sessionStorage.setItem(errorUiReloadGuardKey, "1");
+                markGuard("errorUi", errorUiReloadGuardKey);
                 location.reload();
             };
 
@@ -77,18 +139,33 @@
 
             Blazor.start({
                 circuit: {
+                    configureSignalR: (builder) => {
+                        try {
+                            builder.withServerTimeout(60000);
+                            builder.withKeepAliveInterval(15000);
+
+                            // Firefox can be less stable when repeatedly negotiating non-WebSocket fallbacks.
+                            // Prefer long polling there for consistent startup behavior.
+                            if (isFirefox && typeof builder.withUrl === "function") {
+                                builder.withUrl("_blazor", 4);
+                            }
+                        } catch (error) {
+                            console.warn("SignalR client tuning skipped.", error);
+                        }
+                    },
                     reconnectionOptions: {
                         maxRetries: 8,
                         retryIntervalMilliseconds: (previousAttempts) => retrySchedule[previousAttempts] ?? 30000
                     }
                 }
             }).then(() => {
-                sessionStorage.removeItem(startupReloadGuardKey);
+                clearGuard("startup", startupReloadGuardKey);
+                clearGuard("errorUi", errorUiReloadGuardKey);
             }).catch((error) => {
                 console.error("Blazor startup failed.", error);
 
-                if (sessionStorage.getItem(startupReloadGuardKey) !== "1") {
-                    sessionStorage.setItem(startupReloadGuardKey, "1");
+                if (!hasGuard("startup", startupReloadGuardKey)) {
+                    markGuard("startup", startupReloadGuardKey);
                     location.reload();
                     return;
                 }

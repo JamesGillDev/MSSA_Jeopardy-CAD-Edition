@@ -1203,6 +1203,31 @@
     gap: 0.6rem;
 }
 
+.judge-flow {
+    margin: 0 0 0.45rem;
+    color: #c3d4ff;
+    font-size: 0.85rem;
+}
+
+.judge-lock-note {
+    margin: 0.5rem 0 0;
+    color: #f4d57d;
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
+}
+
+.score-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    filter: none;
+}
+
+.score-btn:hover:disabled {
+    transform: none;
+    filter: none;
+}
+
 .score-btn.correct {
     background: #2cb76f;
     color: #052510;

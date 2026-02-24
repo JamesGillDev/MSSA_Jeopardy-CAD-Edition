@@ -279,8 +279,8 @@ else
                         <span>Shortcuts:</span>
                         <kbd>1-9</kbd> buzz
                         <kbd>R</kbd> reveal
-                        <kbd>C</kbd> correct
-                        <kbd>X</kbd> incorrect
+                        <kbd>C</kbd> correct (after reveal)
+                        <kbd>X</kbd> incorrect (after reveal)
                         <kbd>M</kbd> mute
                         <kbd>Esc</kbd> close
                     </div>
@@ -315,11 +315,28 @@ else
                     {
                         <div class="judge-panel" role="region" aria-label="Answer judging panel">
                             <h4>@GameService.PlayerNames[GameService.AnsweringPlayer.Value] answered:</h4>
+                            <p class="judge-flow">Host flow: Reveal answer, then score the response.</p>
                             <div class="judge-actions">
                                 <button class="score-btn reveal" type="button" @onclick="RevealAnswer" disabled="@_answerRevealed">Reveal Answer</button>
-                                <button class="score-btn correct" type="button" @onclick="() => ScorePlayerAnswer(true)">Correct</button>
-                                <button class="score-btn incorrect" type="button" @onclick="() => ScorePlayerAnswer(false)">Incorrect</button>
+                                <button class="score-btn correct"
+                                        type="button"
+                                        @onclick="() => ScorePlayerAnswer(true)"
+                                        disabled="@(!_answerRevealed)"
+                                        title="@(_answerRevealed ? "Mark answer correct" : "Reveal answer first")">
+                                    Correct
+                                </button>
+                                <button class="score-btn incorrect"
+                                        type="button"
+                                        @onclick="() => ScorePlayerAnswer(false)"
+                                        disabled="@(!_answerRevealed)"
+                                        title="@(_answerRevealed ? "Mark answer incorrect" : "Reveal answer first")">
+                                    Incorrect
+                                </button>
                             </div>
+                            @if (!_answerRevealed)
+                            {
+                                <p class="judge-lock-note">Reveal the answer to unlock scoring.</p>
+                            }
                         </div>
                     }
                 </div>
@@ -598,6 +615,19 @@ else
 
     private void ScorePlayerAnswer(bool isCorrect)
     {
+        if (GameService.CurrentQuestion == null || !GameService.AnsweringPlayer.HasValue)
+        {
+            return;
+        }
+
+        if (!_answerRevealed)
+        {
+            SetAnnouncement("Reveal the answer before marking correct or incorrect.");
+            PlaySfx("ui");
+            StateHasChanged();
+            return;
+        }
+
         var scoringPlayer = GameService.AnsweringPlayer;
         var answeredQuestion = GameService.CurrentQuestion;
         int pointsAwarded = answeredQuestion is null ? 0 : (answeredQuestion.IsBonus ? answeredQuestion.PointValue * 2 : answeredQuestion.PointValue);
@@ -673,8 +703,19 @@ else
 
     private void RevealAnswer()
     {
+        if (GameService.CurrentQuestion == null || _answerRevealed)
+        {
+            return;
+        }
+
+        if (GameService.TimedModeEnabled)
+        {
+            StopQuestionTimer(resetCountdown: false);
+        }
+
         _answerRevealed = true;
-        SetAnnouncement("Answer revealed.");
+        SetAnnouncement("Answer revealed. Scoring is now unlocked.");
+        AddBroadcastEvent("Answer revealed. Host can now score the attempt.", "neutral");
         PlaySfx("ui");
         StateHasChanged();
     }
@@ -983,12 +1024,30 @@ else
         {
             if (normalized == "c")
             {
-                ScorePlayerAnswer(true);
+                if (_answerRevealed)
+                {
+                    ScorePlayerAnswer(true);
+                }
+                else
+                {
+                    SetAnnouncement("Reveal the answer before marking correct.");
+                    PlaySfx("ui");
+                    StateHasChanged();
+                }
                 return;
             }
             if (normalized == "x")
             {
-                ScorePlayerAnswer(false);
+                if (_answerRevealed)
+                {
+                    ScorePlayerAnswer(false);
+                }
+                else
+                {
+                    SetAnnouncement("Reveal the answer before marking incorrect.");
+                    PlaySfx("ui");
+                    StateHasChanged();
+                }
                 return;
             }
         }
