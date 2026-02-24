@@ -1,3 +1,7 @@
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using MSSA_Jeopardy.Components
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,29 +20,81 @@
     <script src="_framework/blazor.web.js" autostart="false"></script>
     <script>
         (() => {
-            const reloadGuardKey = "mssa-jeopardy:startup-auto-reload";
+            const startupReloadGuardKey = "mssa-jeopardy:startup-auto-reload";
+            const errorUiReloadGuardKey = "mssa-jeopardy:error-ui-auto-reload";
+            const appStartMs = Date.now();
+            const retrySchedule = [0, 1000, 2000, 5000, 10000, 15000, 30000];
+
+            const maybeAutoReloadFromErrorUi = () => {
+                const errorUi = document.getElementById("blazor-error-ui");
+                if (!errorUi) {
+                    return;
+                }
+
+                const style = window.getComputedStyle(errorUi);
+                const isVisible = style.display !== "none" && style.visibility !== "hidden";
+                if (!isVisible) {
+                    return;
+                }
+
+                // Target startup/cold-start failures only.
+                if (Date.now() - appStartMs > 60000) {
+                    return;
+                }
+
+                if (sessionStorage.getItem(errorUiReloadGuardKey) === "1") {
+                    return;
+                }
+
+                sessionStorage.setItem(errorUiReloadGuardKey, "1");
+                location.reload();
+            };
+
+            const attachErrorUiObserver = () => {
+                const errorUi = document.getElementById("blazor-error-ui");
+                if (!errorUi) {
+                    return false;
+                }
+
+                const observer = new MutationObserver(maybeAutoReloadFromErrorUi);
+                observer.observe(errorUi, { attributes: true, attributeFilter: ["style", "class"] });
+
+                // Defensive poll in case visibility changes without attribute mutation.
+                window.setInterval(maybeAutoReloadFromErrorUi, 1000);
+                maybeAutoReloadFromErrorUi();
+                return true;
+            };
+
+            if (!attachErrorUiObserver()) {
+                const attachAttempts = window.setInterval(() => {
+                    if (attachErrorUiObserver()) {
+                        window.clearInterval(attachAttempts);
+                    }
+                }, 500);
+
+                window.setTimeout(() => window.clearInterval(attachAttempts), 15000);
+            }
 
             Blazor.start({
                 circuit: {
                     reconnectionOptions: {
                         maxRetries: 8,
-                        retryIntervalMilliseconds: Array.prototype.at.bind([0, 1000, 2000, 5000, 10000, 15000, 30000])
+                        retryIntervalMilliseconds: (previousAttempts) => retrySchedule[previousAttempts] ?? 30000
                     }
                 }
             }).then(() => {
-                sessionStorage.removeItem(reloadGuardKey);
+                sessionStorage.removeItem(startupReloadGuardKey);
             }).catch((error) => {
                 console.error("Blazor startup failed.", error);
 
-                // Recover once for transient first-start failures (cold start/network race).
-                if (sessionStorage.getItem(reloadGuardKey) !== "1") {
-                    sessionStorage.setItem(reloadGuardKey, "1");
+                if (sessionStorage.getItem(startupReloadGuardKey) !== "1") {
+                    sessionStorage.setItem(startupReloadGuardKey, "1");
                     location.reload();
                     return;
                 }
 
                 const errorUi = document.getElementById("blazor-error-ui");
-                if (errorUi && errorUi.style.display === "none") {
+                if (errorUi) {
                     errorUi.style.display = "block";
                 }
             });
