@@ -34,10 +34,6 @@ body {
     letter-spacing: 0.002em;
 }
 
-html[data-welcome-dismissed="1"] .welcome-gate {
-    display: none !important;
-}
-
 a,
 .btn-link {
     color: var(--link);

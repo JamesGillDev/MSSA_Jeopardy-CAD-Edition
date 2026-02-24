@@ -13,6 +13,10 @@
     backdrop-filter: blur(7px);
 }
 
+.welcome-gate[data-client-hidden="1"] {
+    display: none !important;
+}
+
 .welcome-bubble {
     position: relative;
     width: min(640px, 96vw);

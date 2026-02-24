@@ -1,5 +1,5 @@
 (() => {
-    const audioVersion = "20260224b";
+    const audioVersion = "20260224d";
     const versioned = (path) => `${path}?v=${audioVersion}`;
 
     const clipCatalog = Object.freeze({
@@ -33,7 +33,6 @@
 
     const clipCache = new Map();
     const sessionKeyPrefix = "mssa-jeopardy:clip:";
-    const welcomeDismissedKey = "mssa-jeopardy:welcome-dismissed";
     const welcomeCooldownMs = 1200;
     let lastWelcomePlayMs = 0;
     let activeClip = null;
@@ -86,21 +85,6 @@
             return window.sessionStorage;
         } catch {
             return null;
-        }
-    };
-
-    const markWelcomeDismissed = () => {
-        document.documentElement.setAttribute("data-welcome-dismissed", "1");
-        const storage = sessionStorageSafe();
-        if (storage) {
-            storage.setItem(welcomeDismissedKey, "1");
-        }
-    };
-
-    const applyWelcomeDismissedState = () => {
-        const storage = sessionStorageSafe();
-        if (storage && storage.getItem(welcomeDismissedKey) === "1") {
-            document.documentElement.setAttribute("data-welcome-dismissed", "1");
         }
     };
 
@@ -221,11 +205,10 @@
                 ? target.closest(".welcome-gate")
                 : document.querySelector(".welcome-gate");
 
-            if (gate && typeof gate.remove === "function") {
-                gate.remove();
+            if (gate && typeof gate.setAttribute === "function") {
+                gate.setAttribute("data-client-hidden", "1");
             }
 
-            markWelcomeDismissed();
             window.jeopardyHandleWelcomeContinue(event);
         } catch {
             // Ignore dismiss failures; fallback Blazor handler should still run.
@@ -276,7 +259,6 @@
         requestAnimationFrame(() => element.focus({ preventScroll: true }));
     };
 
-    applyWelcomeDismissedState();
 })();
 
 (() => {
