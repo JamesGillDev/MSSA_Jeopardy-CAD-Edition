@@ -16,7 +16,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 - **Randomized Board:** Each game, a random question is chosen for each point value in each selected category.
 - **User-Selectable Categories:** Choose up to 6 categories at the start of each game.
 - **Modern Blazor Interactive Server:** Built with .NET 8 and C# 12 for a fast, interactive, and modern web experience.
-- **Modern layout and voices added using ElevenLabs.
+- **Modern layout and voices added using ElevenLabs.**
 
 ## Key Features
 - Multiplayer support (add/remove players, custom names)
@@ -49,17 +49,45 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 2. Open in Visual Studio or VS Code
 3. Build and run the Blazor project
 
+## Standalone Localhost Mode (Recommended)
+This app is configured to run as a **local host service** and bind to:
+
+- `http://127.0.0.1:8080` (default)
+- Optional override via environment variable: `JEOPARDY_LOCAL_PORT`
+- If a cloud runtime sets `PORT`, the app will bind to `0.0.0.0:$PORT` automatically.
+
+### Run with .NET SDK
+```powershell
+dotnet run --project "MSSA Jeopardy/MSSA Jeopardy.csproj"
+```
+
+### Run on a different local port
+```powershell
+$env:JEOPARDY_LOCAL_PORT="5099"
+dotnet run --project "MSSA Jeopardy/MSSA Jeopardy.csproj"
+```
+
+### Publish as a standalone Windows app (no .NET install required)
+```powershell
+dotnet publish "MSSA Jeopardy/MSSA Jeopardy.csproj" -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o "./dist/win-x64"
+```
+Then run:
+```powershell
+.\dist\win-x64\MSSA_Jeopardy.exe
+```
+
 ## How It Was Deployed on Azure (Web App)
 The original hosted version was deployed to **Azure App Service (Web App)** using **GitHub Actions**.
 
 - A Web App was created in Azure (App Service) with **.NET 8** runtime.
 - The app name used by the workflow is `mssa-jeopardy-jamesgill` (see `.github/workflows/main.yml`).
 - A publish profile was downloaded from Azure Portal and stored in GitHub Secrets as `AZUREAPPSERVICE_PUBLISHPROFILE`.
-- On each push to `main` (or manual workflow run), GitHub Actions restored, built, and published `MSSA Jeopardy/MSSA Jeopardy.csproj`.
-- The workflow then deployed the published output using `azure/webapps-deploy@v3`.
+- Azure deployment is gated by repository variable `ENABLE_AZURE_DEPLOY`; set it to `true` to enable the deploy job.
+- On each push to `main` (or manual workflow run), GitHub Actions restores, builds, and publishes `MSSA Jeopardy/MSSA Jeopardy.csproj`.
+- When `ENABLE_AZURE_DEPLOY=true`, the workflow deploys the published output using `azure/webapps-deploy@v3`.
 - The live site was served at: `https://mssa-jeopardy-jamesgill.azurewebsites.net/`.
 
-## Deploy Without Azure
+## Deploy Without Azure (Optional Cloud Hosting)
 You can keep this project live without an Azure subscription.
 Because this app uses **Blazor Interactive Server mode**, it must run on a server host (not static hosting like GitHub Pages).
 

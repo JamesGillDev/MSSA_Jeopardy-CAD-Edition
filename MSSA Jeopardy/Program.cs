@@ -1,14 +1,27 @@
-using Microsoft.AspNetCore.HttpOverrides;
 using MSSA_Jeopardy.Components;
 using MSSA_Jeopardy.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Support cloud hosts (Render, Railway, Fly, etc.) that inject a PORT env var.
-var port = Environment.GetEnvironmentVariable("PORT");
-if (!string.IsNullOrWhiteSpace(port))
+// Standalone mode by default: host only on localhost.
+// If a cloud host sets ASPNETCORE_URLS or PORT, respect that instead.
+var explicitUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+if (string.IsNullOrWhiteSpace(explicitUrls))
 {
-    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+    var cloudPortSetting = Environment.GetEnvironmentVariable("PORT");
+    if (int.TryParse(cloudPortSetting, out var cloudPort) && cloudPort is >= 1 and <= 65535)
+    {
+        builder.WebHost.UseUrls($"http://0.0.0.0:{cloudPort}");
+    }
+    else
+    {
+        const int defaultLocalPort = 8080;
+        var localPortSetting = Environment.GetEnvironmentVariable("JEOPARDY_LOCAL_PORT");
+        int localPort = int.TryParse(localPortSetting, out var parsedPort) && parsedPort is >= 1 and <= 65535
+            ? parsedPort
+            : defaultLocalPort;
+        builder.WebHost.UseUrls($"http://127.0.0.1:{localPort}");
+    }
 }
 
 builder.Services
@@ -24,18 +37,9 @@ builder.Services
         options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
     });
 
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    options.KnownNetworks.Clear();
-    options.KnownProxies.Clear();
-});
-
 builder.Services.AddSingleton<JeopardyGameService>();
 
 var app = builder.Build();
-
-app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -43,7 +47,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 

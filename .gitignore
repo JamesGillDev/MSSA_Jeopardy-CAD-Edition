@@ -9,6 +9,7 @@ obj/
 Thumbs.db
 .DS_Store
 publish/
+dist/
 appsettings.*.json
 *.pfx
 *.snk
