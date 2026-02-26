@@ -81,7 +81,7 @@ The original hosted version was deployed to **Azure App Service (Web App)** usin
 
 - A Web App was created in Azure (App Service) with **.NET 8** runtime.
 - The app name used by the workflow is `mssa-jeopardy-jamesgill` (see `.github/workflows/main.yml`).
-- A publish profile was downloaded from Azure Portal and stored in GitHub Secrets as `AZUREAPPSERVICE_PUBLISHPROFILE`.
+- A publish profile was downloaded from Azure Portal and stored in GitHub Secrets (referenced as `AZUREAPPSERVICE_PUBLISHPROFILE` in the current workflow).
 - Azure deployment is gated by repository variable `ENABLE_AZURE_DEPLOY`; set it to `true` to enable the deploy job.
 - On each push to `main` (or manual workflow run), GitHub Actions restores, builds, and publishes `MSSA Jeopardy/MSSA Jeopardy.csproj`.
 - When `ENABLE_AZURE_DEPLOY=true`, the workflow deploys the published output using `azure/webapps-deploy@v3`.
