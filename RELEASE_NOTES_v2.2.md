@@ -1,4 +1,4 @@
-# MSSA Jeopardy! v2.2
+# MSSA Jeopardy! v2.2.0
 
 ## Release Notes
 MSSA Jeopardy! - Cloud Application Development Edition
