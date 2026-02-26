@@ -3,7 +3,7 @@
 [Live Web App](https://mssa-jeopardy-jamesgill.azurewebsites.net/)
 
 [![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
-[![Blazor](https://img.shields.io/badge/Blazor-WebAssembly-blue)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
+[![Blazor](https://img.shields.io/badge/Blazor-Interactive%20Server-blue)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
 [![License](https://img.shields.io/badge/License-BLS-blue.svg)](./LICENSE.md)
 
 A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Systems Academy (MSSA) Cloud Application Development Program**. Test your knowledge across a huge range of cloud, dev, and data topics!
@@ -15,7 +15,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 - **Deep Question Pool:** Each category has at least 5 unique questions per point value (100–500), for endless replayability.
 - **Randomized Board:** Each game, a random question is chosen for each point value in each selected category.
 - **User-Selectable Categories:** Choose up to 6 categories at the start of each game.
-- **Modern Blazor WebAssembly:** Built with .NET 8 and C# 12 for a fast, interactive, and modern web experience.
+- **Modern Blazor Interactive Server:** Built with .NET 8 and C# 12 for a fast, interactive, and modern web experience.
 - **Modern layout and voices added using ElevenLabs.
 
 ## Key Features
@@ -38,7 +38,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 - Bicep, Application Insights, Azure Monitor, and many more!
 
 ## How to Play
-1. Launch the app (Blazor WebAssembly, .NET 8 required)
+1. Launch the app (Blazor Interactive Server, .NET 8 required)
 2. Select up to 6 categories
 3. Add players and set names
 4. Start the game and take turns selecting questions
@@ -47,7 +47,38 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 ## How to Build/Run
 1. Clone the repo
 2. Open in Visual Studio or VS Code
-3. Build and run the Blazor WebAssembly project
+3. Build and run the Blazor project
+
+## How It Was Deployed on Azure (Web App)
+The original hosted version was deployed to **Azure App Service (Web App)** using **GitHub Actions**.
+
+- A Web App was created in Azure (App Service) with **.NET 8** runtime.
+- The app name used by the workflow is `mssa-jeopardy-jamesgill` (see `.github/workflows/main.yml`).
+- A publish profile was downloaded from Azure Portal and stored in GitHub Secrets as `AZUREAPPSERVICE_PUBLISHPROFILE`.
+- On each push to `main` (or manual workflow run), GitHub Actions restored, built, and published `MSSA Jeopardy/MSSA Jeopardy.csproj`.
+- The workflow then deployed the published output using `azure/webapps-deploy@v3`.
+- The live site was served at: `https://mssa-jeopardy-jamesgill.azurewebsites.net/`.
+
+## Deploy Without Azure
+You can keep this project live without an Azure subscription.
+Because this app uses **Blazor Interactive Server mode**, it must run on a server host (not static hosting like GitHub Pages).
+
+### Option 1 (Recommended): Render
+1. Push this repo to GitHub.
+2. In Render, create a new **Web Service** from your GitHub repo.
+3. Choose **Docker** runtime (the repo now includes a `Dockerfile`).
+4. Deploy.
+
+### Option 2: Railway or Fly.io
+- Both can deploy this app directly from the same `Dockerfile`.
+- Connect the repo, deploy as a web service, and keep the default container port (`8080`).
+
+### Local Demo (No Cloud Needed)
+```bash
+docker build -t mssa-jeopardy .
+docker run --rm -p 8080:8080 mssa-jeopardy
+```
+Then open `http://localhost:8080`.
 
 ## Contributing
 Pull requests are welcome! Please ensure new questions are unique and not duplicates of existing ones. For major changes, open an issue first to discuss what you would like to change.

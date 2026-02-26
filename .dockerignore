@@ -1,0 +1,9 @@
+.git
+.github
+.vs
+**/bin
+**/obj
+**/.DS_Store
+**/Thumbs.db
+run_out.log
+run_err.log
