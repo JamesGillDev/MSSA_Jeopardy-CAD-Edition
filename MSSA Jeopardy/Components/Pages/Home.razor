@@ -3,6 +3,7 @@
 
 <PageTitle>MSSA Jeopardy - Home</PageTitle>
 
+@using System.Reflection
 @using MSSA_Jeopardy.Services
 @inject IJSRuntime JS
 
@@ -48,6 +49,11 @@
             <span>.NET 8 + Blazor</span>
         </div>
 
+        <div class="release-badge" role="note" aria-label="@($"Published release version {PublishedVersion}")">
+            <img src="/icons/published-release.svg" alt="" aria-hidden="true" />
+            <span>Published v@PublishedVersion</span>
+        </div>
+
         <div class="hero-actions">
             <a class="play-btn"
                href="/jeopardy"
@@ -87,6 +93,12 @@
 </section>
 
 @code {
+    private static readonly string PublishedVersion =
+        typeof(JeopardyGameService).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+        ?? typeof(JeopardyGameService).Assembly.GetName().Version?.ToString(3)
+        ?? "unknown";
+
     private bool _showWelcomeGate = true;
     private bool _welcomeFocusPending = true;
     private ElementReference _welcomeContinueButton;

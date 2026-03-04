@@ -7,6 +7,7 @@ Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog nor
 ### Added
 - Category filtering on the game setup screen to quickly narrow category choices.
 - Host skip-clue action (UI button + `S` hotkey) that awards no points.
+- Published release icon asset and Home screen `Published vX` badge.
 
 ### Changed
 - Normalized app audio to a 10% output ceiling and unified FX slider behavior across synthesized SFX and clip playback.

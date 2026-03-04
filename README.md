@@ -15,6 +15,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 - **Audio Normalization:** Reduced all app audio output to a 10% cap and fixed FX slider behavior so one control applies consistently.
 - **Host Skip Control:** Added skip-clue support (button + keyboard shortcut `S`) that marks the clue answered with no points awarded.
 - **Category Filter:** Added category filtering in setup so hosts can quickly find topics before selecting six categories.
+- **Published Release Icon:** Added a dedicated release icon and a dynamic `Published vX` badge on the Home screen for published builds.
 - **Question Bank QA Sweep:** Replaced vague categories with concrete clue-style Q/A across exam-parenthesized banks (`AZ-900`, `AZ-204`, `AI-900`, `Algorithms (C#)`, `DP-3001`, `DP-080`, `DP-3020`, `MS-4010`) plus additional placeholder banks (`App Service`, `Functions`, `Windows Virtual Desktop`, `Application Gateway`, `Role-Based Access Control`, `Multi-Factor Authentication`), and fixed typo issues.
 
 ## Highlights from v2.3

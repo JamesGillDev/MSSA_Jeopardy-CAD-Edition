@@ -217,6 +217,30 @@
     gap: 0.65rem;
 }
 
+.release-badge {
+    margin-top: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.56rem;
+    min-height: 2.35rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 214, 117, 0.75);
+    background: linear-gradient(180deg, rgba(16, 51, 143, 0.9) 0%, rgba(10, 32, 92, 0.95) 100%);
+    color: #f3f8ff;
+    padding: 0.36rem 0.86rem 0.36rem 0.44rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 228, 162, 0.15) inset;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.release-badge img {
+    width: 1.56rem;
+    height: 1.56rem;
+    display: block;
+    border-radius: 999px;
+    box-shadow: 0 0 0 1px rgba(255, 230, 177, 0.3);
+}
+
 .play-btn,
 .secondary-btn {
     display: inline-flex;

@@ -7,6 +7,7 @@ MSSA Jeopardy! - Cloud Application Development Edition
 - **Public Release**
 
 ## Highlights
+- Added a published-release icon asset and visible `Published vX` badge on Home.
 - Audio output normalized to a safe classroom level (10% maximum).
 - FX volume control now applies consistently to synthesized SFX and voice/music clips.
 - Added host skip-clue flow so clues can be skipped with no points awarded.
