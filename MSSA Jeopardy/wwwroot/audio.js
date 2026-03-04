@@ -1,5 +1,5 @@
 (() => {
-    const audioVersion = "2.3.3";
+    const audioVersion = "2.3.5";
     const versioned = (path) => `${path}?v=${audioVersion}`;
 
     const clipCatalog = Object.freeze({
