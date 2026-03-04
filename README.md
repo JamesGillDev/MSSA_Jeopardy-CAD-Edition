@@ -85,12 +85,13 @@ dotnet run --project "MSSA Jeopardy/MSSA Jeopardy.csproj"
 
 ### Publish as a standalone Windows app (no .NET install required)
 ```powershell
-dotnet publish "MSSA Jeopardy/MSSA Jeopardy.csproj" -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o "./dist/win-x64"
+.\scripts\publish-local.ps1
 ```
 Then run:
 ```powershell
-.\dist\win-x64\MSSA_Jeopardy.exe
+.\publish\current\MSSA_Jeopardy.exe
 ```
+This script always clears previous `publish` output first, so you only keep one local published version at a time.
 
 ## How It Was Deployed on Azure (Web App)
 The original hosted version was deployed to **Azure App Service (Web App)** using **GitHub Actions**.
