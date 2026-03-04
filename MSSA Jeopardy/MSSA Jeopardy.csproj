@@ -4,10 +4,11 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Version>2.3.3</Version>
-		<AssemblyVersion>2.3.3.0</AssemblyVersion>
-		<FileVersion>2.3.3.0</FileVersion>
-		<InformationalVersion>2.3.3</InformationalVersion>
+		<Version>2.3.4</Version>
+		<AssemblyVersion>2.3.4.0</AssemblyVersion>
+		<FileVersion>2.3.4.0</FileVersion>
+		<InformationalVersion>2.3.4</InformationalVersion>
+		<ApplicationIcon>app.ico</ApplicationIcon>
 
 		<!-- Keep the assembly name URL/asset friendly (no spaces / punctuation) -->
 		<AssemblyName>MSSA_Jeopardy</AssemblyName>

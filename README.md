@@ -1,4 +1,4 @@
-# MSSA Jeopardy - CAD Edition (v2.3.3)
+# MSSA Jeopardy - CAD Edition (v2.3.4)
 
 [Live Web App](https://mssa-jeopardy-jamesgill.azurewebsites.net/)
 
@@ -10,13 +10,12 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 
 ---
 
-## What's New in v2.3.3
-- **Public Release:** `v2.3.3` is published as a public release with classroom-focused gameplay fixes.
-- **Audio Normalization:** Reduced all app audio output to a 10% cap and fixed FX slider behavior so one control applies consistently.
-- **Host Skip Control:** Added skip-clue support (button + keyboard shortcut `S`) that marks the clue answered with no points awarded.
-- **Category Filter:** Added category filtering in setup so hosts can quickly find topics before selecting six categories.
-- **Published Release Icon:** Added a dedicated release icon and a dynamic `Published vX` badge on the Home screen for published builds.
-- **Question Bank QA Sweep:** Replaced vague categories with concrete clue-style Q/A across exam-parenthesized banks (`AZ-900`, `AZ-204`, `AI-900`, `Algorithms (C#)`, `DP-3001`, `DP-080`, `DP-3020`, `MS-4010`) plus additional placeholder banks (`App Service`, `Functions`, `Windows Virtual Desktop`, `Application Gateway`, `Role-Based Access Control`, `Multi-Factor Authentication`), and fixed typo issues.
+## What's New in v2.3.4
+- **Public Release:** `v2.3.4` is published as a public release with classroom QA and packaging fixes.
+- **Q/A Strictness Pass:** Tightened ambiguous answers in the core public-release curriculum banks so clues map to a single expected answer.
+- **Windows EXE Icon:** Embedded a real application icon into `MSSA_Jeopardy.exe` for published Windows builds.
+- **Solution Load Cleanup:** Removed stale local `.slnx` cache state and standardized on `MSSA_Jeopardy.sln` for opening the project.
+- **Carry-Forward Features:** Retains `v2.3.3` gameplay updates (audio normalization, skip-clue flow, and category filtering).
 
 ## Highlights from v2.3
 - **Massive Category Pool:** 117 categories including .NET Core, Git & Version Control, Cloud Security, Containers & Kubernetes, Microsoft Power Platform, Data Analytics, Azure Blob Storage, Key Vault, App Service, and many more.
@@ -29,6 +28,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 ## Release History
 - Version history for public releases: [CHANGELOG.md](./CHANGELOG.md)
 - Detailed notes for the `v2.2` milestone: [RELEASE_NOTES_v2.2.md](./RELEASE_NOTES_v2.2.md)
+- Detailed notes for the `v2.3.4` public release: [RELEASE_NOTES_v2.3.4.md](./RELEASE_NOTES_v2.3.4.md)
 - Detailed notes for the `v2.3.3` public release: [RELEASE_NOTES_v2.3.3.md](./RELEASE_NOTES_v2.3.3.md)
 
 ## Key Features
@@ -132,4 +132,4 @@ This project is licensed under the **Business Source License 1.1 (BLS)**. See [L
 - **Change License:** Apache License 2.0 (effective on the Change Date, per license terms).
 
 ---
-MSSA Jeopardy - CAD Edition v2.3.3 | Developed by JamesGillDev and contributors
+MSSA Jeopardy - CAD Edition v2.3.4 | Developed by JamesGillDev and contributors
