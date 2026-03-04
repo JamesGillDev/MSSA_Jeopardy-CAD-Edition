@@ -65,9 +65,11 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 ## Standalone Localhost Mode (Recommended)
 This app is configured to run as a **local host service** and bind to:
 
-- `http://127.0.0.1:8080` (default)
+- `http://localhost:8080` (default, loopback-only on your PC)
 - Optional override via environment variable: `JEOPARDY_LOCAL_PORT`
 - If a cloud runtime sets `PORT`, the app will bind to `0.0.0.0:$PORT` automatically.
+- Published Windows EXE auto-opens your default browser to the local app URL.
+- Optional disable for auto-open: set `JEOPARDY_NO_AUTO_LAUNCH=1`
 
 ### Run with .NET SDK
 ```powershell

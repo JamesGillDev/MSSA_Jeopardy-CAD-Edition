@@ -1,15 +1,19 @@
 using MSSA_Jeopardy.Components;
 using MSSA_Jeopardy.Services;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Standalone mode by default: host only on localhost.
 // If a cloud host sets ASPNETCORE_URLS or PORT, respect that instead.
 var explicitUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+var cloudPortSetting = Environment.GetEnvironmentVariable("PORT");
+var hasCloudPort = int.TryParse(cloudPortSetting, out var cloudPort) && cloudPort is >= 1 and <= 65535;
+string? localLaunchUrl = null;
+
 if (string.IsNullOrWhiteSpace(explicitUrls))
 {
-    var cloudPortSetting = Environment.GetEnvironmentVariable("PORT");
-    if (int.TryParse(cloudPortSetting, out var cloudPort) && cloudPort is >= 1 and <= 65535)
+    if (hasCloudPort)
     {
         builder.WebHost.UseUrls($"http://0.0.0.0:{cloudPort}");
     }
@@ -20,7 +24,8 @@ if (string.IsNullOrWhiteSpace(explicitUrls))
         int localPort = int.TryParse(localPortSetting, out var parsedPort) && parsedPort is >= 1 and <= 65535
             ? parsedPort
             : defaultLocalPort;
-        builder.WebHost.UseUrls($"http://127.0.0.1:{localPort}");
+        localLaunchUrl = $"http://localhost:{localPort}";
+        builder.WebHost.UseUrls(localLaunchUrl);
     }
 }
 
@@ -52,5 +57,28 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+if (localLaunchUrl is not null &&
+    OperatingSystem.IsWindows() &&
+    Environment.UserInteractive &&
+    !app.Environment.IsDevelopment() &&
+    !string.Equals(Environment.GetEnvironmentVariable("JEOPARDY_NO_AUTO_LAUNCH"), "1", StringComparison.OrdinalIgnoreCase))
+{
+    app.Lifetime.ApplicationStarted.Register(() =>
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = localLaunchUrl,
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
+            // No-op: app remains available at localLaunchUrl.
+        }
+    });
+}
 
 app.Run();
