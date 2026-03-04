@@ -24,12 +24,30 @@ public partial class JeopardyGameService
 
     private static readonly Random _random = new();
     private static readonly int[] ExpectedPointValues = [100, 200, 300, 400, 500];
+    private static readonly Dictionary<string, string> DuplicateCategoryAliases = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Azure Fundamentals"] = "AZ-900 (Azure Fundamentals)",
+        ["Azure Application Gateway"] = "Application Gateway",
+        ["Azure Functions"] = "Functions",
+        ["Azure Key Vault"] = "Key Vault",
+        ["Blob Storage"] = "Azure Blob Storage",
+        ["Azure Sentinel"] = "Microsoft Sentinel",
+        ["Azure Security Center"] = "Microsoft Defender for Cloud",
+        ["Azure Logs"] = "Log Analytics"
+    };
     private const int MinDailyDoubleCountPerGame = 3;
     private const int MaxDailyDoubleCountPerGame = 6;
     private int _nextPlayerId = 1;
     public static readonly string[] AllCategoryNames = BuildCategoryNames();
     public static readonly string[] CompleteCategoryNames = BuildCompleteCategoryNames();
     private static string Canon(string s) => (s ?? "").Trim();
+    private static string NormalizeCategoryName(string categoryName)
+    {
+        var canonical = Canon(categoryName);
+        return DuplicateCategoryAliases.TryGetValue(canonical, out var canonicalTarget)
+            ? Canon(canonicalTarget)
+            : canonical;
+    }
 
     public JeopardyGameService()
     {
@@ -55,7 +73,7 @@ public partial class JeopardyGameService
             .ToDictionary(c => Canon(c), c => c, StringComparer.OrdinalIgnoreCase);
 
         var selected = categories
-            .Select(c => Canon(c ?? ""))
+            .Select(c => NormalizeCategoryName(c ?? ""))
             .Where(c => canonicalCompleteMap.ContainsKey(c))
             .Select(c => canonicalCompleteMap[c])
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -353,7 +371,7 @@ public void SkipCurrentQuestion()
         DebugValidateQuestionPool(pool);
 
         return pool
-            .Select(q => Canon(q.Category ?? ""))
+            .Select(q => NormalizeCategoryName(q.Category ?? ""))
             .Where(c => !string.IsNullOrWhiteSpace(c))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(category => category, StringComparer.OrdinalIgnoreCase)
@@ -371,7 +389,9 @@ public void SkipCurrentQuestion()
                 !string.IsNullOrWhiteSpace(g.Key) &&
                 g.Count() == 25 &&
                 ExpectedPointValues.All(v => g.Count(q => q.PointValue == v) == 5))
-            .Select(g => Canon(g.Key))
+            .Select(g => NormalizeCategoryName(g.Key))
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(category => category, StringComparer.OrdinalIgnoreCase)
             .ToArray();
     }
@@ -383,7 +403,7 @@ public void SkipCurrentQuestion()
             return false;
         }
 
-        var canonicalCategory = Canon(categoryName);
+        var canonicalCategory = NormalizeCategoryName(categoryName);
         return CompleteCategoryNames.Contains(canonicalCategory, StringComparer.OrdinalIgnoreCase);
     }
 

@@ -4,10 +4,10 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Version>2.3.4</Version>
-		<AssemblyVersion>2.3.4.0</AssemblyVersion>
-		<FileVersion>2.3.4.0</FileVersion>
-		<InformationalVersion>2.3.4</InformationalVersion>
+		<Version>2.3.5</Version>
+		<AssemblyVersion>2.3.5.0</AssemblyVersion>
+		<FileVersion>2.3.5.0</FileVersion>
+		<InformationalVersion>2.3.5</InformationalVersion>
 		<ApplicationIcon>app.ico</ApplicationIcon>
 
 		<!-- Keep the assembly name URL/asset friendly (no spaces / punctuation) -->

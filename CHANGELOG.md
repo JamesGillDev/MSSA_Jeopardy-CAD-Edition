@@ -3,6 +3,18 @@ All notable changes to this project are documented in this file for public GitHu
 
 Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog normalizes those entries as `2.1.0`, `2.2.0`, and `2.3.0`.
 
+## [2.3.5] - 2026-03-04
+### Added
+- Added canonical category alias handling to collapse duplicate category families in selection lists.
+- Added `RELEASE_NOTES_v2.3.5.md` for this public release.
+
+### Changed
+- Updated category discovery and completeness lists to show canonical names only (removed duplicate aliases like `Azure Fundamentals` when `AZ-900 (Azure Fundamentals)` is present).
+- Bumped application/release metadata from `2.3.4` to `2.3.5`.
+
+### Fixed
+- Improved local published EXE behavior to use `localhost` and auto-open the default browser on startup.
+
 ## [2.3.4] - 2026-03-04
 ### Added
 - Embedded a Windows application icon for published executables using `app.ico` and project `ApplicationIcon` metadata.
@@ -79,7 +91,8 @@ Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog nor
 ### Changed
 - Initial v2 public release baseline with expanded category set and updated game content/docs.
 
-[2.3.4]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.3...HEAD
+[2.3.5]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.4...HEAD
+[2.3.4]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.3...v2.3.4
 [2.3.3]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.2...v2.3.3
 [2.3.2]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.1...v2.3.2
 [2.3.1]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3...v2.3.1

@@ -1,4 +1,4 @@
-# MSSA Jeopardy - CAD Edition (v2.3.4)
+# MSSA Jeopardy - CAD Edition (v2.3.5)
 
 [Live Web App](https://mssa-jeopardy-jamesgill.azurewebsites.net/)
 
@@ -10,15 +10,15 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 
 ---
 
-## What's New in v2.3.4
-- **Public Release:** `v2.3.4` is published as a public release with classroom QA and packaging fixes.
-- **Q/A Strictness Pass:** Tightened ambiguous answers in the core public-release curriculum banks so clues map to a single expected answer.
-- **Windows EXE Icon:** Embedded a real application icon into `MSSA_Jeopardy.exe` for published Windows builds.
-- **Solution Load Cleanup:** Removed stale local `.slnx` cache state and standardized on `MSSA_Jeopardy.sln` for opening the project.
-- **Carry-Forward Features:** Retains `v2.3.3` gameplay updates (audio normalization, skip-clue flow, and category filtering).
+## What's New in v2.3.5
+- **Public Release:** `v2.3.5` is published as a public release with category-list deduplication and local publish usability fixes.
+- **Duplicate Category Cleanup:** Added canonical category aliasing so duplicate banks (for example `Azure Fundamentals` vs `AZ-900 (Azure Fundamentals)`) no longer both appear in selection.
+- **Cleaner Category Picker:** Removed legacy duplicate aliases from the visible category list and selection flow.
+- **Local Publish UX:** Published EXE now uses `localhost` and auto-opens your browser on launch.
+- **Carry-Forward Fixes:** Includes prior `v2.3.4` updates (Q/A strictness pass, icon embedding, and solution cache cleanup).
 
 ## Highlights from v2.3
-- **Massive Category Pool:** 117 categories including .NET Core, Git & Version Control, Cloud Security, Containers & Kubernetes, Microsoft Power Platform, Data Analytics, Azure Blob Storage, Key Vault, App Service, and many more.
+- **Massive Category Pool:** 109 canonical categories (deduplicated aliases) including .NET Core, Git & Version Control, Cloud Security, Containers & Kubernetes, Microsoft Power Platform, Data Analytics, Azure Blob Storage, Key Vault, App Service, and many more.
 - **Deep Question Pool:** Each category has at least 5 unique questions per point value (100–500), for endless replayability.
 - **Randomized Board:** Each game, a random question is chosen for each point value in each selected category.
 - **User-Selectable Categories:** Choose up to 6 categories at the start of each game.
@@ -28,6 +28,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 ## Release History
 - Version history for public releases: [CHANGELOG.md](./CHANGELOG.md)
 - Detailed notes for the `v2.2` milestone: [RELEASE_NOTES_v2.2.md](./RELEASE_NOTES_v2.2.md)
+- Detailed notes for the `v2.3.5` public release: [RELEASE_NOTES_v2.3.5.md](./RELEASE_NOTES_v2.3.5.md)
 - Detailed notes for the `v2.3.4` public release: [RELEASE_NOTES_v2.3.4.md](./RELEASE_NOTES_v2.3.4.md)
 - Detailed notes for the `v2.3.3` public release: [RELEASE_NOTES_v2.3.3.md](./RELEASE_NOTES_v2.3.3.md)
 
@@ -39,7 +40,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 - Clean, responsive UI
 
 ## Categories (Sample)
-- Azure Fundamentals, AZ-900, AZ-204, AI-900
+- AZ-900, AZ-204, AI-900
 - .NET Core, C# Programming
 - Git & Version Control
 - Cloud Security, Security
@@ -134,4 +135,4 @@ This project is licensed under the **Business Source License 1.1 (BLS)**. See [L
 - **Change License:** Apache License 2.0 (effective on the Change Date, per license terms).
 
 ---
-MSSA Jeopardy - CAD Edition v2.3.4 | Developed by JamesGillDev and contributors
+MSSA Jeopardy - CAD Edition v2.3.5 | Developed by JamesGillDev and contributors
