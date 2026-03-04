@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [string]$Runtime = "win-x64",
+    [string]$Runtime = "win10-x64",
+    [string]$Framework = "net8.0-windows10.0.19041.0",
     [string]$Configuration = "Release",
     [switch]$NoRestore
 )
@@ -10,7 +11,7 @@ Set-StrictMode -Version Latest
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = (Resolve-Path (Join-Path $scriptDir "..")).Path
-$projectPath = Join-Path $repoRoot "MSSA Jeopardy\MSSA Jeopardy.csproj"
+$projectPath = Join-Path $repoRoot "MSSA_Jeopardy.Maui\MSSA_Jeopardy.Maui.csproj"
 $publishRoot = Join-Path $repoRoot "publish"
 $outputPath = Join-Path $publishRoot "current"
 
@@ -18,11 +19,13 @@ $outputPath = Join-Path $publishRoot "current"
 $projectVersion = $projectXml.Project.PropertyGroup.Version
 
 Write-Host "Project version: $projectVersion"
+Write-Host "Target framework: $Framework"
 Write-Host "Target runtime: $Runtime"
 Write-Host "Configuration: $Configuration"
 
-Write-Host "Stopping any running MSSA_Jeopardy processes..."
-Get-Process MSSA_Jeopardy -ErrorAction SilentlyContinue | Stop-Process -Force
+Write-Host "Stopping any running MSSA Jeopardy desktop processes..."
+Get-Process "MSSA_Jeopardy.Maui" -ErrorAction SilentlyContinue | Stop-Process -Force
+Get-Process "MSSA_Jeopardy" -ErrorAction SilentlyContinue | Stop-Process -Force
 
 if ([System.IO.Directory]::Exists($publishRoot))
 {
@@ -35,18 +38,28 @@ if ([System.IO.Directory]::Exists($publishRoot))
 if (-not $NoRestore)
 {
     Write-Host "Running restore..."
-    dotnet restore $projectPath -r $Runtime
+    dotnet restore $projectPath -r $Runtime -p:TargetFramework=$Framework
+    if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed with exit code $LASTEXITCODE" }
 }
 
-Write-Host "Publishing single-file self-contained build..."
+Write-Host "Publishing MAUI Blazor desktop app..."
 dotnet publish $projectPath `
+    -f $Framework `
     -c $Configuration `
     -r $Runtime `
-    --self-contained true `
-    /p:PublishSingleFile=true `
+    -p:WindowsPackageType=None `
+    -p:WindowsAppSDKSelfContained=true `
+    -p:SelfContained=true `
+    -p:PublishSingleFile=true `
     -o $outputPath `
     --no-restore
+if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed with exit code $LASTEXITCODE" }
+
+$exe = Get-ChildItem -Path $outputPath -Filter "*.exe" -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 
 Write-Host "Publish complete."
 Write-Host "Output: $outputPath"
-Write-Host "Run: `"$outputPath\MSSA_Jeopardy.exe`""
+if ($exe)
+{
+    Write-Host "Run: `"$($exe.FullName)`""
+}

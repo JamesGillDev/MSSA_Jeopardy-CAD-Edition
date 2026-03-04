@@ -1,8 +1,10 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSSA Jeopardy", "MSSA Jeopardy\MSSA Jeopardy.csproj", "{3E65B0D3-2D3F-4E5A-9F73-5A5E6F9B0A11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSSA_Jeopardy.Maui", "MSSA_Jeopardy.Maui\MSSA_Jeopardy.Maui.csproj", "{1019DAE7-3EAC-4595-BDEA-2DF8C5581B46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +20,9 @@ Global
 		{5A4C2E0D-5E89-4AE1-8E9D-8A0B0F2A9C22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A4C2E0D-5E89-4AE1-8E9D-8A0B0F2A9C22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A4C2E0D-5E89-4AE1-8E9D-8A0B0F2A9C22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1019DAE7-3EAC-4595-BDEA-2DF8C5581B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1019DAE7-3EAC-4595-BDEA-2DF8C5581B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1019DAE7-3EAC-4595-BDEA-2DF8C5581B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1019DAE7-3EAC-4595-BDEA-2DF8C5581B46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

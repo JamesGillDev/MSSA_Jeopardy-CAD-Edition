@@ -1,0 +1,1392 @@
+@page "/jeopardy"
+@using MSSA_Jeopardy.Models
+@using Microsoft.AspNetCore.Components.Web
+@inject JeopardyGameService GameService
+@inject IJSRuntime JS
+@implements IDisposable
+
+<PageTitle>MSSA Jeopardy!</PageTitle>
+
+@if (!GameService.GameStarted)
+{
+    var filteredCategories = GetFilteredCategories();
+    <section class="setup-shell" aria-labelledby="setup-heading">
+        <header class="setup-header">
+            <h2 id="setup-heading">Build Your Gameboard</h2>
+            <p>Select exactly 6 categories to start.</p>
+            <div class="category-filter-wrap">
+                <label class="category-filter-label" for="category-filter-input">Filter Categories</label>
+                <div class="category-filter-controls">
+                    <input id="category-filter-input"
+                           class="category-filter-input"
+                           type="search"
+                           placeholder="Type to filter categories"
+                           value="@_categoryFilter"
+                           @oninput="OnCategoryFilterInput"
+                           aria-label="Filter available categories" />
+                    <button class="clear-btn" type="button" @onclick="ClearCategoryFilter" disabled="@string.IsNullOrWhiteSpace(_categoryFilter)">Clear Filter</button>
+                </div>
+                <span class="category-filter-count">@filteredCategories.Count shown</span>
+            </div>
+        </header>
+
+        <div class="category-picker-grid" role="list" aria-label="Category selection">
+            @foreach (var category in filteredCategories)
+            {
+                var isComplete = JeopardyGameService.IsCategoryComplete(category);
+                var isSelected = GameService.SelectedCategories.Contains(category);
+                <button class="category-chip @(isSelected ? "selected" : string.Empty) @(!isComplete ? "incomplete" : string.Empty)"
+                        type="button"
+                        @onclick="() => ToggleCategory(category)"
+                        disabled="@(!isComplete || (!isSelected && GameService.SelectedCategories.Count >= 6))"
+                        aria-pressed="@isSelected"
+                        aria-disabled="@(!isComplete || (!isSelected && GameService.SelectedCategories.Count >= 6))"
+                        title="@category">
+                    @category
+                </button>
+            }
+        </div>
+        @if (filteredCategories.Count == 0)
+        {
+            <p class="category-filter-empty">No categories match the current filter.</p>
+        }
+
+        <section class="player-manager" aria-label="Player setup">
+            <div class="player-manager-header">
+                <h3>Players</h3>
+                <span>@GameService.TotalPlayers total</span>
+            </div>
+            <div class="player-list" role="list">
+                @foreach (var playerId in GameService.GetPlayerIds())
+                {
+                    var playerName = GameService.PlayerNames.TryGetValue(playerId, out var existingName) ? existingName : $"Player {playerId}";
+                    <div class="player-row" role="listitem">
+                        <span class="player-chip">Player @playerId</span>
+                        <input class="player-name-input"
+                               type="text"
+                               maxlength="30"
+                               value="@playerName"
+                               @onchange="(e) => UpdatePlayerName(playerId, e.Value?.ToString())"
+                               aria-label="@($"Player {playerId} name")" />
+                        <button class="remove-player-btn"
+                                type="button"
+                                @onclick="() => RemovePlayerFromSetup(playerId)"
+                                disabled="@(GameService.TotalPlayers <= 1)">
+                            Remove
+                        </button>
+                    </div>
+                }
+            </div>
+            <div class="player-manager-actions">
+                <button class="add-player-btn"
+                        type="button"
+                        @onclick="AddPlayerFromSetup"
+                        disabled="@(GameService.TotalPlayers >= MaxSupportedPlayers)">
+                    Add Player
+                </button>
+                @if (GameService.TotalPlayers >= MaxSupportedPlayers)
+                {
+                    <span class="player-limit-note">Max @MaxSupportedPlayers players (keyboard buzz supports 1-9).</span>
+                }
+            </div>
+        </section>
+
+        <div class="setup-toolbar">
+            <div class="selection-count @(GameService.SelectedCategories.Count == 6 ? "ready" : string.Empty)">
+                @GameService.SelectedCategories.Count / 6 selected
+                <span class="complete-count">(@JeopardyGameService.CompleteCategoryNames.Length complete categories available)</span>
+            </div>
+            <div class="mode-toggle">
+                <label class="mode-toggle-label">
+                    <input type="checkbox"
+                           checked="@GameService.TimedModeEnabled"
+                           @onchange="OnTimedModeChanged" />
+                    <span>Timed Mode</span>
+                </label>
+                <span class="mode-toggle-help">Turn off for learning mode (no clue countdown).</span>
+            </div>
+            <div class="setup-actions">
+                <button class="clear-btn" type="button" @onclick="ClearCategories" disabled="@(GameService.SelectedCategories.Count == 0)">Clear</button>
+                <button class="start-game-btn" type="button" @onclick="StartGame" disabled="@(GameService.SelectedCategories.Count != 6)">Start Game</button>
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    var nextPlayerName = GetNextPlayerName();
+    <section class="game-shell" aria-label="Jeopardy game board">
+        @if (_showRoundIntro)
+        {
+            <div class="round-intro-overlay" role="dialog" aria-modal="true" aria-labelledby="round-intro-title" aria-live="assertive">
+                <section class="round-intro-card">
+                    <p class="round-intro-kicker">Round Starting</p>
+                    <h3 class="round-intro-title" id="round-intro-title">Get Ready</h3>
+                    <div class="round-intro-count">@_roundIntroSecondsRemaining</div>
+                    <p class="round-intro-copy">Board unlocks in @(_roundIntroSecondsRemaining) second@(_roundIntroSecondsRemaining == 1 ? string.Empty : "s").</p>
+                </section>
+            </div>
+        }
+
+        <div class="broadcast-hud" role="region" aria-label="Game status and controls">
+            <div class="hud-main">
+                <div class="hud-brand">
+                    <span class="hud-kicker">Broadcast Mode</span>
+                    <h2 class="board-title">MSSA Jeopardy!</h2>
+                    <p class="board-subtitle">Classic board mode</p>
+                </div>
+                <div class="hud-turn-panel">
+                    <span class="live-pill">Live</span>
+                    <div class="hud-turn-copy">
+                        <span class="hud-turn-label">In Control</span>
+                        <strong class="hud-turn-player">@GameService.PlayerNames[GameService.CurrentPlayer]</strong>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(nextPlayerName))
+                    {
+                        <div class="hud-next-player">
+                            Up Next:
+                            <strong>@nextPlayerName</strong>
+                        </div>
+                    }
+                    <span class="mode-status-pill @(GameService.TimedModeEnabled ? "timed" : "practice")" aria-label="Current clue timing mode">
+                        <span class="mode-lock-icon" aria-hidden="true"></span>
+                        @GetModeStatusLabel()
+                    </span>
+                </div>
+                <div class="hud-controls">
+                    <div class="audio-controls">
+                        <button class="audio-toggle-btn" type="button" @onclick="ToggleMute" aria-pressed="@_audioMuted" aria-label="@(_audioMuted ? "Unmute sound effects" : "Mute sound effects")">@(_audioMuted ? "Unmute FX" : "Mute FX")</button>
+                        <label class="audio-volume">
+                            <span>FX</span>
+                            <input type="range"
+                                   aria-label="Sound effect volume"
+                                   aria-valuetext="@GetFxVolumeLabel()"
+                                   min="0"
+                                   max="1"
+                                   step="0.05"
+                                   value="@_audioVolume"
+                                   @oninput="OnVolumeInput"
+                            disabled="@_audioMuted" />
+                        </label>
+                    </div>
+                    <button class="progress-toggle-btn"
+                            type="button"
+                            @onclick="ToggleRoundProgress"
+                            aria-expanded="@_showRoundProgress"
+                            aria-controls="round-progress-panel">
+                        @(_showRoundProgress ? "Hide Progress" : "Show Progress")
+                    </button>
+                    <button class="host-mode-btn" type="button" @onclick="RequestMidGameModeSwitch" disabled="@_isRematchPending">@GetMidGameModeButtonLabel()</button>
+                    <button class="clear-btn" type="button" @onclick="ResetBoard" disabled="@_isRematchPending">Reset</button>
+                    <button class="new-game-btn" type="button" @onclick="NewGame">New Game</button>
+                </div>
+            </div>
+
+            @if (_showMidGameModeConfirm)
+            {
+                <div class="host-confirm-panel" role="dialog" aria-modal="false" aria-label="Confirm mode switch">
+                    <p>@GetMidGameModeConfirmText()</p>
+                    <div class="host-confirm-actions">
+                        <button class="start-game-btn" type="button" @onclick="ConfirmMidGameModeSwitch">Confirm</button>
+                        <button class="clear-btn" type="button" @onclick="CancelMidGameModeSwitch">Cancel</button>
+                    </div>
+                </div>
+            }
+
+            <div class="score-strip" role="list" aria-label="Player scores">
+                @foreach (var player in GameService.PlayerNames.OrderBy(p => p.Key))
+                {
+                    <article @key="GetScoreCardKey(player.Key)" class="score-card @(player.Key == GameService.CurrentPlayer ? "active" : string.Empty) @(_lastScoredPlayerId == player.Key ? "scored" : string.Empty)" role="listitem" aria-current="@(player.Key == GameService.CurrentPlayer ? "true" : null)">
+                        <span class="score-player">@player.Value</span>
+                        <span class="score-value">$@GameService.PlayerScores[player.Key]</span>
+                    </article>
+                }
+            </div>
+
+            @if (_showRoundProgress)
+            {
+                <section id="round-progress-panel" class="round-progress-wrap" role="region" aria-label="Round progress and event feed">
+                    <div class="round-progress-copy">
+                        <span class="round-progress-label">Round Progress</span>
+                        <strong>@GetAnsweredClueCount() / @GetTotalClueCount() clues answered</strong>
+                    </div>
+                    <div class="round-progress-track" style="@GetRoundProgressStyle()">
+                        <span class="round-progress-fill"></span>
+                    </div>
+                    <span class="round-progress-remaining">@GetRemainingClueCount() remaining</span>
+                    <div class="event-ticker" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Live game event feed">
+                        @foreach (var evt in _broadcastEvents)
+                        {
+                            <article class="ticker-item @evt.ToneClass">
+                                <span class="ticker-time">@evt.TimeLabel</span>
+                                <span class="ticker-message">@evt.Message</span>
+                            </article>
+                        }
+                    </div>
+                </section>
+            }
+        </div>
+
+        <div class="jeopardy-board" style="--column-count:@GameService.Categories.Count;" role="grid" aria-label="Clue board">
+            @for (int categoryIndex = 0; categoryIndex < GameService.Categories.Count; categoryIndex++)
+            {
+                var category = GameService.Categories[categoryIndex];
+                var orderedClues = category.Questions.OrderBy(q => q.PointValue).ToList();
+                var categoryHeaderId = $"category-header-{categoryIndex + 1}";
+                <section class="category-column" style="--reveal-index:@categoryIndex;" role="rowgroup" aria-labelledby="@categoryHeaderId">
+                    <header class="category-title" id="@categoryHeaderId">@category.Name</header>
+                    @for (int clueIndex = 0; clueIndex < orderedClues.Count; clueIndex++)
+                    {
+                        var clue = orderedClues[clueIndex];
+                        <button class="@GetClueTileClass(clue)"
+                                type="button"
+                                style="--column-index:@categoryIndex; --tile-index:@clueIndex;"
+                                @onclick="() => SelectQuestion(clue)"
+                                disabled="@(_showRoundIntro || clue.IsAnswered)"
+                                aria-label="@GetClueAriaLabel(category.Name, clue)">
+                            @if (!clue.IsAnswered)
+                            {
+                                <span class="clue-value">$@clue.PointValue</span>
+                            }
+                            else
+                            {
+                                <span class="clue-value-placeholder">&nbsp;</span>
+                            }
+                        </button>
+                    }
+                </section>
+            }
+        </div>
+
+        @if (GameService.CurrentQuestion != null)
+        {
+            <div class="question-modal"
+                 @key="GetCurrentQuestionKey()"
+                 tabindex="0"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="question-text"
+                 aria-describedby="question-shortcuts answer-panel"
+                 @ref="_questionModalRef"
+                 @onkeydown="HandleQuestionHotkeys">
+                <div class="question-card" role="document">
+                    <div class="question-header">
+                        <span class="question-points">$@GameService.CurrentQuestion.PointValue</span>
+                        @if (GameService.TimedModeEnabled)
+                        {
+                            <div class="question-countdown" style="@GetCountdownStyle()" role="status" aria-live="polite" aria-label="Question timer">
+                                <span>@_questionSecondsRemaining</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="question-mode-pill">Practice Mode</span>
+                        }
+                        <button class="close-btn" type="button" @onclick="CloseQuestion" aria-label="Close current question">Close</button>
+                    </div>
+                    @if (GameService.CurrentQuestion.IsBonus)
+                    {
+                        <div class="bonus-banner">
+                            <span class="bonus-tag">Daily Double</span>
+                            <span class="bonus-copy">This clue is worth 2x points for a correct answer.</span>
+                        </div>
+                    }
+
+                    <p class="question-text" id="question-text">@GameService.CurrentQuestion.Question</p>
+
+                    <div class="question-shortcuts" id="question-shortcuts">
+                        <span>Shortcuts:</span>
+                        <kbd>1-9</kbd> buzz
+                        <kbd>R</kbd> reveal
+                        <kbd>C</kbd> correct (after reveal)
+                        <kbd>X</kbd> incorrect (after reveal)
+                        <kbd>S</kbd> skip clue
+                        <kbd>M</kbd> mute
+                        <kbd>Esc</kbd> close
+                    </div>
+
+                    <div class="answer-panel @(_answerRevealed ? "shown" : string.Empty)" id="answer-panel" role="status" aria-live="polite">
+                        @if (_answerRevealed)
+                        {
+                            <h5>Answer Reveal</h5>
+                            <p>@GameService.CurrentQuestion.Answer</p>
+                        }
+                    </div>
+
+                    <div class="host-clue-actions">
+                        <button class="score-btn skip" type="button" @onclick="SkipQuestion">Skip Clue (No Score)</button>
+                    </div>
+
+                    @if (GameService.AnsweringPlayer == null)
+                    {
+                        <div class="buzz-panel" role="region" aria-label="Player buzzer selection">
+                            <h4>Who is answering?</h4>
+                            <div class="buzz-grid">
+                                @foreach (var player in GameService.PlayerNames.OrderBy(p => p.Key))
+                                {
+                                    <button class="buzz-btn"
+                                            type="button"
+                                            @onclick="() => OnPlayerAttempt(player.Key)"
+                                            disabled="@((GameService.TimedModeEnabled && _questionSecondsRemaining <= 0) || GameService.PlayerAttempts.Contains(player.Key))"
+                                            aria-label="@GetPlayerBuzzAriaLabel(player.Key, player.Value)">
+                                        @player.Value
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="judge-panel" role="region" aria-label="Answer judging panel">
+                            <h4>@GameService.PlayerNames[GameService.AnsweringPlayer.Value] answered:</h4>
+                            <p class="judge-flow">Host flow: Reveal answer, then score the response.</p>
+                            <div class="judge-actions">
+                                <button class="score-btn reveal" type="button" @onclick="RevealAnswer" disabled="@_answerRevealed">Reveal Answer</button>
+                                <button class="score-btn correct"
+                                        type="button"
+                                        @onclick="() => ScorePlayerAnswer(true)"
+                                        disabled="@(!_answerRevealed)"
+                                        title="@(_answerRevealed ? "Mark answer correct" : "Reveal answer first")">
+                                    Correct
+                                </button>
+                                <button class="score-btn incorrect"
+                                        type="button"
+                                        @onclick="() => ScorePlayerAnswer(false)"
+                                        disabled="@(!_answerRevealed)"
+                                        title="@(_answerRevealed ? "Mark answer incorrect" : "Reveal answer first")">
+                                    Incorrect
+                                </button>
+                            </div>
+                            @if (!_answerRevealed)
+                            {
+                                <p class="judge-lock-note">Reveal the answer to unlock scoring.</p>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (GameService.IsGameComplete())
+        {
+            var leaderboard = GetLeaderboard();
+            var winner = leaderboard.First();
+            <div class="finale-overlay @(_isRematchPending ? "is-resetting" : string.Empty)" @key="GetFinaleKey()" role="dialog" aria-modal="true" aria-labelledby="finale-title">
+                <div class="confetti-layer" aria-hidden="true">
+                    @foreach (var piece in _confettiPieces)
+                    {
+                        <span class="confetti-piece"
+                              style="--x:@piece.X; --delay:@piece.Delay; --duration:@piece.Duration; --size:@piece.Size; --hue:@piece.Hue; --drift:@piece.Drift;"></span>
+                    }
+                </div>
+
+                <section class="finale-card">
+                    <p class="finale-kicker">Round Complete</p>
+                    <h3 class="finale-title" id="finale-title">@winner.Name Wins!</h3>
+                    <p class="finale-subtitle">Top score: $@winner.Score</p>
+
+                    <div class="podium-grid">
+                        @foreach (var entry in leaderboard)
+                        {
+                            <article class="podium-card @(entry.Rank == 1 ? "champion" : string.Empty)">
+                                <span class="podium-rank">#@entry.Rank</span>
+                                <strong class="podium-name">@entry.Name</strong>
+                                <span class="podium-score">$@entry.Score</span>
+                            </article>
+                        }
+                    </div>
+
+                    <div class="finale-actions">
+                        <button class="start-game-btn" type="button" @onclick="Rematch" disabled="@_isRematchPending">Play Again (Same 6)</button>
+                        <button class="clear-btn" type="button" @onclick="NewGame" disabled="@_isRematchPending">Back To Category Select</button>
+                    </div>
+                </section>
+            </div>
+        }
+    </section>
+}
+<div class="sr-only" role="status" aria-live="polite" aria-atomic="true">@_screenReaderAnnouncement</div>
+
+@code {
+    private sealed record LeaderboardEntry(int Rank, int PlayerId, string Name, int Score);
+    private sealed record ConfettiPiece(string X, string Delay, string Duration, string Size, int Hue, string Drift);
+    private sealed record BroadcastEvent(string TimeLabel, string Message, string ToneClass);
+
+    private readonly Dictionary<int, int> _scorePulseVersion = [];
+    private readonly List<BroadcastEvent> _broadcastEvents = [];
+    private static readonly List<ConfettiPiece> _confettiPieces = BuildConfettiPieces();
+    private const int MaxSupportedPlayers = 9;
+    private const int RoundIntroSeconds = 3;
+    private const int QuestionTimerSeconds = 20;
+    private const double DailyDoubleClipVolume = 0.35;
+    private System.Timers.Timer? _roundIntroTimer;
+    private int _roundIntroSecondsRemaining = RoundIntroSeconds;
+    private bool _showRoundIntro;
+    private System.Timers.Timer? _questionTimer;
+    private int _questionSecondsRemaining = QuestionTimerSeconds;
+    private bool _answerRevealed;
+    private string? _focusedQuestionKey;
+    private ElementReference _questionModalRef;
+    private bool _audioMuted;
+    private double _audioVolume = 1.0;
+    private bool _audioInitialized;
+    private bool _winnerSfxPlayed;
+    private bool _isRematchPending;
+    private int? _lastScoredPlayerId;
+    private string? _lastAnsweredQuestionKey;
+    private string _screenReaderAnnouncement = "Category selection ready.";
+    private int? _lastAnnouncedTimerSecond;
+    private bool _showMidGameModeConfirm;
+    private bool _pendingTimedModeValue;
+    private bool _showRoundProgress;
+    private string _categoryFilter = string.Empty;
+
+    private void ToggleCategory(string category)
+    {
+        if (!JeopardyGameService.IsCategoryComplete(category))
+        {
+            return;
+        }
+
+        if (GameService.SelectedCategories.Contains(category))
+        {
+            GameService.SelectedCategories.Remove(category);
+            PlaySfx("ui");
+            return;
+        }
+
+        if (GameService.SelectedCategories.Count < 6)
+        {
+            GameService.SelectedCategories.Add(category);
+            PlaySfx("ui");
+        }
+    }
+
+    private void ClearCategories()
+    {
+        GameService.SelectedCategories.Clear();
+        SetAnnouncement("Category selection cleared.");
+        PlaySfx("ui");
+    }
+
+    private async Task AddPlayerFromSetup()
+    {
+        if (GameService.TotalPlayers >= MaxSupportedPlayers)
+        {
+            SetAnnouncement($"Maximum of {MaxSupportedPlayers} players reached.");
+            return;
+        }
+
+        int playerId = GameService.AddPlayer();
+        SetAnnouncement($"Added Player {playerId}.");
+        await PlayClipAsync("add-player", oncePerSession: true, sessionKey: "add-player-once");
+        StateHasChanged();
+    }
+
+    private void RemovePlayerFromSetup(int playerId)
+    {
+        bool removed = GameService.RemovePlayer(playerId);
+        SetAnnouncement(removed ? $"Removed Player {playerId}." : "At least one player is required.");
+        PlaySfx("ui");
+        StateHasChanged();
+    }
+
+    private void UpdatePlayerName(int playerId, string? proposedName)
+    {
+        string nextName = (proposedName ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(nextName))
+        {
+            SetAnnouncement("Player name cannot be empty.");
+            return;
+        }
+
+        string currentName = GameService.PlayerNames.TryGetValue(playerId, out var existing) ? existing : string.Empty;
+        if (string.Equals(currentName, nextName, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        GameService.SetPlayerName(playerId, nextName);
+        SetAnnouncement($"Player {playerId} renamed to {nextName}.");
+        StateHasChanged();
+    }
+
+    private void OnTimedModeChanged(ChangeEventArgs args)
+    {
+        bool enabled = args.Value switch
+        {
+            bool b => b,
+            string s when bool.TryParse(s, out var parsed) => parsed,
+            _ => true
+        };
+
+        ApplyTimedModeSetting(enabled);
+        SetAnnouncement(enabled ? "Timed mode enabled." : "Practice mode enabled. Clue timer disabled.");
+        PlaySfx("ui");
+        StateHasChanged();
+    }
+
+    private async Task StartGame()
+    {
+        GameService.SetSelectedCategories(GameService.SelectedCategories);
+        GameService.StartGame();
+        StopRoundIntro(hideOverlay: true);
+        StopQuestionTimer(resetCountdown: true);
+        _isRematchPending = false;
+        _winnerSfxPlayed = false;
+        _lastScoredPlayerId = null;
+        _lastAnsweredQuestionKey = null;
+        _scorePulseVersion.Clear();
+        _showMidGameModeConfirm = false;
+        _showRoundProgress = false;
+        _broadcastEvents.Clear();
+        AddBroadcastEvent($"Game started with {GameService.Categories.Count} categories.", "neutral");
+        AddBroadcastEvent(GameService.TimedModeEnabled ? "Timed mode is active." : "Practice mode is active (no clue timer).", "neutral");
+        await PlayClipAsync("start-game-random");
+        BeginRoundIntro(playIntroSfx: false);
+        StateHasChanged();
+    }
+
+    private void NewGame()
+    {
+        GameService.ResetToMenu();
+        StopRoundIntro(hideOverlay: true);
+        StopQuestionTimer(resetCountdown: true);
+        _isRematchPending = false;
+        _winnerSfxPlayed = false;
+        _lastScoredPlayerId = null;
+        _lastAnsweredQuestionKey = null;
+        _scorePulseVersion.Clear();
+        _showMidGameModeConfirm = false;
+        _showRoundProgress = false;
+        _broadcastEvents.Clear();
+        SetAnnouncement("Returned to category selection.");
+        PlaySfx("scene-open");
+        StateHasChanged();
+    }
+
+    private void ResetBoard()
+    {
+        if (!GameService.GameStarted || _isRematchPending)
+        {
+            return;
+        }
+
+        StopRoundIntro(hideOverlay: true);
+        StopQuestionTimer(resetCountdown: true);
+        GameService.CloseQuestion();
+        GameService.InitializeGameKeepPlayers();
+
+        _winnerSfxPlayed = false;
+        _isRematchPending = false;
+        _lastScoredPlayerId = null;
+        _lastAnsweredQuestionKey = null;
+        _scorePulseVersion.Clear();
+        _showMidGameModeConfirm = false;
+        _showRoundProgress = false;
+        _broadcastEvents.Clear();
+
+        AddBroadcastEvent("Board reset with the same categories.", "neutral");
+        AddBroadcastEvent(GameService.TimedModeEnabled ? "Timed mode is active." : "Practice mode is active (no clue timer).", "neutral");
+        SetAnnouncement("Board reset.");
+        BeginRoundIntro();
+        StateHasChanged();
+    }
+
+    private void SelectQuestion(JeopardyQuestion question)
+    {
+        if (_showRoundIntro)
+        {
+            return;
+        }
+
+        GameService.SelectQuestion(question);
+        if (GameService.CurrentQuestion != null)
+        {
+            if (GameService.TimedModeEnabled)
+            {
+                StartQuestionTimer();
+            }
+            else
+            {
+                StopQuestionTimer(resetCountdown: true);
+                _answerRevealed = false;
+            }
+            SetAnnouncement($"Question selected: {GameService.CurrentQuestion.Category} for {GameService.CurrentQuestion.PointValue} points.");
+            AddBroadcastEvent($"Clue selected: {GameService.CurrentQuestion.Category} for ${GameService.CurrentQuestion.PointValue}.", "neutral");
+            if (GameService.CurrentQuestion.IsBonus)
+            {
+                PlayClip("daily-double", volume: DailyDoubleClipVolume);
+            }
+            else
+            {
+                PlaySfx("clue-open");
+            }
+        }
+        StateHasChanged();
+    }
+
+    private void SkipQuestion()
+    {
+        if (GameService.CurrentQuestion == null)
+        {
+            return;
+        }
+
+        var skippedQuestion = GameService.CurrentQuestion;
+        StopQuestionTimer(resetCountdown: true);
+        GameService.SkipCurrentQuestion();
+
+        if (skippedQuestion != null)
+        {
+            _lastAnsweredQuestionKey = BuildQuestionKey(skippedQuestion);
+            SetAnnouncement($"Skipped clue: {skippedQuestion.Category} for {skippedQuestion.PointValue} points. No score change.");
+            AddBroadcastEvent($"Skipped clue: {skippedQuestion.Category} for ${skippedQuestion.PointValue}. No points awarded.", "neutral");
+        }
+        else
+        {
+            SetAnnouncement("Clue skipped. No score change.");
+            AddBroadcastEvent("Clue skipped. No points awarded.", "neutral");
+        }
+
+        PlaySfx("close");
+        StateHasChanged();
+    }
+
+    private void OnPlayerAttempt(int playerId)
+    {
+        GameService.StartPlayerAttempt(playerId);
+        if (GameService.PlayerNames.TryGetValue(playerId, out var playerName))
+        {
+            SetAnnouncement($"{playerName} buzzed in.");
+            AddBroadcastEvent($"{playerName} buzzed in.", "neutral");
+        }
+        PlaySfx("buzz");
+        StateHasChanged();
+    }
+
+    private void ScorePlayerAnswer(bool isCorrect)
+    {
+        if (GameService.CurrentQuestion == null || !GameService.AnsweringPlayer.HasValue)
+        {
+            return;
+        }
+
+        if (!_answerRevealed)
+        {
+            SetAnnouncement("Reveal the answer before marking correct or incorrect.");
+            PlaySfx("ui");
+            StateHasChanged();
+            return;
+        }
+
+        var scoringPlayer = GameService.AnsweringPlayer;
+        var answeredQuestion = GameService.CurrentQuestion;
+        int pointsAwarded = answeredQuestion is null ? 0 : (answeredQuestion.IsBonus ? answeredQuestion.PointValue * 2 : answeredQuestion.PointValue);
+        StopQuestionTimer(resetCountdown: true);
+        GameService.ScorePlayerAnswer(isCorrect);
+        if (scoringPlayer.HasValue)
+        {
+            _lastScoredPlayerId = scoringPlayer.Value;
+            _scorePulseVersion[scoringPlayer.Value] = GetScorePulseVersion(scoringPlayer.Value) + 1;
+        }
+        if (answeredQuestion != null)
+        {
+            _lastAnsweredQuestionKey = BuildQuestionKey(answeredQuestion);
+        }
+        if (scoringPlayer.HasValue && GameService.PlayerNames.TryGetValue(scoringPlayer.Value, out var scoringName))
+        {
+            int updatedScore = GameService.PlayerScores.TryGetValue(scoringPlayer.Value, out int score) ? score : 0;
+            SetAnnouncement($"{scoringName} was {(isCorrect ? "correct" : "incorrect")} for {pointsAwarded} points. Score is now {updatedScore}.");
+            AddBroadcastEvent($"{scoringName} {(isCorrect ? "correct" : "incorrect")} for {pointsAwarded} points. New score: ${updatedScore}.", isCorrect ? "positive" : "negative");
+        }
+        else
+        {
+            SetAnnouncement(isCorrect ? "Answer marked correct." : "Answer marked incorrect.");
+            AddBroadcastEvent(isCorrect ? "Answer marked correct." : "Answer marked incorrect.", isCorrect ? "positive" : "negative");
+        }
+        PlaySfx(isCorrect ? "answer-correct" : "answer-wrong");
+        StateHasChanged();
+    }
+
+    private void CloseQuestion()
+    {
+        StopQuestionTimer(resetCountdown: true);
+        GameService.CloseQuestion();
+        SetAnnouncement("Question closed.");
+        AddBroadcastEvent("Question closed by host.", "neutral");
+        PlaySfx("close");
+        StateHasChanged();
+    }
+
+    private async Task Rematch()
+    {
+        if (_isRematchPending)
+        {
+            return;
+        }
+
+        _isRematchPending = true;
+        PlaySfx("scene-open");
+        await Task.Delay(260);
+        StopQuestionTimer(resetCountdown: true);
+        GameService.InitializeGameKeepPlayers();
+        _winnerSfxPlayed = false;
+        _lastScoredPlayerId = null;
+        _lastAnsweredQuestionKey = null;
+        _scorePulseVersion.Clear();
+        _broadcastEvents.Clear();
+        _showMidGameModeConfirm = false;
+        _showRoundProgress = false;
+        AddBroadcastEvent("Rematch queued with the same categories.", "neutral");
+        AddBroadcastEvent(GameService.TimedModeEnabled ? "Timed mode is active." : "Practice mode is active (no clue timer).", "neutral");
+        _isRematchPending = false;
+        BeginRoundIntro();
+        StateHasChanged();
+    }
+
+    private void ToggleRoundProgress()
+    {
+        _showRoundProgress = !_showRoundProgress;
+        SetAnnouncement(_showRoundProgress ? "Round progress shown." : "Round progress hidden.");
+        PlaySfx("ui");
+        StateHasChanged();
+    }
+
+    private void RevealAnswer()
+    {
+        if (GameService.CurrentQuestion == null || _answerRevealed)
+        {
+            return;
+        }
+
+        if (GameService.TimedModeEnabled)
+        {
+            StopQuestionTimer(resetCountdown: false);
+        }
+
+        _answerRevealed = true;
+        SetAnnouncement("Answer revealed. Scoring is now unlocked.");
+        AddBroadcastEvent("Answer revealed. Host can now score the attempt.", "neutral");
+        PlaySfx("ui");
+        StateHasChanged();
+    }
+
+    private string GetClueTileClass(JeopardyQuestion clue)
+    {
+        var classes = new List<string> { "clue-tile" };
+        if (clue.IsAnswered)
+        {
+            classes.Add("answered");
+            if (_lastAnsweredQuestionKey == BuildQuestionKey(clue))
+            {
+                classes.Add("recent-answer");
+            }
+        }
+        return string.Join(" ", classes);
+    }
+
+    private static string GetClueAriaLabel(string categoryName, JeopardyQuestion clue)
+    {
+        if (clue.IsAnswered)
+        {
+            return $"{categoryName}, {clue.PointValue} point clue, already answered.";
+        }
+        return $"{categoryName}, {clue.PointValue} point clue, available.";
+    }
+
+    private string GetPlayerBuzzAriaLabel(int playerId, string playerName)
+    {
+        var orderedIds = GameService.PlayerNames.OrderBy(p => p.Key).Select(p => p.Key).ToList();
+        int keypadIndex = orderedIds.IndexOf(playerId) + 1;
+        if (keypadIndex <= 0)
+        {
+            return $"Buzz in as {playerName}.";
+        }
+        return $"Buzz in as {playerName}. Keyboard shortcut {keypadIndex}.";
+    }
+
+    private int GetScorePulseVersion(int playerId)
+    {
+        return _scorePulseVersion.TryGetValue(playerId, out int version) ? version : 0;
+    }
+
+    private string GetScoreCardKey(int playerId)
+    {
+        return $"{playerId}-{GetScorePulseVersion(playerId)}";
+    }
+
+    private static string BuildQuestionKey(JeopardyQuestion question)
+    {
+        return $"{question.Category}|{question.PointValue}|{question.Question}";
+    }
+
+    private string GetCurrentQuestionKey()
+    {
+        return GameService.CurrentQuestion is null
+            ? "no-question"
+            : BuildQuestionKey(GameService.CurrentQuestion);
+    }
+
+    private string GetCountdownStyle()
+    {
+        double progress = Math.Clamp(_questionSecondsRemaining / (double)QuestionTimerSeconds, 0, 1);
+        return $"--timer-progress:{progress.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture)};";
+    }
+
+    private string GetFxVolumeLabel()
+    {
+        return $"{Math.Round(_audioVolume * 100)} percent";
+    }
+
+    private string GetModeStatusLabel()
+    {
+        return GameService.TimedModeEnabled ? "Timed" : "Practice";
+    }
+
+    private string GetMidGameModeButtonLabel()
+    {
+        return GameService.TimedModeEnabled ? "Switch To Practice" : "Switch To Timed";
+    }
+
+    private string GetMidGameModeConfirmText()
+    {
+        return _pendingTimedModeValue
+            ? "Switch to Timed Mode? If a clue is open, a fresh 20-second timer starts."
+            : "Switch to Practice Mode? Any active clue timer will stop immediately.";
+    }
+
+    private void RequestMidGameModeSwitch()
+    {
+        _pendingTimedModeValue = !GameService.TimedModeEnabled;
+        _showMidGameModeConfirm = true;
+        SetAnnouncement(_pendingTimedModeValue
+            ? "Confirm switching to timed mode."
+            : "Confirm switching to practice mode.");
+        PlaySfx("ui");
+        StateHasChanged();
+    }
+
+    private void CancelMidGameModeSwitch()
+    {
+        _showMidGameModeConfirm = false;
+        SetAnnouncement("Mode switch canceled.");
+        PlaySfx("ui");
+        StateHasChanged();
+    }
+
+    private void ConfirmMidGameModeSwitch()
+    {
+        _showMidGameModeConfirm = false;
+        ApplyTimedModeSetting(_pendingTimedModeValue);
+
+        if (GameService.CurrentQuestion != null)
+        {
+            if (GameService.TimedModeEnabled && !_answerRevealed)
+            {
+                StartQuestionTimer();
+                AddBroadcastEvent("Timed mode enabled mid-clue. 20-second timer started.", "neutral");
+            }
+            else if (!GameService.TimedModeEnabled)
+            {
+                StopQuestionTimer(resetCountdown: true);
+                AddBroadcastEvent("Practice mode enabled mid-clue. Timer stopped.", "neutral");
+            }
+        }
+        else
+        {
+            AddBroadcastEvent(GameService.TimedModeEnabled ? "Timed mode enabled by host." : "Practice mode enabled by host.", "neutral");
+        }
+
+        SetAnnouncement(GameService.TimedModeEnabled ? "Timed mode enabled." : "Practice mode enabled. Clue timer disabled.");
+        PlaySfx("ui");
+        StateHasChanged();
+    }
+
+    private void ApplyTimedModeSetting(bool enabled)
+    {
+        GameService.SetTimedMode(enabled);
+
+        if (!enabled)
+        {
+            StopQuestionTimer(resetCountdown: true);
+        }
+    }
+
+    private void StartQuestionTimer()
+    {
+        StopQuestionTimer(resetCountdown: false);
+        _questionSecondsRemaining = QuestionTimerSeconds;
+        _answerRevealed = false;
+        _lastAnnouncedTimerSecond = null;
+
+        _questionTimer = new System.Timers.Timer(1000);
+        _questionTimer.AutoReset = true;
+        _questionTimer.Elapsed += OnQuestionTimerElapsed;
+        _questionTimer.Start();
+    }
+
+    private void StopQuestionTimer(bool resetCountdown)
+    {
+        if (_questionTimer != null)
+        {
+            _questionTimer.Stop();
+            _questionTimer.Elapsed -= OnQuestionTimerElapsed;
+            _questionTimer.Dispose();
+            _questionTimer = null;
+        }
+
+        if (resetCountdown)
+        {
+            _questionSecondsRemaining = QuestionTimerSeconds;
+            _lastAnnouncedTimerSecond = null;
+        }
+    }
+
+    private void BeginRoundIntro(bool playIntroSfx = true)
+    {
+        StopRoundIntro(hideOverlay: true);
+        _showRoundIntro = true;
+        _roundIntroSecondsRemaining = RoundIntroSeconds;
+        SetAnnouncement($"Game started with {GameService.Categories.Count} categories. Round starts in {_roundIntroSecondsRemaining}.");
+        if (playIntroSfx)
+        {
+            PlaySfx("scene-open");
+        }
+
+        _roundIntroTimer = new System.Timers.Timer(1000);
+        _roundIntroTimer.AutoReset = true;
+        _roundIntroTimer.Elapsed += OnRoundIntroElapsed;
+        _roundIntroTimer.Start();
+    }
+
+    private void StopRoundIntro(bool hideOverlay)
+    {
+        if (_roundIntroTimer != null)
+        {
+            _roundIntroTimer.Stop();
+            _roundIntroTimer.Elapsed -= OnRoundIntroElapsed;
+            _roundIntroTimer.Dispose();
+            _roundIntroTimer = null;
+        }
+
+        if (hideOverlay)
+        {
+            _showRoundIntro = false;
+        }
+
+        _roundIntroSecondsRemaining = RoundIntroSeconds;
+    }
+
+    private void OnRoundIntroElapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        _roundIntroSecondsRemaining--;
+
+        if (_roundIntroSecondsRemaining > 0)
+        {
+            _ = InvokeAsync(async () =>
+            {
+                SetAnnouncement($"Round starts in {_roundIntroSecondsRemaining}.");
+                await PlaySfxAsync("countdown-tick");
+                StateHasChanged();
+            });
+            return;
+        }
+
+        _showRoundIntro = false;
+        StopRoundIntro(hideOverlay: false);
+        _ = InvokeAsync(() =>
+        {
+            SetAnnouncement("Round started. Board unlocked.");
+            AddBroadcastEvent("Board unlocked. Select a clue.", "neutral");
+            StateHasChanged();
+            return Task.CompletedTask;
+        });
+    }
+
+    private void OnQuestionTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        if (_questionSecondsRemaining > 0)
+        {
+            _questionSecondsRemaining--;
+            bool shouldTick = _questionSecondsRemaining > 0 && _questionSecondsRemaining <= 5;
+            bool isTimeUp = _questionSecondsRemaining == 0;
+            if (_questionSecondsRemaining == 0)
+            {
+                _answerRevealed = true;
+                StopQuestionTimer(resetCountdown: false);
+            }
+            _ = InvokeAsync(async () =>
+            {
+                if (shouldTick)
+                {
+                    if (_lastAnnouncedTimerSecond != _questionSecondsRemaining)
+                    {
+                        _lastAnnouncedTimerSecond = _questionSecondsRemaining;
+                        SetAnnouncement($"{_questionSecondsRemaining} seconds remaining.");
+                    }
+                    await PlaySfxAsync("countdown-tick");
+                }
+
+                if (isTimeUp)
+                {
+                    SetAnnouncement("Time is up. Answer revealed.");
+                    AddBroadcastEvent("Time expired. Answer revealed.", "negative");
+                    await PlaySfxAsync("time-up");
+                }
+
+                StateHasChanged();
+            });
+        }
+    }
+
+    private async Task HandleQuestionHotkeys(KeyboardEventArgs args)
+    {
+        if (GameService.CurrentQuestion == null)
+        {
+            return;
+        }
+
+        string key = (args.Key ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return;
+        }
+
+        string normalized = key.ToLowerInvariant();
+        if (normalized == "escape")
+        {
+            CloseQuestion();
+            return;
+        }
+
+        if (normalized == "m")
+        {
+            await ToggleMute();
+            return;
+        }
+
+        if (normalized == "r")
+        {
+            RevealAnswer();
+            return;
+        }
+
+        if (normalized == "s")
+        {
+            SkipQuestion();
+            return;
+        }
+
+        if (GameService.AnsweringPlayer.HasValue)
+        {
+            if (normalized == "c")
+            {
+                if (_answerRevealed)
+                {
+                    ScorePlayerAnswer(true);
+                }
+                else
+                {
+                    SetAnnouncement("Reveal the answer before marking correct.");
+                    PlaySfx("ui");
+                    StateHasChanged();
+                }
+                return;
+            }
+            if (normalized == "x")
+            {
+                if (_answerRevealed)
+                {
+                    ScorePlayerAnswer(false);
+                }
+                else
+                {
+                    SetAnnouncement("Reveal the answer before marking incorrect.");
+                    PlaySfx("ui");
+                    StateHasChanged();
+                }
+                return;
+            }
+        }
+        else
+        {
+            if (int.TryParse(normalized, out int numberPressed) && numberPressed >= 1)
+            {
+                var playerIds = GameService.PlayerNames.OrderBy(p => p.Key).Select(p => p.Key).ToList();
+                int index = numberPressed - 1;
+                if (index < playerIds.Count && (!GameService.TimedModeEnabled || _questionSecondsRemaining > 0))
+                {
+                    OnPlayerAttempt(playerIds[index]);
+                }
+            }
+        }
+
+        await Task.CompletedTask;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (GameService.CurrentQuestion != null)
+        {
+            var questionKey = GetCurrentQuestionKey();
+            if (_focusedQuestionKey != questionKey)
+            {
+                _focusedQuestionKey = questionKey;
+                try
+                {
+                    await JS.InvokeVoidAsync("jeopardyFocusElement", _questionModalRef);
+                }
+                catch (Exception)
+                {
+                    // Non-blocking: question modal can remain usable without focus helper.
+                }
+            }
+        }
+        else
+        {
+            _focusedQuestionKey = null;
+        }
+
+        if (GameService.GameStarted && GameService.IsGameComplete() && !_winnerSfxPlayed)
+        {
+            _winnerSfxPlayed = true;
+            var winner = GetLeaderboard().FirstOrDefault();
+            if (winner != null)
+            {
+                AddBroadcastEvent($"{winner.Name} wins with ${winner.Score}.", "positive");
+            }
+            await PlayClipAsync("winner-random");
+        }
+        else if (!GameService.IsGameComplete())
+        {
+            _winnerSfxPlayed = false;
+        }
+    }
+
+    private string? GetNextPlayerName()
+    {
+        var playerIds = GameService.GetPlayerIds();
+        if (playerIds.Count <= 1)
+        {
+            return null;
+        }
+
+        int currentIndex = playerIds.IndexOf(GameService.CurrentPlayer);
+        if (currentIndex < 0)
+        {
+            return null;
+        }
+
+        int nextIndex = (currentIndex + 1) % playerIds.Count;
+        int nextPlayerId = playerIds[nextIndex];
+        return GameService.PlayerNames.TryGetValue(nextPlayerId, out var nextName) ? nextName : null;
+    }
+
+    private int GetTotalClueCount()
+    {
+        return GameService.Categories.Sum(c => c.Questions.Count);
+    }
+
+    private int GetAnsweredClueCount()
+    {
+        return GameService.Categories.Sum(c => c.Questions.Count(q => q.IsAnswered));
+    }
+
+    private int GetRemainingClueCount()
+    {
+        return Math.Max(0, GetTotalClueCount() - GetAnsweredClueCount());
+    }
+
+    private string GetRoundProgressStyle()
+    {
+        int total = GetTotalClueCount();
+        int answered = GetAnsweredClueCount();
+        double progress = total == 0 ? 0 : Math.Clamp(answered / (double)total, 0, 1);
+        return $"--round-progress:{progress.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture)};";
+    }
+
+    private List<LeaderboardEntry> GetLeaderboard()
+    {
+        return GameService.PlayerScores
+            .OrderByDescending(x => x.Value)
+            .ThenBy(x => x.Key)
+            .Select((x, index) => new LeaderboardEntry(
+                Rank: index + 1,
+                PlayerId: x.Key,
+                Name: GameService.PlayerNames.TryGetValue(x.Key, out var name) ? name : $"Player {x.Key}",
+                Score: x.Value))
+            .ToList();
+    }
+
+    private string GetFinaleKey()
+    {
+        return string.Join("|",
+            GameService.PlayerScores
+                .OrderBy(x => x.Key)
+                .Select(x => $"{x.Key}:{x.Value}"));
+    }
+
+    private static List<ConfettiPiece> BuildConfettiPieces()
+    {
+        var pieces = new List<ConfettiPiece>();
+        for (int i = 0; i < 36; i++)
+        {
+            var left = $"{2 + ((i * 23) % 96)}%";
+            var delay = $"{((i * 37) % 1300) / 1000.0:0.00}s";
+            var duration = $"{4.8 + ((i * 19) % 18) / 10.0:0.0}s";
+            var size = $"{7 + ((i * 7) % 7)}px";
+            var hue = 30 + ((i * 31) % 290);
+            var drift = $"{-22 + ((i * 17) % 45)}px";
+            pieces.Add(new ConfettiPiece(left, delay, duration, size, hue, drift));
+        }
+        return pieces;
+    }
+
+    public void Dispose()
+    {
+        StopRoundIntro(hideOverlay: true);
+        StopQuestionTimer(resetCountdown: false);
+    }
+
+    private async Task ToggleMute()
+    {
+        _audioMuted = !_audioMuted;
+        try
+        {
+            await EnsureAudioInitializedAsync();
+            await JS.InvokeVoidAsync("jeopardySetMute", _audioMuted);
+            if (!_audioMuted)
+            {
+                await PlaySfxAsync("ui");
+            }
+        }
+        catch (Exception)
+        {
+            // Non-blocking: UI should continue even if audio interop fails.
+        }
+    }
+
+    private async Task OnVolumeInput(ChangeEventArgs args)
+    {
+        if (args.Value is null)
+        {
+            return;
+        }
+
+        var raw = args.Value.ToString();
+        if (!double.TryParse(raw, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
+            && !double.TryParse(raw, out parsed))
+        {
+            return;
+        }
+
+        _audioVolume = Math.Clamp(parsed, 0.0, 1.0);
+        try
+        {
+            await EnsureAudioInitializedAsync();
+            await JS.InvokeVoidAsync("jeopardySetVolume", _audioVolume);
+        }
+        catch (Exception)
+        {
+            // Non-blocking: UI should continue even if audio interop fails.
+        }
+    }
+
+    private void PlaySfx(string soundName)
+    {
+        _ = PlaySfxAsync(soundName);
+    }
+
+    private void PlayClip(string clipName, bool oncePerSession = false, string? sessionKey = null, double? volume = null)
+    {
+        _ = PlayClipAsync(clipName, oncePerSession, sessionKey, volume);
+    }
+
+    private async Task PlayClipAsync(string clipName, bool oncePerSession = false, string? sessionKey = null, double? volume = null)
+    {
+        try
+        {
+            double? normalizedVolume = volume.HasValue
+                ? Math.Clamp(volume.Value, 0.0, 1.0)
+                : null;
+            await JS.InvokeVoidAsync("jeopardyPlayClip", clipName, new { oncePerSession, sessionKey, volume = normalizedVolume });
+        }
+        catch (Exception)
+        {
+            // Non-blocking: UI should continue even if audio is unavailable.
+        }
+    }
+
+    private async Task PlaySfxAsync(string soundName)
+    {
+        try
+        {
+            await EnsureAudioInitializedAsync();
+            await JS.InvokeVoidAsync("jeopardyPlaySfx", soundName);
+        }
+        catch (Exception)
+        {
+            // Non-blocking: UI should continue even if audio is unavailable.
+        }
+    }
+
+    private async Task EnsureAudioInitializedAsync()
+    {
+        if (_audioInitialized)
+        {
+            return;
+        }
+
+        await JS.InvokeVoidAsync("jeopardyAudioInit");
+        await JS.InvokeVoidAsync("jeopardySetVolume", _audioVolume);
+        await JS.InvokeVoidAsync("jeopardySetMute", _audioMuted);
+        _audioInitialized = true;
+    }
+
+    private List<string> GetFilteredCategories()
+    {
+        if (string.IsNullOrWhiteSpace(_categoryFilter))
+        {
+            return JeopardyGameService.AllCategoryNames.ToList();
+        }
+
+        return JeopardyGameService.AllCategoryNames
+            .Where(category => category.Contains(_categoryFilter, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    private void OnCategoryFilterInput(ChangeEventArgs args)
+    {
+        _categoryFilter = args.Value?.ToString()?.Trim() ?? string.Empty;
+    }
+
+    private void ClearCategoryFilter()
+    {
+        _categoryFilter = string.Empty;
+    }
+
+    private void SetAnnouncement(string message)
+    {
+        _screenReaderAnnouncement = message;
+    }
+
+    private void AddBroadcastEvent(string message, string toneClass)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return;
+        }
+
+        _broadcastEvents.Insert(0, new BroadcastEvent(
+            TimeLabel: DateTime.Now.ToString("HH:mm:ss"),
+            Message: message,
+            ToneClass: toneClass));
+
+        const int maxItems = 7;
+        if (_broadcastEvents.Count > maxItems)
+        {
+            _broadcastEvents.RemoveRange(maxItems, _broadcastEvents.Count - maxItems);
+        }
+    }
+}

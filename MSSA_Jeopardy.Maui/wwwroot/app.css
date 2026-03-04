@@ -1,0 +1,49 @@
+:root {
+    color-scheme: dark;
+    --bg-top: #050d2c;
+    --bg-mid: #040a22;
+    --bg-low: #020613;
+    --text-main: #eaf2ff;
+    --text-muted: #a9bde8;
+    --link: #8ec4ff;
+    --link-hover: #c9e4ff;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: "Segoe UI Variable Text", "Bahnschrift", "Trebuchet MS", sans-serif;
+    color: var(--text-main);
+    background:
+        radial-gradient(circle at 16% 0%, rgba(43, 102, 224, 0.28) 0%, rgba(43, 102, 224, 0) 38%),
+        radial-gradient(circle at 89% 100%, rgba(255, 195, 73, 0.1) 0%, rgba(255, 195, 73, 0) 33%),
+        linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 52%, var(--bg-low) 100%);
+    background-attachment: fixed;
+    line-height: 1.45;
+    letter-spacing: 0.002em;
+}
+
+a,
+.btn-link {
+    color: var(--link);
+}
+
+a:hover,
+.btn-link:hover {
+    color: var(--link-hover);
+}
+
+h1:focus {
+    outline: none;
+}

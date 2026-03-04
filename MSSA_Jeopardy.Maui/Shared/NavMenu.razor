@@ -1,0 +1,18 @@
+<nav class="ribbon-nav" aria-label="Primary">
+    <a class="ribbon-brand" href="">MSSA Jeopardy!</a>
+
+    <div class="ribbon-links">
+        <NavLink class="ribbon-link" href="" Match="NavLinkMatch.All">
+            <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
+            <span>Home</span>
+        </NavLink>
+
+        <NavLink class="ribbon-link ribbon-link-play"
+                 href="jeopardy"
+                 onpointerdown="jeopardyHandleBoardSetupGesture(event)"
+                 onkeydown="jeopardyHandleBoardSetupKey(event)">
+            <span class="bi bi-grid-fill-nav-menu" aria-hidden="true"></span>
+            <span>Play Jeopardy!</span>
+        </NavLink>
+    </div>
+</nav>

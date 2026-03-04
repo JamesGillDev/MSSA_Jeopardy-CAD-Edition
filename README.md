@@ -1,4 +1,4 @@
-# MSSA Jeopardy - CAD Edition (v2.3.5)
+# MSSA Jeopardy - CAD Edition (v2.4.0)
 
 [Live Web App](https://mssa-jeopardy-jamesgill.azurewebsites.net/)
 
@@ -10,12 +10,12 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 
 ---
 
-## What's New in v2.3.5
-- **Public Release:** `v2.3.5` is published as a public release with category-list deduplication and local publish usability fixes.
-- **Duplicate Category Cleanup:** Added canonical category aliasing so duplicate banks (for example `Azure Fundamentals` vs `AZ-900 (Azure Fundamentals)`) no longer both appear in selection.
-- **Cleaner Category Picker:** Removed legacy duplicate aliases from the visible category list and selection flow.
-- **Local Publish UX:** Published EXE now uses `localhost` and auto-opens your browser on launch.
-- **Carry-Forward Fixes:** Includes prior `v2.3.4` updates (Q/A strictness pass, icon embedding, and solution cache cleanup).
+## What's New in v2.4.0
+- **Public Release:** `v2.4.0` is published as a public release with a new MAUI Blazor desktop app target.
+- **Desktop App Mode:** Added a Windows MAUI Blazor app project so Jeopardy runs as a native desktop window instead of a localhost web host.
+- **Shared Game Logic:** Reused the same question bank and game service logic in desktop mode.
+- **Single Publish Output:** Local publish now produces one canonical output folder (`publish/current`) for the desktop app.
+- **Carry-Forward Fixes:** Includes prior category deduplication, Q/A strictness, icon, and stability improvements.
 
 ## Highlights from v2.3
 - **Massive Category Pool:** 109 canonical categories (deduplicated aliases) including .NET Core, Git & Version Control, Cloud Security, Containers & Kubernetes, Microsoft Power Platform, Data Analytics, Azure Blob Storage, Key Vault, App Service, and many more.
@@ -28,6 +28,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 ## Release History
 - Version history for public releases: [CHANGELOG.md](./CHANGELOG.md)
 - Detailed notes for the `v2.2` milestone: [RELEASE_NOTES_v2.2.md](./RELEASE_NOTES_v2.2.md)
+- Detailed notes for the `v2.4.0` public release: [RELEASE_NOTES_v2.4.0.md](./RELEASE_NOTES_v2.4.0.md)
 - Detailed notes for the `v2.3.5` public release: [RELEASE_NOTES_v2.3.5.md](./RELEASE_NOTES_v2.3.5.md)
 - Detailed notes for the `v2.3.4` public release: [RELEASE_NOTES_v2.3.4.md](./RELEASE_NOTES_v2.3.4.md)
 - Detailed notes for the `v2.3.3` public release: [RELEASE_NOTES_v2.3.3.md](./RELEASE_NOTES_v2.3.3.md)
@@ -52,7 +53,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 - Bicep, Application Insights, Azure Monitor, and many more!
 
 ## How to Play
-1. Launch the app (Blazor Interactive Server, .NET 8 required)
+1. Launch the app (MAUI Blazor Desktop on Windows, .NET 8 required)
 2. Select up to 6 categories
 3. Add players and set names
 4. Start the game and take turns selecting questions
@@ -63,33 +64,22 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 2. Open in Visual Studio or VS Code
 3. Build and run the Blazor project
 
-## Standalone Localhost Mode (Recommended)
-This app is configured to run as a **local host service** and bind to:
-
-- `http://localhost:8080` (default, loopback-only on your PC)
-- Optional override via environment variable: `JEOPARDY_LOCAL_PORT`
-- If a cloud runtime sets `PORT`, the app will bind to `0.0.0.0:$PORT` automatically.
-- Published Windows EXE auto-opens your default browser to the local app URL.
-- Optional disable for auto-open: set `JEOPARDY_NO_AUTO_LAUNCH=1`
+## Desktop App Mode (Recommended)
+This project now includes a **MAUI Blazor desktop app** that runs in a native Windows app window (no localhost URL required).
+The previous ASP.NET Core web-hosted project remains in `MSSA Jeopardy/` for cloud-host scenarios.
 
 ### Run with .NET SDK
 ```powershell
-dotnet run --project "MSSA Jeopardy/MSSA Jeopardy.csproj"
+dotnet run --project "MSSA_Jeopardy.Maui/MSSA_Jeopardy.Maui.csproj" -f net8.0-windows10.0.19041.0
 ```
 
-### Run on a different local port
-```powershell
-$env:JEOPARDY_LOCAL_PORT="5099"
-dotnet run --project "MSSA Jeopardy/MSSA Jeopardy.csproj"
-```
-
-### Publish as a standalone Windows app (no .NET install required)
+### Publish as a standalone Windows desktop app
 ```powershell
 .\scripts\publish-local.ps1
 ```
 Then run:
 ```powershell
-.\publish\current\MSSA_Jeopardy.exe
+.\publish\current\MSSA_Jeopardy.Maui.exe
 ```
 This script always clears previous `publish` output first, so you only keep one local published version at a time.
 
@@ -136,4 +126,4 @@ This project is licensed under the **Business Source License 1.1 (BLS)**. See [L
 - **Change License:** Apache License 2.0 (effective on the Change Date, per license terms).
 
 ---
-MSSA Jeopardy - CAD Edition v2.3.5 | Developed by JamesGillDev and contributors
+MSSA Jeopardy - CAD Edition v2.4.0 | Developed by JamesGillDev and contributors

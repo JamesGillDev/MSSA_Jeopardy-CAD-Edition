@@ -3,6 +3,19 @@ All notable changes to this project are documented in this file for public GitHu
 
 Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog normalizes those entries as `2.1.0`, `2.2.0`, and `2.3.0`.
 
+## [2.4.0] - 2026-03-04
+### Added
+- Added a new Windows-targeted MAUI Blazor desktop project: `MSSA_Jeopardy.Maui`.
+- Reused core gameplay/question-bank logic in desktop mode via linked shared service/model files.
+- Added `RELEASE_NOTES_v2.4.0.md` for this public release.
+
+### Changed
+- Updated local publish workflow (`scripts/publish-local.ps1`) to publish the MAUI desktop app to `publish/current`.
+- Updated README run/publish guidance to desktop-first usage.
+
+### Fixed
+- Eliminated localhost dependency for local classroom runs by enabling native desktop hosting.
+
 ## [2.3.5] - 2026-03-04
 ### Added
 - Added canonical category alias handling to collapse duplicate category families in selection lists.
@@ -91,7 +104,8 @@ Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog nor
 ### Changed
 - Initial v2 public release baseline with expanded category set and updated game content/docs.
 
-[2.3.5]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.4...HEAD
+[2.4.0]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.5...HEAD
+[2.3.5]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.4...v2.3.5
 [2.3.4]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.3...v2.3.4
 [2.3.3]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.2...v2.3.3
 [2.3.2]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.1...v2.3.2

@@ -1,0 +1,96 @@
+.page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-ribbon {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    border-bottom: 1px solid rgba(122, 176, 255, 0.34);
+    background:
+        linear-gradient(180deg, rgba(15, 41, 121, 0.86) 0%, rgba(10, 29, 84, 0.88) 100%);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32);
+}
+
+.top-ribbon-inner {
+    min-height: 4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.top-ribbon-inner ::deep .ribbon-nav {
+    flex: 1;
+    min-width: 0;
+}
+
+.about-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.35rem;
+    border-radius: 999px;
+    border: 1px solid rgba(151, 191, 255, 0.46);
+    background: rgba(14, 37, 103, 0.75);
+    color: #d9e9ff;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0.42rem 0.95rem;
+    white-space: nowrap;
+}
+
+.about-link:hover {
+    color: #f2f8ff;
+    filter: brightness(1.08);
+}
+
+.about-link:focus-visible {
+    outline: 2px solid #ffe198;
+    outline-offset: 2px;
+}
+
+main {
+    flex: 1;
+}
+
+.content {
+    padding-top: 1rem;
+    padding-bottom: 1.2rem;
+}
+
+@media (max-width: 880px) {
+    .top-ribbon-inner {
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        padding-top: 0.55rem;
+        padding-bottom: 0.55rem;
+    }
+
+    .about-link {
+        margin-left: auto;
+    }
+}
+
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}

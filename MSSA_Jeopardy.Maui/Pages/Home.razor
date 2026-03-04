@@ -1,0 +1,125 @@
+@page "/"
+
+<PageTitle>MSSA Jeopardy - Home</PageTitle>
+
+@using System.Reflection
+@using MSSA_Jeopardy.Services
+@inject IJSRuntime JS
+
+@if (_showWelcomeGate)
+{
+    <div class="welcome-gate" role="dialog" aria-modal="true" aria-labelledby="welcome-title" aria-describedby="welcome-copy">
+        <section class="welcome-bubble">
+            <p class="welcome-kicker">MSSA Cohort Experience</p>
+
+            <div class="welcome-title-wrap">
+                <span class="welcome-title-ribbon" aria-hidden="true"></span>
+                <h2 id="welcome-title">Welcome To MSSA Jeopardy!</h2>
+            </div>
+
+            <p class="welcome-copy" id="welcome-copy">
+                Click continue to begin.
+            </p>
+
+            <button class="welcome-continue-btn"
+                    type="button"
+                    @onclick="DismissWelcomeGate"
+                    onpointerdown="jeopardyDismissWelcomeGate(event)"
+                    onkeydown="jeopardyHandleWelcomeContinueKey(event)"
+                    @ref="_welcomeContinueButton">
+                Continue
+            </button>
+        </section>
+    </div>
+}
+
+<section class="hero-shell">
+    <div class="hero-panel">
+        <p class="hero-kicker">MSSA Cohort Knowledge Challenge</p>
+        <h1>MSSA Jeopardy!</h1>
+        <p class="hero-text">
+            A training-focused board for Azure, .NET, DevOps, and cloud fundamentals.
+            Run competitive review sessions, reinforce key concepts, and track outcomes live.
+        </p>
+
+        <div class="hero-badges" aria-label="Highlights">
+            <span>@JeopardyGameService.AllCategoryNames.Length Categories</span>
+            <span>Realtime Multiplayer</span>
+            <span>.NET 8 + Blazor</span>
+        </div>
+
+        <div class="release-badge" role="note" aria-label="@($"Published release version {PublishedVersion}")">
+            <img src="/icons/published-release.svg" alt="" aria-hidden="true" />
+            <span>Published v@PublishedVersion</span>
+        </div>
+
+        <div class="hero-actions">
+            <a class="play-btn"
+               href="/jeopardy"
+               onpointerdown="jeopardyHandleBoardSetupGesture(event)"
+               onkeydown="jeopardyHandleBoardSetupKey(event)">Play Jeopardy</a>
+            <a class="secondary-btn"
+               href="/jeopardy"
+               onpointerdown="jeopardyHandleBoardSetupGesture(event)"
+               onkeydown="jeopardyHandleBoardSetupKey(event)">Choose Categories</a>
+        </div>
+    </div>
+
+    <aside class="howto-panel">
+        <h2>How To Play</h2>
+        <ol>
+            <li>Select exactly 6 categories and start the board.</li>
+            <li>Pick a clue value tile from the board.</li>
+            <li>Any player can buzz in to answer that clue.</li>
+            <li>The host marks the answer correct or incorrect.</li>
+            <li>Highest score at the end wins the round.</li>
+        </ol>
+    </aside>
+</section>
+
+<section class="categories-shell">
+    <div class="categories-header">
+        <h2>All Available Categories</h2>
+        <p>@JeopardyGameService.AllCategoryNames.Length categories available</p>
+    </div>
+
+    <div class="categories-grid" role="list" aria-label="All categories">
+        @foreach (var category in JeopardyGameService.AllCategoryNames)
+        {
+            <div class="category-card" role="listitem">@category</div>
+        }
+    </div>
+</section>
+
+@code {
+    private static readonly string PublishedVersion =
+        typeof(JeopardyGameService).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+        ?? typeof(JeopardyGameService).Assembly.GetName().Version?.ToString(3)
+        ?? "unknown";
+
+    private bool _showWelcomeGate = true;
+    private bool _welcomeFocusPending = true;
+    private ElementReference _welcomeContinueButton;
+
+    private void DismissWelcomeGate()
+    {
+        _showWelcomeGate = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_showWelcomeGate && _welcomeFocusPending)
+        {
+            _welcomeFocusPending = false;
+            try
+            {
+                await JS.InvokeVoidAsync("jeopardyFocusElement", _welcomeContinueButton);
+            }
+            catch (Exception)
+            {
+                // No-op: app should still render even if focus helper is unavailable.
+            }
+        }
+    }
+}
