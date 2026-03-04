@@ -9,14 +9,29 @@
 
 @if (!GameService.GameStarted)
 {
+    var filteredCategories = GetFilteredCategories();
     <section class="setup-shell" aria-labelledby="setup-heading">
         <header class="setup-header">
             <h2 id="setup-heading">Build Your Gameboard</h2>
             <p>Select exactly 6 categories to start.</p>
+            <div class="category-filter-wrap">
+                <label class="category-filter-label" for="category-filter-input">Filter Categories</label>
+                <div class="category-filter-controls">
+                    <input id="category-filter-input"
+                           class="category-filter-input"
+                           type="search"
+                           placeholder="Type to filter categories"
+                           value="@_categoryFilter"
+                           @oninput="OnCategoryFilterInput"
+                           aria-label="Filter available categories" />
+                    <button class="clear-btn" type="button" @onclick="ClearCategoryFilter" disabled="@string.IsNullOrWhiteSpace(_categoryFilter)">Clear Filter</button>
+                </div>
+                <span class="category-filter-count">@filteredCategories.Count shown</span>
+            </div>
         </header>
 
         <div class="category-picker-grid" role="list" aria-label="Category selection">
-            @foreach (var category in JeopardyGameService.AllCategoryNames)
+            @foreach (var category in filteredCategories)
             {
                 var isComplete = JeopardyGameService.IsCategoryComplete(category);
                 var isSelected = GameService.SelectedCategories.Contains(category);
@@ -31,6 +46,10 @@
                 </button>
             }
         </div>
+        @if (filteredCategories.Count == 0)
+        {
+            <p class="category-filter-empty">No categories match the current filter.</p>
+        }
 
         <section class="player-manager" aria-label="Player setup">
             <div class="player-manager-header">
@@ -281,6 +300,7 @@ else
                         <kbd>R</kbd> reveal
                         <kbd>C</kbd> correct (after reveal)
                         <kbd>X</kbd> incorrect (after reveal)
+                        <kbd>S</kbd> skip clue
                         <kbd>M</kbd> mute
                         <kbd>Esc</kbd> close
                     </div>
@@ -291,6 +311,10 @@ else
                             <h5>Answer Reveal</h5>
                             <p>@GameService.CurrentQuestion.Answer</p>
                         }
+                    </div>
+
+                    <div class="host-clue-actions">
+                        <button class="score-btn skip" type="button" @onclick="SkipQuestion">Skip Clue (No Score)</button>
                     </div>
 
                     @if (GameService.AnsweringPlayer == null)
@@ -404,7 +428,7 @@ else
     private string? _focusedQuestionKey;
     private ElementReference _questionModalRef;
     private bool _audioMuted;
-    private double _audioVolume = 0.8;
+    private double _audioVolume = 1.0;
     private bool _audioInitialized;
     private bool _winnerSfxPlayed;
     private bool _isRematchPending;
@@ -415,6 +439,7 @@ else
     private bool _showMidGameModeConfirm;
     private bool _pendingTimedModeValue;
     private bool _showRoundProgress;
+    private string _categoryFilter = string.Empty;
 
     private void ToggleCategory(string category)
     {
@@ -598,6 +623,33 @@ else
                 PlaySfx("clue-open");
             }
         }
+        StateHasChanged();
+    }
+
+    private void SkipQuestion()
+    {
+        if (GameService.CurrentQuestion == null)
+        {
+            return;
+        }
+
+        var skippedQuestion = GameService.CurrentQuestion;
+        StopQuestionTimer(resetCountdown: true);
+        GameService.SkipCurrentQuestion();
+
+        if (skippedQuestion != null)
+        {
+            _lastAnsweredQuestionKey = BuildQuestionKey(skippedQuestion);
+            SetAnnouncement($"Skipped clue: {skippedQuestion.Category} for {skippedQuestion.PointValue} points. No score change.");
+            AddBroadcastEvent($"Skipped clue: {skippedQuestion.Category} for ${skippedQuestion.PointValue}. No points awarded.", "neutral");
+        }
+        else
+        {
+            SetAnnouncement("Clue skipped. No score change.");
+            AddBroadcastEvent("Clue skipped. No points awarded.", "neutral");
+        }
+
+        PlaySfx("close");
         StateHasChanged();
     }
 
@@ -1020,6 +1072,12 @@ else
             return;
         }
 
+        if (normalized == "s")
+        {
+            SkipQuestion();
+            return;
+        }
+
         if (GameService.AnsweringPlayer.HasValue)
         {
             if (normalized == "c")
@@ -1216,7 +1274,9 @@ else
             return;
         }
 
-        if (!double.TryParse(args.Value.ToString(), out var parsed))
+        var raw = args.Value.ToString();
+        if (!double.TryParse(raw, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
+            && !double.TryParse(raw, out parsed))
         {
             return;
         }
@@ -1282,6 +1342,28 @@ else
         await JS.InvokeVoidAsync("jeopardySetVolume", _audioVolume);
         await JS.InvokeVoidAsync("jeopardySetMute", _audioMuted);
         _audioInitialized = true;
+    }
+
+    private List<string> GetFilteredCategories()
+    {
+        if (string.IsNullOrWhiteSpace(_categoryFilter))
+        {
+            return JeopardyGameService.AllCategoryNames.ToList();
+        }
+
+        return JeopardyGameService.AllCategoryNames
+            .Where(category => category.Contains(_categoryFilter, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    private void OnCategoryFilterInput(ChangeEventArgs args)
+    {
+        _categoryFilter = args.Value?.ToString()?.Trim() ?? string.Empty;
+    }
+
+    private void ClearCategoryFilter()
+    {
+        _categoryFilter = string.Empty;
     }
 
     private void SetAnnouncement(string message)

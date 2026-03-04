@@ -1,5 +1,5 @@
 (() => {
-    const audioVersion = "2.3.2";
+    const audioVersion = "2.3.3";
     const versioned = (path) => `${path}?v=${audioVersion}`;
 
     const clipCatalog = Object.freeze({
@@ -13,6 +13,7 @@
         "start-game-2": [versioned("/audio/start-game-2.mp3")],
         "start-game-3": [versioned("/audio/start-game-3.mp3")],
         "start-game-4": [versioned("/audio/start-game-4.mp3")],
+        // Backward-compatible alias for an earlier typo.
         "stary-game-4": [versioned("/audio/start-game-4.mp3")],
         "start-game-random": [
             versioned("/audio/start-game-1.mp3"),
@@ -23,6 +24,7 @@
         "winner-1": [versioned("/audio/winner-1.mp3")],
         "winner-2": [versioned("/audio/winner-2.mp3")],
         "winner-3": [versioned("/audio/winner-3.mp3")],
+        // Backward-compatible alias for an earlier typo.
         "winnder-3": [versioned("/audio/winner-3.mp3")],
         "winner-random": [
             versioned("/audio/winner-1.mp3"),
@@ -32,6 +34,11 @@
     });
 
     const clipCache = new Map();
+    const clipState = {
+        muted: false,
+        volume: 1,
+        maxOutput: 0.1
+    };
     const sessionKeyPrefix = "mssa-jeopardy:clip:";
     const welcomeCooldownMs = 1200;
     let lastWelcomePlayMs = 0;
@@ -40,6 +47,28 @@
     let latestExclusiveClip = null;
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+    const getBaseVolume = (clip) => {
+        const raw = Number(clip?.dataset?.baseVolume);
+        return Number.isFinite(raw) ? clamp(raw, 0, 1) : 1;
+    };
+
+    const applyClipVolume = (clip) => {
+        if (!clip) {
+            return;
+        }
+
+        const base = getBaseVolume(clip);
+        const fxVolume = clamp(clipState.volume, 0, 1);
+        const cap = clamp(clipState.maxOutput, 0, 1);
+        clip.volume = clipState.muted ? 0 : base * fxVolume * cap;
+    };
+
+    const applyAllClipVolumes = () => {
+        for (const clip of clipCache.values()) {
+            applyClipVolume(clip);
+        }
+    };
 
     const randomItem = (items) => {
         if (!Array.isArray(items) || items.length === 0) {
@@ -136,7 +165,8 @@
             stopActiveClip(clip);
         }
 
-        clip.volume = volume;
+        clip.dataset.baseVolume = String(volume);
+        applyClipVolume(clip);
 
         if (restart) {
             stopClip(clip);
@@ -269,6 +299,16 @@
         return playClipByName(name, options || {});
     };
 
+    window.jeopardySetClipMute = function (isMuted) {
+        clipState.muted = !!isMuted;
+        applyAllClipVolumes();
+    };
+
+    window.jeopardySetClipVolume = function (volume) {
+        clipState.volume = clamp(Number(volume) || 0, 0, 1);
+        applyAllClipVolumes();
+    };
+
     window.playBoardSetupVoice = async function () {
         return playSource(versioned("/audio/add-player.mp3"), { restart: true, volume: 1 });
     };
@@ -285,11 +325,12 @@
 })();
 
 (() => {
+    const maxOutput = 0.1;
     const sfx = {
         context: null,
         gain: null,
         muted: false,
-        volume: 0.8,
+        volume: 1,
         unlocked: false,
         unlockBound: false
     };
@@ -318,7 +359,7 @@
             return;
         }
 
-        const target = sfx.muted ? 0 : clamp(sfx.volume, 0, 1);
+        const target = sfx.muted ? 0 : clamp(sfx.volume, 0, 1) * maxOutput;
         sfx.gain.gain.setTargetAtTime(target, sfx.context.currentTime, 0.02);
     };
 
@@ -445,12 +486,18 @@
         ensureAudio();
         sfx.muted = !!isMuted;
         applyGain();
+        if (typeof window.jeopardySetClipMute === "function") {
+            window.jeopardySetClipMute(isMuted);
+        }
     };
 
     window.jeopardySetVolume = function (volume) {
         ensureAudio();
         sfx.volume = clamp(Number(volume) || 0, 0, 1);
         applyGain();
+        if (typeof window.jeopardySetClipVolume === "function") {
+            window.jeopardySetClipVolume(volume);
+        }
     };
 
     window.jeopardyPlaySfx = function (name) {

@@ -25,6 +25,49 @@
     color: #c5d8ff;
 }
 
+.category-filter-wrap {
+    margin-top: 0.7rem;
+    display: grid;
+    gap: 0.28rem;
+}
+
+.category-filter-label {
+    color: #b8caf6;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.category-filter-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.category-filter-input {
+    flex: 1;
+    min-height: 38px;
+    border: 1px solid rgba(145, 189, 255, 0.42);
+    border-radius: 10px;
+    background: rgba(12, 31, 95, 0.72);
+    color: #f1f6ff;
+    padding: 0.35rem 0.46rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.category-filter-count {
+    color: #9fb4ea;
+    font-size: 0.76rem;
+}
+
+.category-filter-empty {
+    margin: 0.55rem 0 0;
+    color: #d7e4ff;
+    font-size: 0.84rem;
+}
+
 .category-picker-grid {
     margin-top: 1rem;
     display: grid;
@@ -1203,6 +1246,10 @@
     gap: 0.6rem;
 }
 
+.host-clue-actions {
+    margin-bottom: 0.65rem;
+}
+
 .judge-flow {
     margin: 0 0 0.45rem;
     color: #c3d4ff;
@@ -1246,6 +1293,12 @@
     border-color: #be8917;
 }
 
+.score-btn.skip {
+    background: linear-gradient(180deg, #dce8ff 0%, #c1d5fa 100%);
+    color: #1a366a;
+    border-color: rgba(118, 168, 255, 0.5);
+}
+
 .category-chip:focus-visible,
 .clear-btn:focus-visible,
 .start-game-btn:focus-visible,
@@ -1259,6 +1312,7 @@
 .clue-tile:focus-visible,
 .audio-volume input[type="range"]:focus-visible,
 .player-name-input:focus-visible,
+.category-filter-input:focus-visible,
 .add-player-btn:focus-visible,
 .remove-player-btn:focus-visible {
     outline: 3px solid #ffd462;
@@ -1576,6 +1630,11 @@
     .setup-actions {
         width: 100%;
         justify-content: space-between;
+    }
+
+    .category-filter-controls {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .question-text {

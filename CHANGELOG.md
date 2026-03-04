@@ -3,6 +3,34 @@ All notable changes to this project are documented in this file for public GitHu
 
 Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog normalizes those entries as `2.1.0`, `2.2.0`, and `2.3.0`.
 
+## [2.3.3] - 2026-03-04
+### Added
+- Category filtering on the game setup screen to quickly narrow category choices.
+- Host skip-clue action (UI button + `S` hotkey) that awards no points.
+
+### Changed
+- Normalized app audio to a 10% output ceiling and unified FX slider behavior across synthesized SFX and clip playback.
+- Rewrote vague parenthesized category banks with concrete technical clue/answer content:
+  - `AZ-900 (Azure Fundamentals)`
+  - `AZ-204 (Azure Developer)`
+  - `AI-900 (Azure AI Fundamentals)`
+  - `Algorithms (C#)`
+  - `DP-3001 (Azure Data)`
+  - `DP-080 (Data Fundamentals)`
+  - `DP-3020 (Advanced Data)`
+  - `MS-4010 (Security)`
+- Replaced additional generic/template category banks with specific technical clue/answer content:
+  - `App Service`
+  - `Functions`
+  - `Windows Virtual Desktop`
+  - `Application Gateway`
+  - `Role-Based Access Control`
+  - `Multi-Factor Authentication`
+- Bumped application/release metadata to `v2.3.3` and synced versioned audio asset marker.
+
+### Fixed
+- Corrected typo in Event Grid Q/A (`What is dead-lettering ...`).
+
 ## [2.3.2] - 2026-02-26
 ### Changed
 - Refined deployment workflow/docs updates since `v2.3.1` for clearer cloud-host publishing on GitHub.
@@ -38,7 +66,8 @@ Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog nor
 ### Changed
 - Initial v2 public release baseline with expanded category set and updated game content/docs.
 
-[2.3.2]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.1...HEAD
+[2.3.3]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.2...HEAD
+[2.3.2]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.1...v2.3.2
 [2.3.1]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3...v2.3.1
 [2.3.0]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.2...v2.3
 [2.2.0]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.1...v2.2
