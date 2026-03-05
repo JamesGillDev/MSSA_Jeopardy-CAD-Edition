@@ -15,6 +15,7 @@ Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog nor
 - Restored MAUI Blazor CSS isolation so desktop views render with the intended styles.
 - Added global `#blazor-error-ui` defaults so the unhandled error banner is hidden unless a real runtime fault occurs.
 - Updated published version badge output to show only the release version (removed `+build` metadata suffix).
+- Fixed Daily Double clue modal layout so the judge/answer controls remain in normal flow instead of being pushed to the bottom.
 
 ## [2.4.0] - 2026-03-04
 ### Added

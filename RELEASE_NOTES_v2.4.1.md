@@ -11,6 +11,7 @@ MSSA Jeopardy! - Cloud Application Development Edition
 - Fixed persistent bottom-left unhandled error banner visibility in desktop mode.
 - Bumped MAUI desktop version metadata and versioned audio marker to `2.4.1`.
 - Fixed published version badge rendering so it shows only the public release version (for example `v2.4.1`) without `+build` metadata.
+- Fixed Daily Double clue modal layout so player judging controls stay in normal position.
 
 ## Fix Details
 - MAUI project update:
@@ -22,6 +23,9 @@ MSSA Jeopardy! - Cloud Application Development Edition
   - Updated `MSSA_Jeopardy.Maui/wwwroot/index.html` audio script query to `v=2.4.1`.
   - Updated `MSSA_Jeopardy.Maui/wwwroot/audio.js` runtime version marker to `2.4.1`.
   - Updated Home release badge version parsing in both web and MAUI pages to trim `AssemblyInformationalVersion` metadata after `+`, rendering `Published v2.4.1` style output.
+- Daily Double modal flow:
+  - Updated question modal card layout from fixed grid rows to a flexible column flow so optional Daily Double banner rows do not force judge controls to the bottom.
+  - Applied the same fix to desktop runtime fallback stylesheet (`wwwroot/maui-components.css`) used by the published MAUI app.
 
 ## Local Publish
 - Publish command:
