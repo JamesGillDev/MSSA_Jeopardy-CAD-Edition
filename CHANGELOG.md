@@ -3,6 +3,18 @@ All notable changes to this project are documented in this file for public GitHu
 
 Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog normalizes those entries as `2.1.0`, `2.2.0`, and `2.3.0`.
 
+## [2.4.1] - 2026-03-04
+### Added
+- Added `RELEASE_NOTES_v2.4.1.md` for this public release.
+
+### Changed
+- Bumped MAUI desktop app version metadata from `2.4.0` to `2.4.1`.
+- Updated versioned desktop audio asset marker to `2.4.1`.
+
+### Fixed
+- Restored MAUI Blazor CSS isolation so desktop views render with the intended styles.
+- Added global `#blazor-error-ui` defaults so the unhandled error banner is hidden unless a real runtime fault occurs.
+
 ## [2.4.0] - 2026-03-04
 ### Added
 - Added a new Windows-targeted MAUI Blazor desktop project: `MSSA_Jeopardy.Maui`.
@@ -104,7 +116,8 @@ Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog nor
 ### Changed
 - Initial v2 public release baseline with expanded category set and updated game content/docs.
 
-[2.4.0]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.5...HEAD
+[2.4.1]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.5...v2.4.0
 [2.3.5]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.4...v2.3.5
 [2.3.4]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.3...v2.3.4
 [2.3.3]: https://github.com/JamesGillDev/MSSA_Jeopardy-CAD-Edition/compare/v2.3.2...v2.3.3

@@ -1,4 +1,4 @@
-# MSSA Jeopardy - CAD Edition (v2.4.0)
+# MSSA Jeopardy - CAD Edition (v2.4.1)
 
 [Live Web App](https://mssa-jeopardy-jamesgill.azurewebsites.net/)
 
@@ -10,12 +10,12 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 
 ---
 
-## What's New in v2.4.0
-- **Public Release:** `v2.4.0` is published as a public release with a new MAUI Blazor desktop app target.
-- **Desktop App Mode:** Added a Windows MAUI Blazor app project so Jeopardy runs as a native desktop window instead of a localhost web host.
-- **Shared Game Logic:** Reused the same question bank and game service logic in desktop mode.
-- **Single Publish Output:** Local publish now produces one canonical output folder (`publish/current`) for the desktop app.
-- **Carry-Forward Fixes:** Includes prior category deduplication, Q/A strictness, icon, and stability improvements.
+## What's New in v2.4.1
+- **Public Release:** `v2.4.1` is published as a public release with MAUI desktop UI/stability hotfixes.
+- **MAUI Styling Restored:** Re-enabled Blazor CSS isolation for the desktop app so the Jeopardy layout renders correctly.
+- **Error Banner Behavior Fixed:** The bottom-left unhandled error UI is hidden by default and now only appears on real runtime faults.
+- **Desktop App Mode:** Carries forward the Windows MAUI Blazor app target so Jeopardy runs as a native desktop window instead of a localhost web host.
+- **Single Publish Output:** Local publish continues to produce one canonical output folder (`publish/current`) for the desktop app.
 
 ## Highlights from v2.3
 - **Massive Category Pool:** 109 canonical categories (deduplicated aliases) including .NET Core, Git & Version Control, Cloud Security, Containers & Kubernetes, Microsoft Power Platform, Data Analytics, Azure Blob Storage, Key Vault, App Service, and many more.
@@ -27,6 +27,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 
 ## Release History
 - Version history for public releases: [CHANGELOG.md](./CHANGELOG.md)
+- Detailed notes for the `v2.4.1` public release: [RELEASE_NOTES_v2.4.1.md](./RELEASE_NOTES_v2.4.1.md)
 - Detailed notes for the `v2.2` milestone: [RELEASE_NOTES_v2.2.md](./RELEASE_NOTES_v2.2.md)
 - Detailed notes for the `v2.4.0` public release: [RELEASE_NOTES_v2.4.0.md](./RELEASE_NOTES_v2.4.0.md)
 - Detailed notes for the `v2.3.5` public release: [RELEASE_NOTES_v2.3.5.md](./RELEASE_NOTES_v2.3.5.md)
@@ -126,4 +127,4 @@ This project is licensed under the **Business Source License 1.1 (BLS)**. See [L
 - **Change License:** Apache License 2.0 (effective on the Change Date, per license terms).
 
 ---
-MSSA Jeopardy - CAD Edition v2.4.0 | Developed by JamesGillDev and contributors
+MSSA Jeopardy - CAD Edition v2.4.1 | Developed by JamesGillDev and contributors
