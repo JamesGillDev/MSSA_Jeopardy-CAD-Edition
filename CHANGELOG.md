@@ -11,6 +11,7 @@ Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog nor
 - Bumped MAUI desktop app version metadata from `2.4.0` to `2.4.1`.
 - Updated versioned desktop audio asset marker to `2.4.1`.
 - Replaced MAUI desktop icon and splash foreground artwork with a custom Jeopardy-themed design.
+- Embedded a dedicated Win32 executable icon (`Resources/app-win32.ico`) via `ApplicationIcon` so published desktop EXEs no longer show the default .NET icon.
 
 ### Fixed
 - Restored MAUI Blazor CSS isolation so desktop views render with the intended styles.

@@ -10,6 +10,7 @@
     <Nullable>enable</Nullable>
 
     <ApplicationTitle>MSSA Jeopardy Desktop</ApplicationTitle>
+    <ApplicationIcon>Resources\app-win32.ico</ApplicationIcon>
     <ApplicationId>com.jamesgilldev.mssa_jeopardy.desktop</ApplicationId>
     <Version>2.4.1</Version>
     <AssemblyVersion>2.4.1.0</AssemblyVersion>
