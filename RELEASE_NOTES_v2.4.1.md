@@ -10,7 +10,7 @@ MSSA Jeopardy! - Cloud Application Development Edition
 - Restored full MAUI desktop Jeopardy styling by re-enabling Blazor CSS isolation.
 - Fixed persistent bottom-left unhandled error banner visibility in desktop mode.
 - Bumped MAUI desktop version metadata and versioned audio marker to `2.4.1`.
-- Fixed published version badge rendering so it displays the actual version value.
+- Fixed published version badge rendering so it shows only the public release version (for example `v2.4.1`) without `+build` metadata.
 
 ## Fix Details
 - MAUI project update:
@@ -21,7 +21,7 @@ MSSA Jeopardy! - Cloud Application Development Edition
 - Version synchronization:
   - Updated `MSSA_Jeopardy.Maui/wwwroot/index.html` audio script query to `v=2.4.1`.
   - Updated `MSSA_Jeopardy.Maui/wwwroot/audio.js` runtime version marker to `2.4.1`.
-  - Updated Home release badge markup in both web and MAUI pages to render `Published v@(PublishedVersion)`.
+  - Updated Home release badge version parsing in both web and MAUI pages to trim `AssemblyInformationalVersion` metadata after `+`, rendering `Published v2.4.1` style output.
 
 ## Local Publish
 - Publish command:

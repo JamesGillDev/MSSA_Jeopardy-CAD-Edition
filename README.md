@@ -14,6 +14,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 - **Public Release:** `v2.4.1` is published as a public release with MAUI desktop UI/stability hotfixes.
 - **MAUI Styling Restored:** Re-enabled Blazor CSS isolation for the desktop app so the Jeopardy layout renders correctly.
 - **Error Banner Behavior Fixed:** The bottom-left unhandled error UI is hidden by default and now only appears on real runtime faults.
+- **Published Badge Cleanup:** Home now shows only the release version (for example `Published v2.4.1`) without `+build` metadata.
 - **Desktop App Mode:** Carries forward the Windows MAUI Blazor app target so Jeopardy runs as a native desktop window instead of a localhost web host.
 - **Single Publish Output:** Local publish continues to produce one canonical output folder (`publish/current`) for the desktop app.
 

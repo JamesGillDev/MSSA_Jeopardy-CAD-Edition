@@ -93,11 +93,7 @@
 </section>
 
 @code {
-    private static readonly string PublishedVersion =
-        typeof(JeopardyGameService).Assembly
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-        ?? typeof(JeopardyGameService).Assembly.GetName().Version?.ToString(3)
-        ?? "unknown";
+    private static readonly string PublishedVersion = GetPublishedVersion();
 
     private bool _showWelcomeGate = true;
     private bool _welcomeFocusPending = true;
@@ -122,5 +118,19 @@
                 // No-op: app should still render even if focus helper is unavailable.
             }
         }
+    }
+
+    private static string GetPublishedVersion()
+    {
+        var informationalVersion = typeof(JeopardyGameService).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+        if (!string.IsNullOrWhiteSpace(informationalVersion))
+        {
+            // Drop source/build metadata suffix (for example "+d8f2830...") and show only the release version.
+            return informationalVersion.Split('+', 2)[0];
+        }
+
+        return typeof(JeopardyGameService).Assembly.GetName().Version?.ToString(3) ?? "unknown";
     }
 }
