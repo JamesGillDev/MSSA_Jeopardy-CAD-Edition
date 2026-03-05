@@ -15,11 +15,13 @@ MSSA Jeopardy! - Cloud Application Development Edition
 - Fixed published version badge rendering so it shows only the public release version (for example `v2.4.1`) without `+build` metadata.
 - Fixed Daily Double clue modal layout so player judging controls stay in normal position.
 - Updated local publish flow to refresh Explorer icon cache so the custom EXE icon is visible immediately.
+- Rebuilt the Win32 icon file in a compiler-safe format so Explorer large/tile views reliably show the custom Jeopardy icon.
 
 ## Fix Details
 - MAUI project update:
   - Replaced `Resources/appicon.svg` and `Resources/appiconfg.svg` artwork with custom Jeopardy icon assets used for desktop app icon/splash generation.
   - Added `Resources/app-win32.ico` and set `ApplicationIcon` in `MSSA_Jeopardy.Maui.csproj` so the unpackaged published EXE carries Jeopardy branding.
+  - Regenerated `Resources/app-win32.ico` as a valid Windows icon resource that compiles cleanly and is consistently consumed by Explorer.
   - Removed `EnableDefaultCssItems=false` from `MSSA_Jeopardy.Maui.csproj`.
   - Added an MSBuild target that maps MAUI `@(MauiCss)` items into `@(ScopedCssInput)` so `MSSA_Jeopardy.Maui.styles.css` is generated and published reliably.
 - Global error UI handling:

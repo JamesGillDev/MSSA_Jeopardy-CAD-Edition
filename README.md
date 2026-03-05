@@ -14,6 +14,7 @@ A fun, interactive Jeopardy-style quiz game for the **Microsoft Software & Syste
 - **Public Release:** `v2.4.1` is published as a public release with MAUI desktop UI/stability hotfixes.
 - **Desktop Icon Refresh:** Replaced default MAUI/.NET icon art and embedded a custom Win32 icon so the published `MSSA_Jeopardy.Maui.exe` shows Jeopardy branding in File Explorer.
 - **Publish Icon Cache Refresh:** Local publish now refreshes Windows Explorer icon cache so updated EXE icons appear immediately after publishing.
+- **Explorer Icon Reliability Fix:** Rebuilt the Win32 `.ico` resource in a compiler-safe format so large/tile Explorer views use the custom icon instead of falling back to `.NET`.
 - **MAUI Styling Restored:** Re-enabled Blazor CSS isolation for the desktop app so the Jeopardy layout renders correctly.
 - **Error Banner Behavior Fixed:** The bottom-left unhandled error UI is hidden by default and now only appears on real runtime faults.
 - **Published Badge Cleanup:** Home now shows only the release version (for example `Published v2.4.1`) without `+build` metadata.

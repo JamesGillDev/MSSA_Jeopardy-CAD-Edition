@@ -19,6 +19,7 @@ Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog nor
 - Updated published version badge output to show only the release version (removed `+build` metadata suffix).
 - Fixed Daily Double clue modal layout so the judge/answer controls remain in normal flow instead of being pushed to the bottom.
 - Updated local publish script to refresh Windows Explorer icon cache after publish so the custom EXE icon appears immediately.
+- Rebuilt `Resources/app-win32.ico` as a compiler-safe icon resource so Explorer consistently renders the custom desktop icon (including large/tile views) instead of the default `.NET` icon.
 
 ## [2.4.0] - 2026-03-04
 ### Added
