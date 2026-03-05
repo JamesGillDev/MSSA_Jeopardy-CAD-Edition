@@ -7,6 +7,7 @@ MSSA Jeopardy! - Cloud Application Development Edition
 - **Public Release**
 
 ## Highlights
+- Refreshed the desktop icon with a custom Jeopardy-themed visual style.
 - Restored full MAUI desktop Jeopardy styling by re-enabling Blazor CSS isolation.
 - Fixed persistent bottom-left unhandled error banner visibility in desktop mode.
 - Bumped MAUI desktop version metadata and versioned audio marker to `2.4.1`.
@@ -15,6 +16,7 @@ MSSA Jeopardy! - Cloud Application Development Edition
 
 ## Fix Details
 - MAUI project update:
+  - Replaced `Resources/appicon.svg` and `Resources/appiconfg.svg` artwork with custom Jeopardy icon assets used for desktop app icon/splash generation.
   - Removed `EnableDefaultCssItems=false` from `MSSA_Jeopardy.Maui.csproj`.
   - Added an MSBuild target that maps MAUI `@(MauiCss)` items into `@(ScopedCssInput)` so `MSSA_Jeopardy.Maui.styles.css` is generated and published reliably.
 - Global error UI handling:

@@ -10,6 +10,7 @@ Older tags use short semantic forms (`v2.1`, `v2.2`, `v2.3`). This changelog nor
 ### Changed
 - Bumped MAUI desktop app version metadata from `2.4.0` to `2.4.1`.
 - Updated versioned desktop audio asset marker to `2.4.1`.
+- Replaced MAUI desktop icon and splash foreground artwork with a custom Jeopardy-themed design.
 
 ### Fixed
 - Restored MAUI Blazor CSS isolation so desktop views render with the intended styles.
