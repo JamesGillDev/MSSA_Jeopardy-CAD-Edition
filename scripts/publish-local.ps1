@@ -3,7 +3,8 @@ param(
     [string]$Runtime = "win10-x64",
     [string]$Framework = "net8.0-windows10.0.19041.0",
     [string]$Configuration = "Release",
-    [switch]$NoRestore
+    [switch]$NoRestore,
+    [switch]$SkipExplorerIconRefresh
 )
 
 $ErrorActionPreference = "Stop"
@@ -62,4 +63,15 @@ Write-Host "Output: $outputPath"
 if ($exe)
 {
     Write-Host "Run: `"$($exe.FullName)`""
+}
+
+if (-not $SkipExplorerIconRefresh)
+{
+    $ie4uinitPath = Join-Path $env:SystemRoot "System32\ie4uinit.exe"
+    if (Test-Path $ie4uinitPath)
+    {
+        Write-Host "Refreshing Windows Explorer icon cache..."
+        & $ie4uinitPath -ClearIconCache | Out-Null
+        & $ie4uinitPath -show | Out-Null
+    }
 }

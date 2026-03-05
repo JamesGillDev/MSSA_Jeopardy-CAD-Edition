@@ -14,6 +14,7 @@ MSSA Jeopardy! - Cloud Application Development Edition
 - Bumped MAUI desktop version metadata and versioned audio marker to `2.4.1`.
 - Fixed published version badge rendering so it shows only the public release version (for example `v2.4.1`) without `+build` metadata.
 - Fixed Daily Double clue modal layout so player judging controls stay in normal position.
+- Updated local publish flow to refresh Explorer icon cache so the custom EXE icon is visible immediately.
 
 ## Fix Details
 - MAUI project update:
@@ -34,6 +35,8 @@ MSSA Jeopardy! - Cloud Application Development Edition
 ## Local Publish
 - Publish command:
   - `.\scripts\publish-local.ps1`
+- Optional:
+  - `.\scripts\publish-local.ps1 -SkipExplorerIconRefresh` (skip icon cache refresh)
 - Output:
   - `publish/current`
 - Run:
